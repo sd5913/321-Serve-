@@ -1,0 +1,531 @@
+{
+  "reference_canvas": "975 × 450 for most supplied complete screens; per-file dimensions vary.",
+  "current_hud_beats": 6,
+  "files": [
+    {
+      "path": "assets/ui/backgrounds/Background1.png",
+      "type": "background",
+      "width": 975,
+      "height": 449,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/backgrounds/Background2.png",
+      "type": "background",
+      "width": 975,
+      "height": 449,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/backgrounds/Background3.png",
+      "type": "background",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/backgrounds/Background4.png",
+      "type": "background",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/complete/Countdown1.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/Countdown2.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/Countdown3.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/ExitConfirmation.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/complete/HUD-4-miss.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/complete/HUD0.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/HUD1.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/HUD2.png",
+      "type": "complete-screen",
+      "width": 973,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/HUD3.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/HUD4.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/HUD5.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/HUD6.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/Instruction.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/Pause.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/complete/ResultScreen1.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/complete/ResultScreen2.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/complete/ResultScreen3.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/complete/Startpage.png",
+      "type": "complete-screen",
+      "width": 975,
+      "height": 450,
+      "has_transparency": false
+    },
+    {
+      "path": "assets/ui/elements/branding/logo-321-serve.png",
+      "type": "element",
+      "width": 824,
+      "height": 475,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/back.png",
+      "type": "element",
+      "width": 627,
+      "height": 123,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/button-base-coral.png",
+      "type": "element",
+      "width": 600,
+      "height": 120,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/button-base-cream.png",
+      "type": "element",
+      "width": 600,
+      "height": 120,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/cancel.png",
+      "type": "element",
+      "width": 652,
+      "height": 125,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/got-it.png",
+      "type": "element",
+      "width": 1917,
+      "height": 612,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/home-pause.png",
+      "type": "element",
+      "width": 538,
+      "height": 122,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/home-result.png",
+      "type": "element",
+      "width": 625,
+      "height": 157,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/pause-58-thick.png",
+      "type": "element",
+      "width": 58,
+      "height": 58,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/pause-58.png",
+      "type": "element",
+      "width": 58,
+      "height": 58,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/quit.png",
+      "type": "element",
+      "width": 658,
+      "height": 125,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/restart.png",
+      "type": "element",
+      "width": 538,
+      "height": 120,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/resume.png",
+      "type": "element",
+      "width": 539,
+      "height": 121,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/retry.png",
+      "type": "element",
+      "width": 622,
+      "height": 150,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/settings-gear.png",
+      "type": "element",
+      "width": 103,
+      "height": 105,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/buttons/start.png",
+      "type": "element",
+      "width": 555,
+      "height": 187,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/countdown/1.png",
+      "type": "element",
+      "width": 362,
+      "height": 343,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/countdown/2.png",
+      "type": "element",
+      "width": 467,
+      "height": 353,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/countdown/3.png",
+      "type": "element",
+      "width": 492,
+      "height": 378,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/decorations/celebration-left.png",
+      "type": "element",
+      "width": 95,
+      "height": 133,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/decorations/celebration-right.png",
+      "type": "element",
+      "width": 95,
+      "height": 130,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/feedback/miss.png",
+      "type": "element",
+      "width": 1722,
+      "height": 910,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/feedback/on-beat.png",
+      "type": "element",
+      "width": 1902,
+      "height": 816,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/labels/progress-will-be-lost.png",
+      "type": "element",
+      "width": 668,
+      "height": 54,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/modals/panel-base.png",
+      "type": "element",
+      "width": 670,
+      "height": 660,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/dialogs/pause-complete.png",
+      "type": "complete-dialog",
+      "width": 668,
+      "height": 659,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/dialogs/quit-complete.png",
+      "type": "complete-dialog",
+      "width": 815,
+      "height": 668,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/complete/dialogs/settings-complete.png",
+      "type": "complete-dialog",
+      "width": 744,
+      "height": 612,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/result/label-on-beat.png",
+      "type": "element",
+      "width": 376,
+      "height": 76,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/result/score-100-percent-sample.png",
+      "type": "element",
+      "width": 603,
+      "height": 178,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/bar-base.png",
+      "type": "element",
+      "width": 420,
+      "height": 44,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/dot-hit.png",
+      "type": "element",
+      "width": 316,
+      "height": 316,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/dot-miss.png",
+      "type": "element",
+      "width": 318,
+      "height": 316,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/dot-pending.png",
+      "type": "element",
+      "width": 317,
+      "height": 317,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/six-beat-states/bar-6-hit-0.png",
+      "type": "element",
+      "width": 3740,
+      "height": 702,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/six-beat-states/bar-6-hit-1.png",
+      "type": "element",
+      "width": 3740,
+      "height": 702,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/six-beat-states/bar-6-hit-2.png",
+      "type": "element",
+      "width": 3740,
+      "height": 702,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/six-beat-states/bar-6-hit-3.png",
+      "type": "element",
+      "width": 3740,
+      "height": 702,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/six-beat-states/bar-6-hit-4.png",
+      "type": "element",
+      "width": 3740,
+      "height": 702,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/six-beat-states/bar-6-hit-5.png",
+      "type": "element",
+      "width": 3740,
+      "height": 702,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/rhythm/six-beat-states/bar-6-hit-6.png",
+      "type": "element",
+      "width": 3740,
+      "height": 702,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/settings/label-music.png",
+      "type": "element",
+      "width": 223,
+      "height": 49,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/settings/label-sfx.png",
+      "type": "element",
+      "width": 153,
+      "height": 49,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/settings/slider-fill.png",
+      "type": "element",
+      "width": 388,
+      "height": 22,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/settings/slider-music-reference.png",
+      "type": "element",
+      "width": 384,
+      "height": 76,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/settings/slider-sfx-reference.png",
+      "type": "element",
+      "width": 416,
+      "height": 77,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/settings/slider-thumb.png",
+      "type": "element",
+      "width": 64,
+      "height": 64,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/settings/slider-track.png",
+      "type": "element",
+      "width": 400,
+      "height": 34,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/titles/nice-cuts.png",
+      "type": "element",
+      "width": 827,
+      "height": 234,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/titles/paused.png",
+      "type": "element",
+      "width": 438,
+      "height": 76,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/titles/quit-game.png",
+      "type": "element",
+      "width": 670,
+      "height": 97,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/titles/settings.png",
+      "type": "element",
+      "width": 560,
+      "height": 81,
+      "has_transparency": true
+    },
+    {
+      "path": "assets/ui/elements/tutorial/listen-then-tap-card.png",
+      "type": "element",
+      "width": 463,
+      "height": 318,
+      "has_transparency": true
+    }
+  ]
+}

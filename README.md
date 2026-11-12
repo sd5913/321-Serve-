@@ -31,11 +31,14 @@ The full visual design of the game — interface layouts, visual style, and comp
 
 | Path | Contents |
 | --- | --- |
-| [assets/ui/](assets/ui/) | UI screens, backgrounds, countdowns and HUD states |
+| [Complete UI / 完整界面](assets/ui/complete/) | Full screen layout references and complete dialog panels |
+| [Separate UI elements / 独立元素](assets/ui/elements/) | Transparent components for game integration |
+| [UI backgrounds / 背景](assets/ui/backgrounds/) | Kitchen background images |
+| [UI asset guide](assets/ui/README.md) | Folder usage, duplicate cleanup and component notes |
 | [assets/game/](assets/game/) | Game asset overview |
 | [docs/Sushi_Rhythm_Design_and_Assets.docx](docs/Sushi_Rhythm_Design_and_Assets.docx) | Chinese transcription of the handwritten game design and asset list, dated 2 November 2026 |
 
-The images are preserved as supplied. Some files are complete screen references or asset sheets rather than separate runtime components. The Chinese design document records an earlier proposal and its open questions; it is not a statement that every listed feature or asset is complete.
+Full screen references and the game asset overview are preserved as supplied. UI components are separated into a dedicated elements directory; see the UI asset guide before implementation. The Chinese design document records an earlier proposal and its open questions; it is not a statement that every listed feature or asset is complete.
 
 ---
 
