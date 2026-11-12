@@ -29,13 +29,17 @@ The full visual design of the game — interface layouts, visual style, and comp
 
 ## Structure
 
-```
-321-Serve-/
-└── README.md
-```
+| Path | Contents |
+| --- | --- |
+| [assets/ui/](assets/ui/) | UI screens, backgrounds, countdowns and HUD states |
+| [assets/game/](assets/game/) | Game asset overview |
+| [docs/Sushi_Rhythm_Design_and_Assets.docx](docs/Sushi_Rhythm_Design_and_Assets.docx) | Chinese transcription of the handwritten game design and asset list, dated 2 November 2026 |
+
+The images are preserved as supplied. Some files are complete screen references or asset sheets rather than separate runtime components. The Chinese design document records an earlier proposal and its open questions; it is not a statement that every listed feature or asset is complete.
 
 ---
 
 ## Contact
 
 For design or development questions, please reach the team through the repository issues.
+
