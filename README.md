@@ -1,34 +1,33 @@
 # 321 Serve
 
-一款音乐节奏游戏 / A music rhythm game.
+A music rhythm game.
 
-本仓库用于存放《321 Serve》的视觉设计与开发资料。
-
----
-
-## 视觉设计 / Visual Design
-
-游戏的整体视觉设计在 Figma 中完成，包括界面布局、视觉风格与组件规范：
-
-**Figma 设计稿 → [HP – 321 Serve](https://www.figma.com/design/wDOcRmw9hqUAvnOOdLzmeV/HP?node-id=0-1&p=f)**
-
-> 该 Figma 文件为团队原创的游戏视觉设计稿，用于本项目的界面与视觉方向确认，后续开发以此为准。
-> The Figma file above is the original visual design of the game, created by our team, and serves as the reference for all interface and visual work.
+This repository holds the visual design and development materials for *321 Serve*.
 
 ---
 
-## 项目信息 / Project Info
+## Visual Design
 
-| 项目 | 内容 |
+The full visual design of the game — interface layouts, visual style, and component guidelines — is created in Figma:
+
+**Figma design → [HP – 321 Serve](https://www.figma.com/design/wDOcRmw9hqUAvnOOdLzmeV/HP?node-id=0-1&p=f)**
+
+> The Figma file above is our team's original visual design for the game. It defines the interface and visual direction of the project, and all subsequent development follows it as the reference.
+
+---
+
+## Project Info
+
+| Item | Details |
 | --- | --- |
-| 名称 | 321 Serve |
-| 类型 | 音乐节奏游戏 (Music Rhythm Game) |
-| 视觉设计 | [Figma](https://www.figma.com/design/wDOcRmw9hqUAvnOOdLzmeV/HP?node-id=0-1&p=f) |
-| 当前阶段 | 视觉设计 |
+| Title | 321 Serve |
+| Genre | Music rhythm game |
+| Visual design | [Figma](https://www.figma.com/design/wDOcRmw9hqUAvnOOdLzmeV/HP?node-id=0-1&p=f) |
+| Stage | Visual design |
 
 ---
 
-## 目录结构 / Structure
+## Structure
 
 ```
 321-Serve-/
@@ -37,6 +36,6 @@
 
 ---
 
-## 联系 / Contact
+## Contact
 
-如有设计或开发相关问题，请通过仓库 Issue 联系团队成员。
+For design or development questions, please reach the team through the repository issues.
