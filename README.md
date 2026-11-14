@@ -1,32 +1,38 @@
 # 321 Serve
 
-A music rhythm game.
+A rhythm game about shaping rice balls to the beat.
 
-## Play the first interaction prototype · 第一版交互原型
+一款跟着节拍捏饭团的音乐游戏。
+
+## Play locally · 本地试玩
 
 Download or clone this repository, then open **index.html** in a modern browser. No build step, network connection or runtime dependencies are needed. Keep the assets folder next to the HTML file. On phones, landscape orientation is recommended.
 
-下载仓库后直接打开 **index.html**，无需安装依赖。建议使用桌面 Chrome / Edge，手机推荐横屏。
+下载仓库后，用 Chrome 或 Edge 打开 [index.html](index.html)，点击 **START**。无需安装依赖，手机试玩推荐横屏。
 
-- Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
+- Click **START** and listen for the four-beat count-in. Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
 - **Escape** pauses/resumes; the top bar also includes pause, mute and fullscreen controls.
 - The yellow **SQUISH** section asks for one press every two beats.
 - 120 BPM · 47 seconds · 56 notes · four-beat count-in.
 - Perfect: ±75 ms. Good: ±155 ms. Late notes miss automatically; extra presses break the combo and reduce accuracy.
-- Successful hits trigger squash, rice particles and impact sound. Wrong or missed hits display a large red anger symbol and an angry rice face.
-- Optional input compensation: −200 to +200 ms. Positive values compensate late input. Reduced-motion mode removes shaking and the close-up camera change.
+- Open the gear on the start screen to adjust input compensation from −200 to +200 ms. Positive values compensate late input. Reduced-motion mode removes shaking and the close-up camera change.
 
-![First prototype](docs/prototype/preview.png)
+### v0.1 UI update · 界面更新
+
+- The start screen uses the repository artwork for the sushi turntable, logo, START button and settings gear. The count-in uses the illustrated **3 → 2 → 1** assets followed by **GO!**.
+- Both normal play and SQUISH show **ON BEAT!** for Perfect and Good hits, with the judgment and timing offset beneath the artwork. **MISS!** shows **TOO LATE** for a missed note or **OFF BEAT** for an extra press.
+
+开场使用仓库里的寿司转盘、Logo 和按钮素材。普通段和 SQUISH 段共用判定贴图。命中时显示 **ON BEAT!** 和偏差毫秒数，漏拍或误触时显示 **MISS!** 和具体原因。
+
+![Start-screen design reference / 开始页设计参考](assets/ui/complete/Startpage.png)
 
 ### Version scope
 
-This is an interaction prototype, with a synthesized Web Audio rhythm track and a fixed chart. It is not a final music track or an engine build. Hardware/audio latency still needs real-device playtesting. The original UI references and design documents below are preserved.
+The browser prototype uses a synthesized Web Audio track and a fixed chart. Audio and input latency still need real-device playtesting.
 
 ### Verification
 
 Browser checks cover asset loading, keyboard and pointer hits, off-beat feedback, pause/resume, the squish segment, results, restart, and a 375px viewport. To repeat: install Playwright as a development tool, install its Chromium browser, and run **node verify.cjs**. Optional environment variables PLAYWRIGHT_MODULE and BROWSER_PATH select an existing local installation.
-
-
 
 This repository holds the visual design and development materials for *321 Serve*.
 
@@ -71,4 +77,3 @@ Full screen references and the game asset overview are preserved as supplied. UI
 ## Contact
 
 For design or development questions, please reach the team through the repository issues.
-
