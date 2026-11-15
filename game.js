@@ -1,5 +1,7 @@
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'),c=canvas.getContext('2d');
+const music = $('music');
+const SFX_VOLUME = .9;
 const INK='#142342',CREAM='#fffbed',RED='#ff583f',YELLOW='#ffe879',BPM=120,BEAT=60/BPM;
 const assets = {};
 const ui = 'assets/ui/elements/';
@@ -16,19 +18,120 @@ const assetPaths = {
   2: ui + 'countdown/2.png',
   1: ui + 'countdown/1.png'
 };
-let state='loading',audio,master,origin=0,pausedAt=0,nextTick=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],lastFrame=0,offset=0;
+let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],lastFrame=0,offset=0;
 let reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;$('motion').checked=reduce;
 const chart=[...Array.from({length:16},(_,i)=>4+i*2),...Array.from({length:16},(_,i)=>36+i),...Array.from({length:8},(_,i)=>56+i*2),...Array.from({length:16},(_,i)=>76+i)];
 const END=94*BEAT;
-const time=()=>state==='playing'?audio.currentTime-origin:pausedAt;
+const time = () => state === 'playing' ? music.currentTime : pausedAt;
+let startingPlayback = false;
 function tone(freq,at,len=.08,type='sine',vol=.15,end=freq){if(!audio)return;const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,at);o.frequency.exponentialRampToValueAtTime(Math.max(1,end),at+len);g.gain.setValueAtTime(.001,at);g.gain.linearRampToValueAtTime(vol,at+.004);g.gain.exponentialRampToValueAtTime(.001,at+len);o.connect(g);g.connect(master);o.start(at);o.stop(at+len+.02);}
-function beatSound(i,at){tone(i%4===0?140:100,at,.12,'sine',.24,42);tone(i%2?2200:1500,at,.025,'square',.025);const bass=[130.81,130.81,164.81,146.83];if(i%2===0)tone(bass[Math.floor(i/8)%4],at,.18,'triangle',.08);if(i%4===2)tone(523.25,at,.08,'sine',.04);}
-async function start(){if(state==='loading')return;if(!audio){audio=new (window.AudioContext||window.webkitAudioContext)();master=audio.createGain();master.gain.value=muted?0:.65;master.connect(audio.destination);}await audio.resume();origin=audio.currentTime+.12;pausedAt=0;nextTick=0;notes=chart.map((b,i)=>({t:b*BEAT,i,result:null}));combo=best=score=perfect=good=misses=strays=0;particles=[];fx=null;state='playing';$('overlay').hidden=true;canvas.inert=false;$('modal').hidden=true;$('pause').disabled=false;$('pause').textContent='Ⅱ';$('status').textContent='听四拍准备；饭团到红色区域，按下空格。';canvas.focus();}
-function pause(){if(state!=='playing')return;pausedAt=time();state='paused';audio.suspend();$('modalLabel').textContent='TAKE A BREATHER';$('modalTitle').textContent='休息一拍';$('modalBody').textContent='饭团也在等你。准备好了就继续。';$('resume').hidden=false;$('resume').textContent='继续开饭';$('modal').hidden=false;$('pause').textContent='▶';$('resume').focus();}
-async function resume(){if(state!=='paused')return;await audio.resume();state='playing';$('modal').hidden=true;$('pause').textContent='Ⅱ';canvas.focus();}
-function finish(){state='result';pausedAt=END;audio.suspend();const acc=Math.round((perfect+good*.7)/(notes.length+strays)*100);$('modalLabel').textContent='ORDER COMPLETE / 关卡完成';$('modalTitle').textContent=acc>=85?'NICE SQUISH!':'再来一份？';$('modalBody').textContent='准确率 '+acc+'%  ·  最高连击 '+best+'\nPERFECT '+perfect+'  /  GOOD '+good+'  /  MISS '+misses+'\n得分 '+score.toLocaleString();$('resume').hidden=true;$('retry').textContent='再捏一局';$('modal').hidden=false;$('pause').disabled=true;$('retry').focus();$('status').textContent='关卡完成，查看本次成绩。';}
+async function playMusic() {
+  if (startingPlayback) return false;
+  startingPlayback = true;
+  try {
+    await Promise.all([music.play(), audio.resume()]);
+    return true;
+  } catch {
+    music.pause();
+    $('status').textContent = '背景音乐无法播放。请确认 assets/audio 文件夹完整，然后重试。';
+    return false;
+  } finally {
+    startingPlayback = false;
+  }
+}
+
+async function start() {
+  if (state === 'loading' || state === 'playing' || startingPlayback) return;
+  if (!audio) {
+    audio = new (window.AudioContext || window.webkitAudioContext)();
+    master = audio.createGain();
+    master.gain.value = muted ? 0 : SFX_VOLUME;
+    master.connect(audio.destination);
+  }
+
+  music.currentTime = 0;
+  if (!await playMusic()) return;
+  pausedAt = 0;
+  notes = chart.map((b, i) => ({ t: b * BEAT, i, result: null }));
+  combo = best = score = perfect = good = misses = strays = 0;
+  particles = [];
+  fx = null;
+  state = 'playing';
+  $('overlay').hidden = true;
+  canvas.inert = false;
+  $('modal').hidden = true;
+  $('pause').disabled = false;
+  $('pause').textContent = 'Ⅱ';
+  $('status').textContent = '听四拍准备；饭团到红色区域，按下空格。';
+  canvas.focus();
+  if (document.hidden) pause();
+}
+function pause(){if(state!=='playing')return;pausedAt=time();state='paused';music.pause();audio.suspend();$('modalLabel').textContent='TAKE A BREATHER';$('modalTitle').textContent='休息一拍';$('modalBody').textContent='饭团也在等你。准备好了就继续。';$('resume').hidden=false;$('resume').textContent='继续开饭';$('modal').hidden=false;$('pause').textContent='▶';$('resume').focus();}
+async function resume() {
+  if (state !== 'paused' || !await playMusic()) return;
+  state = 'playing';
+  $('modal').hidden = true;
+  $('pause').textContent = 'Ⅱ';
+  canvas.focus();
+  if (document.hidden) pause();
+}
+function finish(){state='result';pausedAt=END;music.pause();audio.suspend();const acc=Math.round((perfect+good*.7)/(notes.length+strays)*100);$('modalLabel').textContent='ORDER COMPLETE / 关卡完成';$('modalTitle').textContent=acc>=85?'NICE SQUISH!':'再来一份？';$('modalBody').textContent='准确率 '+acc+'%  ·  最高连击 '+best+'\nPERFECT '+perfect+'  /  GOOD '+good+'  /  MISS '+misses+'\n得分 '+score.toLocaleString();$('resume').hidden=true;$('retry').textContent='再捏一局';$('modal').hidden=false;$('pause').disabled=true;$('retry').focus();$('status').textContent='关卡完成，查看本次成绩。';}
 function hit(){if(state!=='playing')return;const t=time(),judge=t-offset/1000;if(t<1.7)return;let n=notes.filter(n=>!n.result).reduce((a,b)=>!a||Math.abs(b.t-judge)<Math.abs(a.t-judge)?b:a,null);if(n&&Math.abs(n.t-judge)<=.155){const delta=judge-n.t;const result=Math.abs(delta)<=.075?'perfect':'good';n.result=result;combo++;best=Math.max(best,combo);result==='perfect'?perfect++:good++;score+=result==='perfect'?1000+Math.min(combo,20)*25:600;feedback(result,t,n,delta);}else{strays++;combo=0;feedback('wrong',t,notes.reduce((a,b)=>Math.abs(b.t-t)<Math.abs(a.t-t)?b:a),0);}}
-function feedback(kind,t,n,delta){const success=kind==='perfect'||kind==='good';fx={kind,t,n,delta};if(success){tone(170,audio.currentTime,.12,'sine',.6,45);tone(kind==='perfect'?1046.5:784,audio.currentTime+.02,.09,'triangle',.14);for(let i=0;i<18;i++)particles.push({x:600,y:425,vx:(Math.random()-.5)*700,vy:-120-Math.random()*500,born:t,r:Math.random()*4+3});}else{tone(110,audio.currentTime,.18,'sawtooth',.12,55);}if(success&&combo%8===0)$('status').textContent=combo+' 连击！饭团很开心。';else if(!success)$('status').textContent=kind==='miss'?'漏拍了！饭团生气了，跟上下一拍。':'拍子偏了！等饭团到达中央再按。';}
+function riceVoice(at, duration, pitches, formants, volume) {
+  const voice = audio.createOscillator();
+  voice.type = 'sawtooth';
+  voice.frequency.setValueAtTime(pitches[0], at);
+  voice.frequency.exponentialRampToValueAtTime(pitches[1], at + duration * .34);
+  voice.frequency.exponentialRampToValueAtTime(pitches[2], at + duration);
+
+  const envelope = audio.createGain();
+  envelope.gain.setValueAtTime(.001, at);
+  envelope.gain.linearRampToValueAtTime(volume, at + .006);
+  envelope.gain.exponentialRampToValueAtTime(volume * .6, at + duration * .65);
+  envelope.gain.exponentialRampToValueAtTime(.001, at + duration);
+  envelope.connect(master);
+
+  for (const frequency of formants) {
+    const filter = audio.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = frequency;
+    filter.Q.value = 3.3;
+    voice.connect(filter).connect(envelope);
+  }
+
+  voice.start(at);
+  voice.stop(at + duration);
+}
+
+function playSquish(double) {
+  const at = audio.currentTime;
+  tone(250, at, .025, 'sine', .28, 62);
+  if (double) {
+    riceVoice(at + .012, .075, [420, 720, 590], [690, 2570], .65);
+    riceVoice(at + .095, .109, [570, 410, 225], [925, 1540], .78);
+    tone(460, at + .172, .026, 'triangle', .14, 155);
+  } else {
+    riceVoice(at + .016, .098, [305, 505, 275], [750, 2110], .78);
+  }
+}
+
+function feedback(kind, t, n, delta) {
+  const success = kind === 'perfect' || kind === 'good';
+  fx = { kind, t, n, delta };
+  if (success) {
+    playSquish(combo === 2);
+    for (let i = 0; i < 18; i++) {
+      particles.push({ x: 600, y: 425, vx: (Math.random() - .5) * 700,
+        vy: -120 - Math.random() * 500, born: t, r: Math.random() * 4 + 3 });
+    }
+    if (combo % 8 === 0) $('status').textContent = combo + ' 连击！饭团很开心。';
+  } else {
+    tone(110, audio.currentTime, .18, 'sawtooth', .12, 55);
+    $('status').textContent = kind === 'miss'
+      ? '漏拍了！饭团生气了，跟上下一拍。'
+      : '拍子偏了！等饭团到达中央再按。';
+  }
+}
 function rr(x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=3;c.stroke();}}
 function txt(s,x,y,size=20,color=INK,align='left'){c.fillStyle=color;c.font='900 '+size+'px "Arial Black", "Microsoft YaHei", sans-serif';c.textAlign=align;c.fillText(s,x,y);}
 function ellipse(x,y,rx,ry,color){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=color;c.fill();}
@@ -76,9 +179,9 @@ if(state==='playing'||state==='paused'){const b=Math.floor(t/BEAT);rr(440,574,32
 if (count > 0) centeredArt(count, 280, 235, 195);
 else txt('GO!',600,330,140,INK,'center');}}
 c.restore();}
-function loop(ms){requestAnimationFrame(loop);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){while(nextTick*BEAT<=t+.10&&nextTick*BEAT<END){const at=origin+nextTick*BEAT;if(at>=audio.currentTime-.02)beatSound(nextTick,Math.max(audio.currentTime,at));nextTick++;}for(const n of notes){if(!n.result&&t-offset/1000>n.t+.155){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';$('phase').textContent=t>=28&&t<36?'SQUISH BREAK · 双手挤压':'LEVEL 01 · RICE RICE BABY';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
+function loop(ms){requestAnimationFrame(loop);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){for(const n of notes){if(!n.result&&t-offset/1000>n.t+.155){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';$('phase').textContent=t>=28&&t<36?'SQUISH BREAK · 双手挤压':'LEVEL 01 · RICE RICE BABY';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
 $('start').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;$('pause').onclick=()=>state==='paused'?resume():pause();
-$('sound').onclick=()=>{muted=!muted;if(master)master.gain.value=muted?0:.65;$('sound').textContent='声音 '+(muted?'OFF':'ON');$('sound').setAttribute('aria-pressed',String(muted));};
+$('sound').onclick=()=>{muted=!muted;music.muted=muted;if(master)master.gain.value=muted?0:SFX_VOLUME;$('sound').textContent='声音 '+(muted?'OFF':'ON');$('sound').setAttribute('aria-pressed',String(muted));};
 $('full').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.querySelector('.game').requestFullscreen().catch(()=>{$('status').textContent='此浏览器不支持全屏，可使用浏览器缩放。';});};
 const settingsButtons = [$('settingsToggle'), $('startSettings')];
 for (const button of settingsButtons) {

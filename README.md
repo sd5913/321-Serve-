@@ -28,7 +28,7 @@ Download or clone this repository, then open **index.html** in a modern browser.
 
 ### Version scope
 
-The browser prototype uses a synthesized Web Audio track and a fixed chart. Audio and input latency still need real-device playtesting.
+The browser prototype plays a bundled soundtrack from [assets/audio](assets/audio/) and uses its playback time to synchronize the fixed chart. Hit and miss effects are synthesized with Web Audio. Audio and input latency still need real-device playtesting.
 
 ### Verification
 
