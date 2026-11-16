@@ -17,6 +17,15 @@ Download or clone this repository, then open **index.html** in a modern browser.
 - Perfect: ±75 ms. Good: ±155 ms. Late notes miss automatically; extra presses break the combo and reduce accuracy.
 - Open the gear on the start screen to adjust input compensation from −200 to +200 ms. Positive values compensate late input. Reduced-motion mode removes shaking and the close-up camera change.
 
+### v0.0 UI update · 界面更新
+
+<sub>5 November 2026 · 2026年11月5日</sub>
+
+- Explored **six Startpage designs** and selected the start-screen direction currently used in the project.
+- Finalized the large-heading style based on the selected Startpage: the initial rounded, soft lettering became **forward-slanted, angular, heavy display lettering with cut corners, a thick dark-navy outline and cream fill**, giving the interface a stronger sense of rhythm and arcade energy. <sub>Typography finalized: 9 November 2026 · 字体确定：2026年11月9日</sub>
+
+11月5日从 **6 个 Startpage 方案**中选定目前使用的开始页方向；11月9日通过开始页确定大标题字形，由最初偏圆润、柔和的字体，调整为现在 **向前倾斜、棱角分明、带切角的粗重字形**，搭配厚深蓝描边与米白色字面，强化节奏感与街机游戏风格。
+
 ### v0.1 UI update · 界面更新
 
 - The start screen uses the repository artwork for the sushi turntable, logo, START button and settings gear. The count-in uses the illustrated **3 → 2 → 1** assets followed by **GO!**.
@@ -25,6 +34,15 @@ Download or clone this repository, then open **index.html** in a modern browser.
 开场使用仓库里的寿司转盘、Logo 和按钮素材。普通段和 SQUISH 段共用判定贴图。命中时显示 **ON BEAT!** 和偏差毫秒数，漏拍或误触时显示 **MISS!** 和具体原因。
 
 ![Start-screen design reference / 开始页设计参考](assets/ui/complete/Startpage.png)
+
+### v0.2 UI update · 界面更新
+
+<sub>12 November 2026 · 2026年11月12日</sub>
+
+- Extended the selected Startpage and confirmed heading style into the **complete UI set**: start screen, tutorial, **3 → 2 → 1 → GO!**, gameplay HUD, **ON BEAT!/MISS!**, pause, settings, quit confirmation and results.
+- Updated the individual UI components and established consistent typography, colors, thick outlines, buttons, icons and screen layouts across the interface.
+
+以选定的 Startpage 和确定后的标题风格为基础，制定并完善全部 UI 页面与小组件，覆盖开始页、教学、倒计时、游戏 HUD、判定反馈、暂停、设置、退出确认及结算页，并统一字体、配色、厚描边、按钮、图标和页面排版。
 
 ### Version scope
 
@@ -57,36 +75,6 @@ The full visual design of the game — interface layouts, visual style, and comp
 **Figma design → [HP – 321 Serve](https://www.figma.com/design/wDOcRmw9hqUAvnOOdLzmeV/HP?node-id=0-1&p=f)**
 
 > The Figma file above is our team's original visual design for the game. It defines the interface and visual direction of the project, and all subsequent development follows it as the reference.
-
----
-
-## UI Design Evolution · UI 设计演进
-
-The milestones below describe the **UI design process**. The existing v0.1 UI integration notes and playable-prototype version remain part of the project history.
-
-以下版本记录 **UI 设计的演进过程**；原有的 v0.1 界面接入记录和可玩原型版本说明继续保留。
-
-### v0.0 — Startpage exploration and direction selection · 开始页探索与方向确定
-
-- Explored **six Startpage proposals** and selected the start-screen design currently used in the project.
-- Used the selected Startpage to establish the game's visual direction and large-heading lettering. The initial **rounded, soft, playful lettering** evolved into the current **forward-slanted, angular, heavy display lettering with a thick dark-navy outline and cream fill**. The sharper corners, cut edges and strong contrast give the title a more energetic, rhythmic, arcade-like character.
-
-- 探索了 **6 个 Startpage 方案**，从中选定目前项目使用的开始页设计。
-- 通过选定的 Startpage 确定整体视觉方向与大标题字形：从最初 **偏圆润、柔和、可爱** 的字体，调整为现在 **向前倾斜、棱角分明、带切角结构的粗重展示字形**，搭配 **厚深蓝描边与米白色字面**，加强速度感、节奏感和街机游戏的视觉辨识度。
-
-### v0.2 — Complete UI design system · 全套 UI 设计完善
-
-- Extended the visual language established by the selected Startpage into the **full UI design set**: start screen, tutorial, 3–2–1–GO! countdown, gameplay HUD, ON BEAT!/MISS! feedback, pause, settings, quit confirmation and results.
-- Defined a consistent treatment for large-heading artwork, IBM Plex Mono small text, cream/navy/coral colors, thick outlines, buttons, icons, feedback components and screen layouts.
-- Refined the individual UI assets and their use across screens, including the score percentage artwork, to keep the interface visually consistent.
-
-- 以选定的 Startpage 和确定后的标题风格为基础，制定并完善 **全套 UI**：开始页、教学页、3–2–1–GO! 倒计时、游戏 HUD、ON BEAT!/MISS! 判定反馈、暂停、设置、退出确认及结算页。
-- 统一大标题图形字、IBM Plex Mono 英文小字、米白／深蓝／珊瑚红配色、厚描边、按钮、图标、反馈组件与各页面排版规则。
-- 逐步完善独立 UI 元素及跨页面的使用方式，包括结算百分比素材，使各界面遵循同一套视觉语言。
-
-See the [complete UI references](assets/ui/complete/), [individual UI elements](assets/ui/elements/) and [UI asset guide](assets/ui/README.md) for the design assets and integration guidance.
-
-完整设计与独立素材参见 [完整 UI 参考](assets/ui/complete/)、[独立 UI 元素](assets/ui/elements/)及 [UI 素材说明](assets/ui/README.md)。
 
 ---
 
