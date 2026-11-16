@@ -1,7 +1,23 @@
 <!doctype html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#fa2e45"><title>321 Serve! — Rice Rice Baby</title><link rel="stylesheet" href="style.css"></head>
-<body><main><section class="game" aria-label="321 Serve rhythm game">
+<body><svg class="palette-definitions" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+<!-- Map warm, light cream pixels to the existing page cream; preserve other colors. -->
+<filter id="unify-cream" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 20 0 0 -16" result="green"/>
+<feComponentTransfer in="green" result="light-green"><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer>
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 20 0 -12" result="blue"/>
+<feComponentTransfer in="blue" result="light-blue"><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer>
+<feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  20 0 -20 0 -0.4" result="warm"/>
+<feComponentTransfer in="warm" result="warm-only"><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer>
+<feComposite in="light-green" in2="light-blue" operator="in" result="light"/>
+<feComposite in="light" in2="warm-only" operator="in" result="cream-area"/>
+<feComposite in="cream-area" in2="SourceAlpha" operator="in" result="cream-mask"/>
+<feComposite in="SourceGraphic" in2="cream-mask" operator="out" result="unchanged"/>
+<feFlood flood-color="#fff0d9" result="cream-color"/>
+<feComposite in="cream-color" in2="cream-mask" operator="in" result="unified"/>
+<feMerge><feMergeNode in="unchanged"/><feMergeNode in="unified"/></feMerge>
+</filter></defs></svg><main><section class="game" aria-label="321 Serve rhythm game">
 <canvas id="canvas" inert width="1200" height="675" aria-label="Tap when a rice plate reaches the red target"></canvas>
 <div class="topline" id="gameInfo" hidden><span id="phase">RICE RICE BABY</span><span id="score">000000</span></div>
 <div class="progress" id="progressTrack" hidden><i id="progress"></i></div>

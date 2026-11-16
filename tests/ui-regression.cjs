@@ -21,7 +21,10 @@ for(const m of css.matchAll(/url\(['"]?([^)'"]+)['"]?\)/g))refs.add(m[1]);
 for(const m of source.matchAll(/['"](assets\/[^'"]+)['"]/g))if(!m[1].endsWith('/'))refs.add(m[1]);
 for(const m of source.matchAll(/ui\s*\+\s*['"]([^'"]+)['"]/g))refs.add('assets/ui/elements/'+m[1]);
 for(let value=0;value<=100;value++)refs.add('assets/ui/elements/result/percentages/'+String(value).padStart(3,'0')+'.png');
-for(const ref of refs)assert(fs.existsSync(path.join(root,ref)),'missing '+ref);
+for(const ref of refs){
+ if(ref.startsWith('#'))assert(html.includes('id="'+ref.slice(1)+'"'),'missing inline resource '+ref);
+ else assert(fs.existsSync(path.join(root,ref)),'missing '+ref);
+}
 console.log('PASS: HUD results, note pages, input compensation, partial page, dynamic percentage, English UI, local asset paths');
 if(!process.env.CANVAS_MODULE){console.log('Canvas integration smoke skipped (set CANVAS_MODULE to @napi-rs/canvas).');process.exit(0);}
 const {createCanvas,Image,GlobalFonts}=require(process.env.CANVAS_MODULE);
