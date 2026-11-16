@@ -20,6 +20,7 @@ const refs=new Set([...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(m=>m[1]));
 for(const m of css.matchAll(/url\(['"]?([^)'"]+)['"]?\)/g))refs.add(m[1]);
 for(const m of source.matchAll(/['"](assets\/[^'"]+)['"]/g))if(!m[1].endsWith('/'))refs.add(m[1]);
 for(const m of source.matchAll(/ui\s*\+\s*['"]([^'"]+)['"]/g))refs.add('assets/ui/elements/'+m[1]);
+for(let value=0;value<=100;value++)refs.add('assets/ui/elements/result/percentages/'+String(value).padStart(3,'0')+'.png');
 for(const ref of refs)assert(fs.existsSync(path.join(root,ref)),'missing '+ref);
 console.log('PASS: HUD results, note pages, input compensation, partial page, dynamic percentage, English UI, local asset paths');
 if(!process.env.CANVAS_MODULE){console.log('Canvas integration smoke skipped (set CANVAS_MODULE to @napi-rs/canvas).');process.exit(0);}
@@ -80,7 +81,7 @@ const run=s=>vm.runInContext(s,sandbox);
  fs.mkdirSync(path.join(root,'test-output'),{recursive:true});
  fs.writeFileSync(path.join(root,'test-output','squish-hidpi.png'),raster.toBuffer('image/png'));
  music.currentTime=47.1;run('loop(200);');assert.equal(run('state'),'result');assert.equal(elements.get('results').hidden,false);
- assert(elements.get('accuracy').innerHTML.startsWith('<svg'));assert(!elements.get('accuracy').attrs['aria-label'].startsWith('100 '));
+ assert(elements.get('accuracy').src.endsWith('.png'));assert(!elements.get('accuracy').attrs['aria-label'].startsWith('100 '));
  await elements.get('resultRetry').click();assert.equal(run('state'),'countdown');assert.equal(music.currentTime,0);assert.equal(music.paused,true);clockMs+=2001;run('loop(10000)');await new Promise(r=>setImmediate(r));assert.equal(run('state'),'playing');assert.equal(run('score'),0);assert.equal(run('notes.filter(n=>n.result).length'),0);
  run('updateHUD(2)');assert(dots.every(d=>d.dataset.result==='pending'));
  music.currentTime=2.02;listeners.keydown({target:canvas,code:'Space',repeat:false,preventDefault(){}});assert.equal(run('perfect'),1);

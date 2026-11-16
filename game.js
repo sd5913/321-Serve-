@@ -12,12 +12,13 @@ const assetPaths = {
   formed: 'assets/formed.png',
   rice: 'assets/rice.png',
   hand: 'assets/hand.png',
+  fist: 'assets/hand-fist.png',
   onBeat: ui + 'feedback/on-beat.png',
   miss: ui + 'feedback/miss.png',
   3: ui + 'countdown/3.png',
   2: ui + 'countdown/2.png',
   1: ui + 'countdown/1.png',
-  go: ui + 'countdown/go.svg'
+  go: ui + 'countdown/go.png'
 };
 let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],lastFrame=0,offset=0;
 let reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;$('motion').checked=reduce;
@@ -105,9 +106,9 @@ function finish(){
  $('modal').hidden=true;$('settings').hidden=true;$('quitDialog').hidden=true;
  $('results').hidden=false;$('beatHud').hidden=true;$('pause').hidden=true;
  $('gameInfo').hidden=true;$('progressTrack').hidden=true;
- $('accuracy').innerHTML=ServeUI.percentSVG(acc);$('accuracy').setAttribute('aria-label',acc+' percent accuracy');
- document.querySelector('.result-title').src=acc>=85?ui+'titles/nice-cuts.png':ui+'feedback/miss.png';
- document.querySelector('.result-title').alt=acc>=85?'NICE CUTS!':'TRY AGAIN';
+ $('accuracy').src=ui+'result/percentages/'+String(acc).padStart(3,'0')+'.png';$('accuracy').alt=acc+'%';$('accuracy').setAttribute('aria-label',acc+' percent accuracy');
+ document.querySelector('.result-title').src=ui+'titles/nice-cuts.png';
+ document.querySelector('.result-title').alt='NICE CUTS!';
  $('resultStats').textContent='PERFECT '+perfect+' / GOOD '+good+' / MISS '+misses+'\nBEST COMBO '+best+' / SCORE '+score.toLocaleString();
  $('pause').disabled=true;$('resultRetry').focus();$('status').textContent='Order complete. Review your result or try again.';
 }
@@ -189,7 +190,17 @@ function drawFeedback(t, y) {
   txt(detail, 600, y + 79, 15, INK, 'center');
 }
 
-function hand(x,y,size=240,rotation=Math.PI/2,open=false){const a=assets.hand;if(!a)return;c.save();c.translate(x,y);c.rotate(rotation);c.drawImage(a,0,open?0:a.height/2,a.width/3,a.height/2,-size/2,-size/2,size,size);c.restore();}
+function hand(x,y,size=240,rotation=Math.PI/2,open=false){
+ const a=open?assets.hand:assets.fist;if(!a)return;
+ c.save();c.translate(x,y);c.rotate(rotation);
+ if(open)c.drawImage(a,0,0,a.width/3,a.height/2,-size/2,-size/2,size,size);
+ else {
+  // Match the old sprite's visible width while preserving the new PNG's ratio.
+  const w=size*.86,h=w*a.naturalHeight/a.naturalWidth;
+  c.drawImage(a,-w/2,-h/2,w,h);
+ }
+ c.restore();
+}
 function star(x,y,r,color,rot=0){c.save();c.translate(x,y);c.rotate(rot);c.beginPath();for(let i=0;i<20;i++){const a=i*Math.PI/10,v=i%2?r*.53:r;c.lineTo(Math.cos(a)*v,Math.sin(a)*v);}c.closePath();c.fillStyle=color;c.fill();c.restore();}
 function angry(x,y,s=1){c.save();c.translate(x,y);c.scale(s,s);c.strokeStyle=CREAM;c.lineWidth=19;c.lineCap='round';const path=()=>{c.beginPath();for(const [sx,sy] of [[-1,-1],[1,-1],[-1,1],[1,1]]){c.moveTo(sx*12,sy*49);c.lineTo(sx*12,sy*24);c.quadraticCurveTo(sx*12,sy*12,sx*25,sy*12);c.lineTo(sx*48,sy*12);}c.stroke();};path();c.strokeStyle=RED;c.lineWidth=11;path();c.restore();}
 function rice(x,y,formed=false,scale=1,angryFace=false){c.save();c.translate(x,y);c.scale(scale,scale);image(formed?'formed':'rice',-180,-224,360,300);if(angryFace){ellipse(0,-35,35,24,'#fffbed');c.strokeStyle=INK;c.lineWidth=5;c.lineCap='round';c.beginPath();c.moveTo(-24,-48);c.lineTo(-10,-40);c.moveTo(24,-48);c.lineTo(10,-40);c.moveTo(-13,-21);c.quadraticCurveTo(0,-35,13,-21);c.stroke();}c.restore();}
@@ -197,19 +208,28 @@ function viewBounds(){const width=canvas.width/(canvas.height/675);return {left:
 function kitchen(t){const view=viewBounds();image('background',view.left,0,view.width,675);const grad=c.createLinearGradient(0,0,0,675);grad.addColorStop(0,'#ff80622c');grad.addColorStop(1,'#ff8d6255');c.fillStyle=grad;c.fillRect(view.left,0,view.width,675);const pulse=Math.max(0,1-(t%BEAT)/BEAT);c.fillStyle='#ff6047';c.globalAlpha=.14+pulse*.12;c.fillRect(499,470,202,81);c.globalAlpha=1;image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);c.setLineDash([8,9]);c.beginPath();c.moveTo(600,203);c.lineTo(600,462);c.lineWidth=2;c.strokeStyle='#14234222';c.stroke();c.setLineDash([]);
 const visible=state==='ready'||state==='loading'||state==='tutorial';const items=visible?[{t:t-.9,i:-1,result:'perfect'},{t:t,i:0,result:null},{t:t+.9,i:1,result:null}]:notes;
 for(const n of items){const x=600+(t-n.t)*440;if(x< -190||x>1390)continue;const active=fx&&fx.n===n&&t-fx.t<.45;const a=active?t-fx.t:1;const scale=active&&fx.kind!=='miss'?1+.25*Math.sin(a*22)*Math.exp(-a*7):1;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',scale,n.result==='miss'||(active&&fx.kind==='wrong'));if(n.result==='miss'&&x<900)angry(x+60,320,1.05);}
-const age=fx?t-fx.t:99;const down=age<.22?Math.sin(Math.min(1,age/.16)*Math.PI):0;
-if(visible)hand(815,282+Math.sin(t*3)*8,260,0,true);else hand(600,280+down*105,245,age>.32?0:Math.PI/2,age>.32);
-if(age<.7 && !['perfect','good'].includes(fx.kind)) angry(695,277,1.4);
 if(!visible){txt(combo?combo+' COMBO':'FIND THE BEAT',44,135,20);txt(t<18?'01 / FIND YOUR RHYTHM':t<28?'02 / PICK UP THE PACE':'04 / ONE MORE ORDER',47,167,14);}
 }
 function squish(t){const view=viewBounds();c.fillStyle=YELLOW;c.fillRect(view.left,0,view.width,675);const g=c.createRadialGradient(600,340,10,600,340,650);g.addColorStop(0,'#fff9bf');g.addColorStop(1,'#ffe879');c.fillStyle=g;c.fillRect(view.left,0,view.width,675);const age=fx?t-fx.t:99,ok=fx&&['perfect','good'].includes(fx.kind),impact=age<.3?Math.sin(Math.min(1,age/.3)*Math.PI):0;txt(age<.5&&!ok?'OFF BEAT':'SQUISH!',42,145,22);txt('03 / SQUISH ONCE EVERY TWO BEATS',600,230,17,INK,'center');star(600,345,145+impact*35,'#ff8769',t*.1);
 c.save();c.translate(600,355);c.scale(1-impact*.4,1+impact*.25);rice(0,30,true,1.35,age<.6&&!ok);c.restore();
-// Oversized hands fill the frame, as in the abstract storyboard.
-hand(175+impact*95,357,660,0,false);hand(1025-impact*95,357,660,Math.PI,false);
-if(age<.6&&!ok)angry(697,270,1.4);
+}
+// Keep success particles behind the palm instead of painting pale patches over it.
+function drawHands(t,close){
+ const age=fx?t-fx.t:99;
+ if(close){
+  const impact=age<.3?Math.sin(Math.min(1,age/.3)*Math.PI):0;
+  hand(175+impact*95,357,660,0,false);hand(1025-impact*95,357,660,Math.PI,false);
+  if(age<.6&&!['perfect','good'].includes(fx.kind))angry(810,250,1.1);
+ }else{
+  const visible=state==='ready'||state==='loading'||state==='tutorial';
+  const down=age<.22?Math.sin(Math.min(1,age/.16)*Math.PI):0;
+  if(visible)hand(815,282+Math.sin(t*3)*8,260,0,true);else hand(600,280+down*105,245,age>.32?0:Math.PI/2,age>.32);
+  if(age<.7&&!['perfect','good'].includes(fx.kind))angry(790,225,1.1);
+ }
 }
 function draw(t){const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.save();const age=fx?t-fx.t:99;if(!reduce&&age<.16){const amp=(1-age/.16)*8;c.translate(Math.sin(age*180)*amp,Math.cos(age*150)*amp*.5);}const close=t>=28&&t<36&&!reduce;if(close)squish(t);else kitchen(t);
 for(const p of particles){const a=t-p.born;if(a<0||a>.8)continue;ellipse(p.x+p.vx*a,p.y+p.vy*a+650*a*a,p.r,p.r*1.9,CREAM);}particles=particles.filter(p=>t-p.born<.8);
+drawHands(t,close);
 drawFeedback(t, close ? 465 : 135);
 if(state==='playing'||state==='paused'){
  updateHUD(t);
