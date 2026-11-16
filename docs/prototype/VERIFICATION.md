@@ -39,3 +39,11 @@ Manual retest: START → GOT IT → count-in → successful hit / intentional mi
 ### Phone frame and pause panel follow-up — 2026-11-16
 
 All screen states now use 19.5:9. Gameplay keeps its original logical coordinates and uses a uniform centered drawing scale, with the background and conveyor extended to the sides. The pause panel is scaled to two-thirds of its previous size; the Settings link sits beneath Home. Fullscreen retains the same aspect ratio. Native Canvas regression passed at a 1300 × 600 CSS viewport and 2× pixel density, including equal X/Y scales and a centered target. Browser layout checks were added to `verify.cjs` for frame consistency, panel size/centering and non-overlapping controls; they still require a browser-enabled machine. Gameplay and audio logic were not changed.
+
+### Static pre-roll and result layout — 2026-11-16
+
+A separate two-second visual 3/2/1/GO prefix runs before music playback. During this state the scene time is frozen at zero, notes are not judged and presses are ignored. The original soundtrack then plays from zero with its original lead-in, chart and hit windows. Pausing the prefix freezes its wall-clock timer; resuming continues the remaining prefix. Retry also uses this flow.
+
+Results use bounded grid rows so both controls fit within the phone frame. Retry/Home share a narrower centered width, and the live percentage now has thicker cream glyphs, a heavier navy outline and a solid offset base.
+
+Native Canvas integration passed static scenery comparison, ignored prefix input, no premature music play, prefix pause/resume, music starting at zero, ordinary hits/misses and retry. The generated percentage SVG was rendered and checked for visible pixels. Browser checks now include result-control bounds; those CSS checks remain pending a browser-enabled machine.

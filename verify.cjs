@@ -10,7 +10,7 @@ const seek=(page,time)=>page.evaluate(target=>new Promise(resolve=>{music.addEve
  const homeBox=await page.locator('.game').boundingBox();assert(Math.abs(homeBox.width/homeBox.height-13/6)<.01);await page.screenshot({path:__dirname+'/test-output/home.png'});
  await page.click('#startSettings');assert(await page.locator('#settings').isVisible());
  await page.click('#settingsBack');await page.click('#start');assert(await page.locator('#tutorial').isVisible());
- await page.click('#gotIt');await page.waitForFunction(()=>state==='playing');
+ await page.click('#gotIt');await page.waitForFunction(()=>state==='countdown');assert.equal(await page.evaluate(()=>music.currentTime),0);assert.equal(await page.evaluate(()=>music.paused),true);await page.waitForTimeout(500);assert.equal(await page.evaluate(()=>notes.filter(n=>n.result).length),0);await page.waitForFunction(()=>state==='playing');
  const playBox=await page.locator('.game').boundingBox();assert(Math.abs(playBox.height-homeBox.height)<1,'home and play must keep the same frame');
  await seek(page,2);await page.keyboard.press('Space');
  assert.equal(await page.evaluate(()=>perfect),1);await page.waitForFunction(()=>document.querySelector('.hud-dot').dataset.result==='hit');
@@ -30,6 +30,9 @@ const seek=(page,time)=>page.evaluate(target=>new Promise(resolve=>{music.addEve
  await seek(page,28);await page.screenshot({path:__dirname+'/test-output/squish.png'});
  await seek(page,47.1);await page.waitForFunction(()=>state==='result');assert(await page.locator('#results').isVisible());
  assert.match(await page.locator('#accuracy').getAttribute('aria-label'),/percent accuracy/);
+ const resultFrame=await page.locator('.game').boundingBox();
+ for(const id of ['resultRetry','resultHome']){const b=await page.locator('#'+id).boundingBox();assert(b.y+b.height<=resultFrame.y+resultFrame.height,'result controls stay inside phone frame');assert(b.width<=resultFrame.width*.45*.71,'result buttons use compact width');}
+
  await page.screenshot({path:__dirname+'/test-output/results.png'});
  await page.click('#resultRetry');await page.waitForFunction(()=>state==='playing');
  assert.equal(await page.evaluate(()=>score),0);assert.equal(await page.evaluate(()=>notes.filter(n=>n.result).length),0);

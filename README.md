@@ -10,7 +10,7 @@ Download or clone this repository, then open **index.html** in a modern browser.
 
 下载仓库后，用 Chrome 或 Edge 打开 [index.html](index.html)，点击 **START**，阅读教学后点击 **GOT IT**。无需安装依赖，手机试玩推荐横屏。
 
-- Click **START**, then **GOT IT**, and listen for the four-beat count-in. Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
+- Click **START**, then **GOT IT**. A static **3 → 2 → 1 → GO!** plays before the unchanged soundtrack starts from zero; then listen for its original four-beat lead-in. Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
 - **Escape** pauses/resumes; use the upper-right pause button or the SOUND / FULLSCREEN controls beneath the game.
 - The yellow **SQUISH** section asks for one press every two beats.
 - 120 BPM · 47 seconds · 56 notes · four-beat count-in.

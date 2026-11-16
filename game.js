@@ -25,6 +25,19 @@ const chart=[...Array.from({length:16},(_,i)=>4+i*2),...Array.from({length:16},(
 const END=94*BEAT;
 const time = () => state === 'playing' ? music.currentTime : pausedAt;
 let startingPlayback = false;
+const COUNTDOWN_DURATION=4*BEAT;
+let countdownStarted=0,countdownElapsed=0,pausedState='playing',runId=0;
+function countdownTime(){return countdownElapsed+(state==='countdown'?(performance.now()-countdownStarted)/1000:0);}
+async function beginMusic(id){
+ if(state!=='countdown'||startingPlayback)return;
+ if(!await playMusic()){
+  if(id===runId&&state==='countdown'){pausedState='countdown';countdownElapsed=0;state='paused';$('modal').hidden=false;$('resume').focus();}
+  return;
+ }
+ if(id!==runId||state!=='countdown'){music.pause();audio.suspend();return;}
+ state='playing';$('status').textContent='Listen for four beats. Tap when the rice reaches the red target.';
+ if(document.hidden)pause();
+}
 function tone(freq,at,len=.08,type='sine',vol=.15,end=freq){if(!audio)return;const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,at);o.frequency.exponentialRampToValueAtTime(Math.max(1,end),at+len);g.gain.setValueAtTime(.001,at);g.gain.linearRampToValueAtTime(vol,at+.004);g.gain.exponentialRampToValueAtTime(.001,at+len);o.connect(g);g.connect(master);o.start(at);o.stop(at+len+.02);}
 async function playMusic() {
   if (startingPlayback) return false;
@@ -42,7 +55,7 @@ async function playMusic() {
 }
 
 async function start() {
-  if (state === 'loading' || state === 'playing' || startingPlayback) return;
+  if (state === 'loading' || state === 'playing' || state === 'countdown' || startingPlayback) return;
   if (!audio) {
     audio = new (window.AudioContext || window.webkitAudioContext)();
     master = audio.createGain();
@@ -50,31 +63,37 @@ async function start() {
     master.connect(audio.destination);
   }
 
-  music.currentTime = 0;
-  if (!await playMusic()) return;
+  runId++;
+  music.pause();music.currentTime = 0;
+  // Unlock Web Audio on the user gesture; the unchanged soundtrack starts after the visual prefix.
+  audio.resume().catch(()=>{});
+  countdownElapsed=0;countdownStarted=performance.now();pausedState='countdown';
   pausedAt = 0;
   notes = chart.map((b, i) => ({ t: b * BEAT, i, result: null }));
   combo = best = score = perfect = good = misses = strays = 0;
   particles = [];
   fx = null;
-  state = 'playing';
+  state = 'countdown';
   showGameplay();
+  $('score').textContent='000000';$('progress').style.width='0%';$('phase').textContent='GET READY';
   canvas.inert = false;
   $('modal').hidden = true;
   $('pause').disabled = false;
   $('pause').setAttribute('aria-label', 'Pause game');
-  $('status').textContent = 'Listen for four beats. Tap when the rice reaches the red target.';
+  $('status').textContent = 'Get ready. The music starts after the countdown.';
   canvas.focus();
   if (document.hidden) pause();
 }
 function pause(){
- if(state!=='playing')return;
+ if(state!=='playing'&&state!=='countdown')return;
+ pausedState=state;if(state==='countdown')countdownElapsed=countdownTime();
  pausedAt=time();state='paused';music.pause();audio.suspend();
  $('modal').hidden=false;$('pause').setAttribute('aria-label','Resume game');$('resume').focus();
 }
 async function resume() {
-  if (state !== 'paused' || !await playMusic()) return;
-  state = 'playing';
+  if (state !== 'paused') return;
+  if(pausedState==='countdown'){countdownStarted=performance.now();state='countdown';audio.resume().catch(()=>{});}
+  else {if(!await playMusic())return;state='playing';}
   $('modal').hidden = true;
   $('pause').setAttribute('aria-label', 'Pause game');
   canvas.focus();
@@ -195,13 +214,13 @@ drawFeedback(t, close ? 465 : 135);
 if(state==='playing'||state==='paused'){
  updateHUD(t);
  txt(close?'1 · 2 → SQUISH':'TAP ON THE BEAT',600,655,14,INK,'center');
- if(t<2&&t>=0){
-  const count=3-Math.floor(t/BEAT);
-  centeredArt(count>0?count:'go',280,235,195);
- }
+}
+if(state==='countdown'||(state==='paused'&&pausedState==='countdown')){
+ const count=3-Math.floor(Math.min(countdownTime(),COUNTDOWN_DURATION-.001)/BEAT);
+ centeredArt(count>0?count:'go',280,235,195);
 }
 c.restore();}
-function loop(ms){requestAnimationFrame(loop);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){for(const n of notes){if(!n.result&&t-offset/1000>n.t+.155){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';$('phase').textContent=t>=28&&t<36?'SQUISH BREAK':'LEVEL 01 · RICE RICE BABY';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
+function loop(ms){requestAnimationFrame(loop);if(state==='countdown'&&countdownTime()>=COUNTDOWN_DURATION)beginMusic(runId);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){for(const n of notes){if(!n.result&&t-offset/1000>n.t+.155){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';$('phase').textContent=t>=28&&t<36?'SQUISH BREAK':'LEVEL 01 · RICE RICE BABY';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
 const dotAssets={pending:ui+'rhythm/dot-pending.png',hit:ui+'rhythm/dot-hit.png',miss:ui+'rhythm/dot-miss.png',unused:ui+'rhythm/dot-pending.png'};
 const hudDots=Array.from(document.querySelectorAll('.hud-dot'));
 function updateHUD(t){
@@ -226,14 +245,14 @@ function showTutorial(){
  resizeCanvas();$('gotIt').focus();
 }
 function goHome(){
- music.pause();if(audio)audio.suspend();music.currentTime=0;pausedAt=0;state='ready';
+ runId++;countdownElapsed=0;music.pause();if(audio)audio.suspend();music.currentTime=0;pausedAt=0;state='ready';
  notes=[];combo=best=score=perfect=good=misses=strays=0;fx=null;particles=[];
  for(const id of ['tutorial','modal','settings','quitDialog','results','beatHud','pause','gameInfo','progressTrack'])$(id).hidden=true;
  $('overlay').hidden=false;canvas.inert=true;$('pause').disabled=true;
  $('status').textContent='Listen first. Tap on the beat.';resizeCanvas();$('start').focus();
 }
 function openSettings(){
- if(state==='playing')pause();
+ if(state==='playing'||state==='countdown')pause();
  $('settings').hidden=false;
  for(const b of [$('startSettings'),$('settingsToggle')])b.setAttribute('aria-expanded','true');
  $('musicVolume').focus();

@@ -19,7 +19,9 @@ const glyphs={
 function percentSVG(value){
  const digits=String(Math.max(0,Math.min(100,Math.round(value)))).split(''),width=digits.length*112+125;
  const paths=digits.map((d,i)=>'<path transform="translate('+i*112+' 0)" d="'+glyphs[d]+'"/>').join('');
- return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -14 '+(width+40)+' 164" aria-hidden="true"><g transform="skewX(-12) translate(30 0)" fill="#fff0d9" fill-rule="evenodd" stroke="#07162d" stroke-width="8" stroke-linejoin="round" paint-order="stroke fill">'+paths+'<path transform="translate('+digits.length*112+' 0)" d="M75 0H100L28 130H3ZM0 15L14 0H39L52 14V43L39 57H14L0 43ZM17 17V40H34V17ZM55 88L68 74H94L108 88V116L94 130H68L55 116ZM72 91V113H91V91Z"/></g></svg>';
+ const percent='<path transform="translate('+digits.length*112+' 0)" d="M75 0H100L28 130H3ZM0 15L14 0H39L52 14V43L39 57H14L0 43ZM17 17V40H34V17ZM55 88L68 74H94L108 88V116L94 130H68L55 116ZM72 91V113H91V91Z"/>';
+ const art=paths+percent;
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-30 -16 '+(width+65)+' 180" aria-hidden="true"><g transform="skewX(-12) translate(30 0)" fill-rule="evenodd" stroke-linejoin="round" paint-order="stroke fill"><g transform="translate(0 9)" fill="#07162d" stroke="#07162d" stroke-width="22">'+art+'</g><g fill="#fff0d9" stroke="#07162d" stroke-width="20">'+art+'</g><g fill="#fff0d9" stroke="#fff0d9" stroke-width="5">'+art+'</g></g></svg>';
 }
 const api={hudWindow,percentSVG};root.ServeUI=api;if(typeof module==='object'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);
