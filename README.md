@@ -60,6 +60,36 @@ The full visual design of the game — interface layouts, visual style, and comp
 
 ---
 
+## UI Design Evolution · UI 设计演进
+
+The milestones below describe the **UI design process**. The existing v0.1 UI integration notes and playable-prototype version remain part of the project history.
+
+以下版本记录 **UI 设计的演进过程**；原有的 v0.1 界面接入记录和可玩原型版本说明继续保留。
+
+### v0.0 — Startpage exploration and direction selection · 开始页探索与方向确定
+
+- Explored **six Startpage proposals** and selected the start-screen design currently used in the project.
+- Used the selected Startpage to establish the game's visual direction and large-heading lettering. The initial **rounded, soft, playful lettering** evolved into the current **forward-slanted, angular, heavy display lettering with a thick dark-navy outline and cream fill**. The sharper corners, cut edges and strong contrast give the title a more energetic, rhythmic, arcade-like character.
+
+- 探索了 **6 个 Startpage 方案**，从中选定目前项目使用的开始页设计。
+- 通过选定的 Startpage 确定整体视觉方向与大标题字形：从最初 **偏圆润、柔和、可爱** 的字体，调整为现在 **向前倾斜、棱角分明、带切角结构的粗重展示字形**，搭配 **厚深蓝描边与米白色字面**，加强速度感、节奏感和街机游戏的视觉辨识度。
+
+### v0.2 — Complete UI design system · 全套 UI 设计完善
+
+- Extended the visual language established by the selected Startpage into the **full UI design set**: start screen, tutorial, 3–2–1–GO! countdown, gameplay HUD, ON BEAT!/MISS! feedback, pause, settings, quit confirmation and results.
+- Defined a consistent treatment for large-heading artwork, IBM Plex Mono small text, cream/navy/coral colors, thick outlines, buttons, icons, feedback components and screen layouts.
+- Refined the individual UI assets and their use across screens, including the score percentage artwork, to keep the interface visually consistent.
+
+- 以选定的 Startpage 和确定后的标题风格为基础，制定并完善 **全套 UI**：开始页、教学页、3–2–1–GO! 倒计时、游戏 HUD、ON BEAT!/MISS! 判定反馈、暂停、设置、退出确认及结算页。
+- 统一大标题图形字、IBM Plex Mono 英文小字、米白／深蓝／珊瑚红配色、厚描边、按钮、图标、反馈组件与各页面排版规则。
+- 逐步完善独立 UI 元素及跨页面的使用方式，包括结算百分比素材，使各界面遵循同一套视觉语言。
+
+See the [complete UI references](assets/ui/complete/), [individual UI elements](assets/ui/elements/) and [UI asset guide](assets/ui/README.md) for the design assets and integration guidance.
+
+完整设计与独立素材参见 [完整 UI 参考](assets/ui/complete/)、[独立 UI 元素](assets/ui/elements/)及 [UI 素材说明](assets/ui/README.md)。
+
+---
+
 ## Project Info
 
 | Item | Details |
