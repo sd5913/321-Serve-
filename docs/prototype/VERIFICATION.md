@@ -35,3 +35,7 @@ CANVAS_MODULE=/absolute/path/to/@napi-rs/canvas node tests/ui-regression.cjs
 The native Canvas integration supplies a minimal DOM/audio test harness; it does not validate actual browser CSS layout or hardware audio latency. `verify.cjs` has been updated for the new screens but could not be executed here because the available browser could not access the local project. The 12 November browser results above describe the earlier version, not a browser verification of this UI update.
 
 Manual retest: START → GOT IT → count-in → successful hit / intentional miss → pause → settings/back → resume → result percentage → retry → pause/home/quit. Also check landscape phone sizing and hardware timing with the existing music.
+
+### Phone frame and pause panel follow-up — 2026-11-16
+
+All screen states now use 19.5:9. Gameplay keeps its original logical coordinates and uses a uniform centered drawing scale, with the background and conveyor extended to the sides. The pause panel is scaled to two-thirds of its previous size; the Settings link sits beneath Home. Fullscreen retains the same aspect ratio. Native Canvas regression passed at a 1300 × 600 CSS viewport and 2× pixel density, including equal X/Y scales and a centered target. Browser layout checks were added to `verify.cjs` for frame consistency, panel size/centering and non-overlapping controls; they still require a browser-enabled machine. Gameplay and audio logic were not changed.

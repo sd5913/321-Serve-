@@ -38,7 +38,7 @@ for(const m of html.matchAll(/<([\w-]+)\b([^>]*\bid="([^"]+)"[^>]*)>/g)){
  elements.set(e.id,e);
 }
 const canvas=elements.get('canvas');
-canvas.getContext=()=>ctx;canvas.getBoundingClientRect=()=>({width:1200,height:675});
+canvas.getContext=()=>ctx;canvas.getBoundingClientRect=()=>({width:1300,height:600});
 Object.defineProperty(canvas,'width',{get:()=>raster.width,set:v=>{raster.width=v;}});
 Object.defineProperty(canvas,'height',{get:()=>raster.height,set:v=>{raster.height=v;}});
 const music=elements.get('music');music.currentTime=0;music.volume=1;music.pause=()=>{music.paused=true;};music.play=async()=>{music.paused=false;};
@@ -53,7 +53,8 @@ vm.createContext(sandbox);vm.runInContext(source,sandbox);
 const run=s=>vm.runInContext(s,sandbox);
 (async()=>{
  for(let i=0;i<200 && run('state')==='loading';i++)await new Promise(r=>setTimeout(r,10));
- assert.equal(run('state'),'ready');assert.equal(canvas.width,2400);assert.equal(canvas.height,1350);
+ assert.equal(run('state'),'ready');assert.equal(canvas.width,2600);assert.equal(canvas.height,1200);
+ run('draw(0)');const transform=ctx.getTransform();assert.equal(transform.a,transform.d,'phone frame must not stretch foreground');assert(Math.abs(transform.e+600*transform.a-canvas.width/2)<.01,'game target remains centered');
  elements.get('start').click();assert.equal(run('state'),'tutorial');
  await elements.get('gotIt').click();assert.equal(run('state'),'playing');
  music.currentTime=2;run('hit();draw(time());');
