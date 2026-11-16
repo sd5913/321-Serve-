@@ -8,10 +8,10 @@ A rhythm game about shaping rice balls to the beat.
 
 Download or clone this repository, then open **index.html** in a modern browser. No build step, network connection or runtime dependencies are needed. Keep the assets folder next to the HTML file. On phones, landscape orientation is recommended.
 
-下载仓库后，用 Chrome 或 Edge 打开 [index.html](index.html)，点击 **START**。无需安装依赖，手机试玩推荐横屏。
+下载仓库后，用 Chrome 或 Edge 打开 [index.html](index.html)，点击 **START**，阅读教学后点击 **GOT IT**。无需安装依赖，手机试玩推荐横屏。
 
-- Click **START** and listen for the four-beat count-in. Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
-- **Escape** pauses/resumes; the top bar also includes pause, mute and fullscreen controls.
+- Click **START**, then **GOT IT**, and listen for the four-beat count-in. Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
+- **Escape** pauses/resumes; use the upper-right pause button or the SOUND / FULLSCREEN controls beneath the game.
 - The yellow **SQUISH** section asks for one press every two beats.
 - 120 BPM · 47 seconds · 56 notes · four-beat count-in.
 - Perfect: ±75 ms. Good: ±155 ms. Late notes miss automatically; extra presses break the combo and reduce accuracy.
@@ -30,9 +30,21 @@ Download or clone this repository, then open **index.html** in a modern browser.
 
 The browser prototype plays a bundled soundtrack from [assets/audio](assets/audio/) and uses its playback time to synchronize the fixed chart. Hit and miss effects are synthesized with Web Audio. Audio and input latency still need real-device playtesting.
 
+### UI integration · 16 November 2026
+
+The start screen, tutorial, countdown, judgment feedback, pause, settings, quit confirmation and results use the supplied UI components. Large headings remain supplied artwork; small runtime text is English in locally bundled IBM Plex Mono. Results display the actual calculated percentage.
+
+The six-note HUD records chart judgments: coral circle = Perfect/Good, cross = missed note, cream = pending. It advances through groups of six using the existing music playback clock and input-offset setting. An extra off-beat press still shows MISS feedback and affects the original score; it does not consume a scheduled note. Dots keep a square aspect ratio and are independent of camera shake.
+
+Canvas resolution follows the displayed size and device pixel ratio (up to 3×); pause and percentage artwork use SVG. Source PNGs are preserved rather than artificially upscaled, so low-resolution source backgrounds can still look soft on large screens. The soundtrack, chart, judgment windows and sound-effect synthesis are unchanged; volume sliders default to the previous levels.
+
 ### Verification
 
-Browser checks cover asset loading, keyboard and pointer hits, off-beat feedback, pause/resume, the squish segment, results, restart, and a 375px viewport. To repeat: install Playwright as a development tool, install its Chromium browser, and run **node verify.cjs**. Optional environment variables PLAYWRIGHT_MODULE and BROWSER_PATH select an existing local installation.
+Run `node tests/ui-regression.cjs` for dependency-free HUD, percentage and asset checks. An optional native Canvas integration check is documented in [verification notes](docs/prototype/VERIFICATION.md). For browser checks, install Playwright and Chromium, then run `node verify.cjs`; `PLAYWRIGHT_MODULE` and `BROWSER_PATH` can select an existing installation. The latest UI passed Node and native Canvas integration checks; browser/device visual and audio-latency checks remain to be run on a machine with browser access.
+
+### Font credit
+
+IBM Plex Mono © IBM Corp., licensed under the SIL Open Font License 1.1. The font and [license](assets/fonts/IBM-Plex-Mono-OFL.txt) are bundled locally. AI assistance was used for UI integration, responsive styling and regression checks; the supplied design artwork remains the visual reference.
 
 This repository holds the visual design and development materials for *321 Serve*.
 
