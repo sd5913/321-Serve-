@@ -274,7 +274,7 @@ function practiceFrame(){
  for(const n of practiceNotes)if(!n.result&&t-offset/1000>n.t+.155)n.result='miss';
  const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
  const view=viewBounds();image('background',view.left,0,view.width,675);image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);
- for(const n of practiceNotes){const x=600+(t-n.t)*264;if(x<view.left-180||x>view.left+view.width+180)continue;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',1,n.result==='miss');}
+ for(const n of practiceNotes){const x=600+(t-n.t)*440;if(x<view.left-180||x>view.left+view.width+180)continue;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',1,n.result==='miss');}
  const age=practiceFx?t-practiceFx.t:99;hand(600,280+(age<.22?Math.sin(Math.min(1,age/.16)*Math.PI)*105:0),245,age>.32?0:Math.PI/2,age>.32);
  hudDots.forEach((el,i)=>{const result=practiceNotes[i].result;const key=!result?'pending':result==='miss'?'miss':'hit';el.src=dotAssets[key];el.dataset.result=key;el.alt='Practice '+(i+1)+': '+key;});
  const done=practiceNotes.every(n=>n.result);$('gotIt').disabled=!done;
