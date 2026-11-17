@@ -12,7 +12,7 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'test-output');
  await page.waitForFunction(()=>state==='ready',null,{timeout:10000});
  const game=page.locator('.game');const home=await game.boundingBox();
  assert(Math.abs(home.width/home.height-13/6)<.001);
- await page.click('#start');assert.equal(await page.evaluate(()=>practiceNotes.length),6);assert(await page.evaluate(()=>music.paused&&music.currentTime===0));await page.evaluate(()=>{practiceStarted=performance.now()-2000;practiceHit();});assert.equal(await page.evaluate(()=>practiceNotes[0].result),'perfect');assert.equal(await page.evaluate(()=>score),0);await page.waitForFunction(()=>!document.getElementById('gotIt').disabled);await page.click('#gotIt');
+ await page.click('#start');assert.equal(await page.evaluate(()=>practiceNotes.length),6);assert(await page.evaluate(()=>music.paused&&music.currentTime===0));await page.evaluate(()=>{practiceStarted=performance.now()-3000;practiceHit();});assert.equal(await page.evaluate(()=>practiceNotes[0].result),'perfect');assert.equal(await page.evaluate(()=>score),0);await page.waitForFunction(()=>!document.getElementById('gotIt').disabled);await page.click('#gotIt');
  assert.equal(await page.evaluate(()=>state),'countdown');
  assert(await page.evaluate(()=>music.paused&&music.currentTime===0));
  const rect=await game.boundingBox();const clip={x:rect.x,y:rect.y+rect.height*.75,width:rect.width,height:rect.height*.2};
