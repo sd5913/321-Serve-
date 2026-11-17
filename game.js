@@ -187,7 +187,9 @@ function drawFeedback(t, y) {
   const detail = hit
     ? fx.kind.toUpperCase() + ' · ' + (fx.delta > 0 ? '+' : '') + Math.round(fx.delta * 1000) + ' ms'
     : fx.kind === 'miss' ? 'TOO LATE' : 'OFF BEAT';
-  txt(detail, 600, y + 79, 15, INK, 'center');
+  const hud=$('beatHud').getBoundingClientRect(),rect=canvas.getBoundingClientRect();
+  const detailY=(hud.bottom-rect.top+rect.height*.035)*675/rect.height;
+  txt(detail,600,detailY,15,INK,'center');
 }
 
 function hand(x,y,size=240,rotation=Math.PI/2,open=false){
@@ -208,9 +210,9 @@ function viewBounds(){const width=canvas.width/(canvas.height/675);return {left:
 function kitchen(t){const view=viewBounds();image('background',view.left,0,view.width,675);const grad=c.createLinearGradient(0,0,0,675);grad.addColorStop(0,'#ff80622c');grad.addColorStop(1,'#ff8d6255');c.fillStyle=grad;c.fillRect(view.left,0,view.width,675);const pulse=Math.max(0,1-(t%BEAT)/BEAT);c.fillStyle='#ff6047';c.globalAlpha=.14+pulse*.12;c.fillRect(499,470,202,81);c.globalAlpha=1;image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);c.setLineDash([8,9]);c.beginPath();c.moveTo(600,203);c.lineTo(600,462);c.lineWidth=2;c.strokeStyle='#14234222';c.stroke();c.setLineDash([]);
 const visible=state==='ready'||state==='loading'||state==='tutorial';const items=visible?[{t:t-.9,i:-1,result:'perfect'},{t:t,i:0,result:null},{t:t+.9,i:1,result:null}]:notes;
 for(const n of items){const x=600+(t-n.t)*440;if(x< -190||x>1390)continue;const active=fx&&fx.n===n&&t-fx.t<.45;const a=active?t-fx.t:1;const scale=active&&fx.kind!=='miss'?1+.25*Math.sin(a*22)*Math.exp(-a*7):1;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',scale,n.result==='miss'||(active&&fx.kind==='wrong'));if(n.result==='miss'&&x<900)angry(x+60,320,1.05);}
-if(!visible){txt(combo?combo+' COMBO':'FIND THE BEAT',44,135,20);txt(t<18?'01 / FIND YOUR RHYTHM':t<28?'02 / PICK UP THE PACE':'04 / ONE MORE ORDER',47,167,14);}
+if(!visible){txt(combo?combo+' COMBO':'FIND THE BEAT',view.left+view.width*.04,135,20);txt(t<18?'01 / FIND YOUR RHYTHM':t<28?'02 / PICK UP THE PACE':'04 / ONE MORE ORDER',view.left+view.width*.04,167,14);}
 }
-function squish(t){const view=viewBounds();c.fillStyle=YELLOW;c.fillRect(view.left,0,view.width,675);const g=c.createRadialGradient(600,340,10,600,340,650);g.addColorStop(0,'#fff9bf');g.addColorStop(1,'#ffe879');c.fillStyle=g;c.fillRect(view.left,0,view.width,675);const age=fx?t-fx.t:99,ok=fx&&['perfect','good'].includes(fx.kind),impact=age<.3?Math.sin(Math.min(1,age/.3)*Math.PI):0;txt(age<.5&&!ok?'OFF BEAT':'SQUISH!',42,145,22);txt('03 / SQUISH ONCE EVERY TWO BEATS',600,230,17,INK,'center');star(600,345,145+impact*35,'#ff8769',t*.1);
+function squish(t){const view=viewBounds();c.fillStyle=YELLOW;c.fillRect(view.left,0,view.width,675);const g=c.createRadialGradient(600,340,10,600,340,650);g.addColorStop(0,'#fff9bf');g.addColorStop(1,'#ffe879');c.fillStyle=g;c.fillRect(view.left,0,view.width,675);const age=fx?t-fx.t:99,ok=fx&&['perfect','good'].includes(fx.kind),impact=age<.3?Math.sin(Math.min(1,age/.3)*Math.PI):0;txt(age<.5&&!ok?'OFF BEAT':'SQUISH!',view.left+view.width*.04,135,20);txt('03 / SQUISH ONCE EVERY TWO BEATS',view.left+view.width*.04,167,14);star(600,345,145+impact*35,'#ff8769',t*.1);
 c.save();c.translate(600,355);c.scale(1-impact*.4,1+impact*.25);rice(0,30,true,1.35,age<.6&&!ok);c.restore();
 }
 // Keep success particles behind the palm instead of painting pale patches over it.
@@ -230,11 +232,11 @@ function drawHands(t,close){
 function draw(t){const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.save();const age=fx?t-fx.t:99;if(!reduce&&age<.16){const amp=(1-age/.16)*8;c.translate(Math.sin(age*180)*amp,Math.cos(age*150)*amp*.5);}const close=t>=28&&t<36&&!reduce;if(close)squish(t);else kitchen(t);
 for(const p of particles){const a=t-p.born;if(a<0||a>.8)continue;ellipse(p.x+p.vx*a,p.y+p.vy*a+650*a*a,p.r,p.r*1.9,CREAM);}particles=particles.filter(p=>t-p.born<.8);
 drawHands(t,close);
-drawFeedback(t, close ? 465 : 135);
 if(state==='playing'||state==='paused'){
  updateHUD(t);
- txt(close?'1 · 2 → SQUISH':'TAP ON THE BEAT',600,655,14,INK,'center');
+
 }
+drawFeedback(t, close ? 465 : 135);
 if(state==='countdown'||(state==='paused'&&pausedState==='countdown')){
  const count=3-Math.floor(Math.min(countdownTime(),COUNTDOWN_DURATION-.001)/BEAT);
  centeredArt(count>0?count:'go',280,235,195);
