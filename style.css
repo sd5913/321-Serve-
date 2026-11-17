@@ -22,3 +22,12 @@ footer{display:flex;justify-content:space-between;align-items:center;gap:16px;pa
 .settings-panel .motion-row{position:absolute;left:13%;top:73%;width:74%}
 .settings-panel #settingsBack{position:absolute;left:13%;bottom:8%;width:74%;height:13%}
 .settings-panel #settingsBack img{width:100%;height:100%;object-fit:contain}
+
+/* Exit confirmation shares the pause panel frame and scale. */
+.quit-panel{display:block;width:43%;padding:0;transform:scale(.666667);transform-origin:center}
+.quit-panel .panel-title{position:absolute;left:13%;top:8%;width:74%;height:16%;max-height:none;margin:0}
+.quit-panel .quit-message{position:absolute;left:13%;top:33%;width:74%;height:12%;object-fit:contain;margin:0}
+.quit-panel>.image-button{position:absolute;left:13%;width:74%;height:16%}
+.quit-panel>.image-button img{width:100%;height:100%;object-fit:contain}
+.quit-panel #cancelQuit{top:54%}.quit-panel #confirmQuit{top:75%}
+@media(max-width:600px){.quit-panel{width:55%;padding:0}}
