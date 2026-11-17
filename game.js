@@ -207,7 +207,8 @@ function star(x,y,r,color,rot=0){c.save();c.translate(x,y);c.rotate(rot);c.begin
 function angry(x,y,s=1){c.save();c.translate(x,y);c.scale(s,s);c.strokeStyle=CREAM;c.lineWidth=19;c.lineCap='round';const path=()=>{c.beginPath();for(const [sx,sy] of [[-1,-1],[1,-1],[-1,1],[1,1]]){c.moveTo(sx*12,sy*49);c.lineTo(sx*12,sy*24);c.quadraticCurveTo(sx*12,sy*12,sx*25,sy*12);c.lineTo(sx*48,sy*12);}c.stroke();};path();c.strokeStyle=RED;c.lineWidth=11;path();c.restore();}
 function rice(x,y,formed=false,scale=1,angryFace=false){c.save();c.translate(x,y);c.scale(scale,scale);image(formed?'formed':'rice',-180,-224,360,300);if(angryFace){ellipse(0,-35,35,24,'#fffbed');c.strokeStyle=INK;c.lineWidth=5;c.lineCap='round';c.beginPath();c.moveTo(-24,-48);c.lineTo(-10,-40);c.moveTo(24,-48);c.lineTo(10,-40);c.moveTo(-13,-21);c.quadraticCurveTo(0,-35,13,-21);c.stroke();}c.restore();}
 function viewBounds(){const width=canvas.width/(canvas.height/675);return {left:(1200-width)/2,width};}
-function kitchen(t){const view=viewBounds();image('background',view.left,0,view.width,675);const grad=c.createLinearGradient(0,0,0,675);grad.addColorStop(0,'#ff80622c');grad.addColorStop(1,'#ff8d6255');c.fillStyle=grad;c.fillRect(view.left,0,view.width,675);const pulse=Math.max(0,1-(t%BEAT)/BEAT);c.fillStyle='#ff6047';c.globalAlpha=.14+pulse*.12;c.fillRect(499,470,202,81);c.globalAlpha=1;image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);c.setLineDash([8,9]);c.beginPath();c.moveTo(600,203);c.lineTo(600,462);c.lineWidth=2;c.strokeStyle='#14234222';c.stroke();c.setLineDash([]);
+function kitchenBackground(){const view=viewBounds();image('background',view.left,0,view.width,675);const grad=c.createLinearGradient(0,0,0,675);grad.addColorStop(0,'#ff80622c');grad.addColorStop(1,'#ff8d6255');c.fillStyle=grad;c.fillRect(view.left,0,view.width,675);return view;}
+function kitchen(t){const view=kitchenBackground();const pulse=Math.max(0,1-(t%BEAT)/BEAT);c.fillStyle='#ff6047';c.globalAlpha=.14+pulse*.12;c.fillRect(499,470,202,81);c.globalAlpha=1;image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);c.setLineDash([8,9]);c.beginPath();c.moveTo(600,203);c.lineTo(600,462);c.lineWidth=2;c.strokeStyle='#14234222';c.stroke();c.setLineDash([]);
 const visible=state==='ready'||state==='loading'||state==='tutorial';const items=visible?[{t:t-.9,i:-1,result:'perfect'},{t:t,i:0,result:null},{t:t+.9,i:1,result:null}]:notes;
 for(const n of items){const x=600+(t-n.t)*440;if(x< -190||x>1390)continue;const active=fx&&fx.n===n&&t-fx.t<.45;const a=active?t-fx.t:1;const scale=active&&fx.kind!=='miss'?1+.25*Math.sin(a*22)*Math.exp(-a*7):1;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',scale,n.result==='miss'||(active&&fx.kind==='wrong'));if(n.result==='miss'&&x<900)angry(x+60,320,1.05);}
 if(!visible){txt(combo?combo+' COMBO':'FIND THE BEAT',view.left+view.width*.04,135,20);txt(t<18?'01 / FIND YOUR RHYTHM':t<28?'02 / PICK UP THE PACE':'04 / ONE MORE ORDER',view.left+view.width*.04,167,14);}
@@ -273,7 +274,7 @@ function practiceFrame(){
  for(const n of practiceNotes)if(!n.result&&t-offset/1000>n.t+.155)n.result='miss';
  const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
  const view=viewBounds();image('background',view.left,0,view.width,675);image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);
- for(const n of practiceNotes){const x=600+(t-n.t)*440;if(x<view.left-180||x>view.left+view.width+180)continue;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',1,n.result==='miss');}
+ for(const n of practiceNotes){const x=600+(t-n.t)*264;if(x<view.left-180||x>view.left+view.width+180)continue;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',1,n.result==='miss');}
  const age=practiceFx?t-practiceFx.t:99;hand(600,280+(age<.22?Math.sin(Math.min(1,age/.16)*Math.PI)*105:0),245,age>.32?0:Math.PI/2,age>.32);
  hudDots.forEach((el,i)=>{const result=practiceNotes[i].result;const key=!result?'pending':result==='miss'?'miss':'hit';el.src=dotAssets[key];el.dataset.result=key;el.alt='Practice '+(i+1)+': '+key;});
  const done=practiceNotes.every(n=>n.result);$('gotIt').disabled=!done;
@@ -281,14 +282,14 @@ function practiceFrame(){
 }
 function drawCountdown(){
  const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
- const view=viewBounds();image('background',view.left,0,view.width,675);
+ kitchenBackground();
  const count=3-Math.floor(Math.min(countdownTime(),COUNTDOWN_DURATION-.001)/COUNTDOWN_STEP);
  centeredArt(count>0?count:'go',280,235,195);
 }
 
 function showTutorial(){
  if(state!=='ready')return;
- state='tutorial';practiceStarted=performance.now();practiceNotes=Array.from({length:6},(_,i)=>({t:2+i*.5,result:null}));practiceFx=null;canvas.inert=false;$('overlay').hidden=true;$('tutorial').hidden=false;$('beatHud').hidden=false;$('gotIt').disabled=true;
+ state='tutorial';practiceStarted=performance.now();practiceNotes=Array.from({length:6},(_,i)=>({t:3+i*1.4,result:null}));practiceFx=null;canvas.inert=false;$('overlay').hidden=true;$('tutorial').hidden=false;$('beatHud').hidden=false;$('gotIt').disabled=true;
  $('status').textContent='Listen, then tap on the beat. Select GOT IT when ready.';
  resizeCanvas();$('gotIt').focus();
 }
