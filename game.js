@@ -289,7 +289,7 @@ function drawCountdown(){
 
 function showTutorial(){
  if(state!=='ready')return;
- state='tutorial';practiceStarted=performance.now();practiceNotes=Array.from({length:6},(_,i)=>({t:3+i*1.4,result:null}));practiceFx=null;canvas.inert=false;$('overlay').hidden=true;$('tutorial').hidden=false;$('beatHud').hidden=false;$('gotIt').disabled=true;
+ state='tutorial';practiceStarted=performance.now();practiceNotes=Array.from({length:6},(_,i)=>({t:3+i*1,result:null}));practiceFx=null;canvas.inert=false;$('overlay').hidden=true;$('tutorial').hidden=false;$('beatHud').hidden=false;$('gotIt').disabled=true;
  $('status').textContent='Listen, then tap on the beat. Select GOT IT when ready.';
  resizeCanvas();$('gotIt').focus();
 }
