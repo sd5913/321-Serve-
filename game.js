@@ -26,7 +26,7 @@ const chart=[...Array.from({length:16},(_,i)=>4+i*2),...Array.from({length:16},(
 const END=94*BEAT;
 const time = () => state === 'playing' ? music.currentTime : pausedAt;
 let startingPlayback = false;
-const COUNTDOWN_DURATION=4*BEAT;
+const COUNTDOWN_STEP=BEAT/.75,COUNTDOWN_DURATION=4*COUNTDOWN_STEP;
 let countdownStarted=0,countdownElapsed=0,pausedState='playing',runId=0;
 function countdownTime(){return countdownElapsed+(state==='countdown'?(performance.now()-countdownStarted)/1000:0);}
 async function beginMusic(id){
@@ -112,7 +112,7 @@ function finish(){
  $('resultStats').textContent='PERFECT '+perfect+' / GOOD '+good+' / MISS '+misses+'\nBEST COMBO '+best+' / SCORE '+score.toLocaleString();
  $('pause').disabled=true;$('resultRetry').focus();$('status').textContent='Order complete. Review your result or try again.';
 }
-function hit(){if(state!=='playing')return;const t=time(),judge=t-offset/1000;if(t<1.7)return;let n=notes.filter(n=>!n.result).reduce((a,b)=>!a||Math.abs(b.t-judge)<Math.abs(a.t-judge)?b:a,null);if(n&&Math.abs(n.t-judge)<=.155){const delta=judge-n.t;const result=Math.abs(delta)<=.075?'perfect':'good';n.result=result;combo++;best=Math.max(best,combo);result==='perfect'?perfect++:good++;score+=result==='perfect'?1000+Math.min(combo,20)*25:600;feedback(result,t,n,delta);}else{strays++;combo=0;feedback('wrong',t,notes.reduce((a,b)=>Math.abs(b.t-t)<Math.abs(a.t-t)?b:a),0);}}
+function hit(){if(state==='tutorial'){practiceHit();return;}if(state!=='playing')return;const t=time(),judge=t-offset/1000;if(t<1.7)return;let n=notes.filter(n=>!n.result).reduce((a,b)=>!a||Math.abs(b.t-judge)<Math.abs(a.t-judge)?b:a,null);if(n&&Math.abs(n.t-judge)<=.155){const delta=judge-n.t;const result=Math.abs(delta)<=.075?'perfect':'good';n.result=result;combo++;best=Math.max(best,combo);result==='perfect'?perfect++:good++;score+=result==='perfect'?1000+Math.min(combo,20)*25:600;feedback(result,t,n,delta);}else{strays++;combo=0;feedback('wrong',t,notes.reduce((a,b)=>Math.abs(b.t-t)<Math.abs(a.t-t)?b:a),0);}}
 function riceVoice(at, duration, pitches, formants, volume) {
   const voice = audio.createOscillator();
   voice.type = 'sawtooth';
@@ -229,7 +229,7 @@ function drawHands(t,close){
   if(age<.7&&!['perfect','good'].includes(fx.kind))angry(790,225,1.1);
  }
 }
-function draw(t){const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.save();const age=fx?t-fx.t:99;if(!reduce&&age<.16){const amp=(1-age/.16)*8;c.translate(Math.sin(age*180)*amp,Math.cos(age*150)*amp*.5);}const close=t>=28&&t<36&&!reduce;if(close)squish(t);else kitchen(t);
+function draw(t){if(state==='countdown'||(state==='paused'&&pausedState==='countdown')){drawCountdown();return;}const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';c.save();const age=fx?t-fx.t:99;if(!reduce&&age<.16){const amp=(1-age/.16)*8;c.translate(Math.sin(age*180)*amp,Math.cos(age*150)*amp*.5);}const close=t>=28&&t<36&&!reduce;if(close)squish(t);else kitchen(t);
 for(const p of particles){const a=t-p.born;if(a<0||a>.8)continue;ellipse(p.x+p.vx*a,p.y+p.vy*a+650*a*a,p.r,p.r*1.9,CREAM);}particles=particles.filter(p=>t-p.born<.8);
 drawHands(t,close);
 if(state==='playing'||state==='paused'){
@@ -238,11 +238,11 @@ if(state==='playing'||state==='paused'){
 }
 drawFeedback(t, close ? 465 : 135);
 if(state==='countdown'||(state==='paused'&&pausedState==='countdown')){
- const count=3-Math.floor(Math.min(countdownTime(),COUNTDOWN_DURATION-.001)/BEAT);
+ const count=3-Math.floor(Math.min(countdownTime(),COUNTDOWN_DURATION-.001)/COUNTDOWN_STEP);
  centeredArt(count>0?count:'go',280,235,195);
 }
 c.restore();}
-function loop(ms){requestAnimationFrame(loop);if(state==='countdown'&&countdownTime()>=COUNTDOWN_DURATION)beginMusic(runId);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){for(const n of notes){if(!n.result&&t-offset/1000>n.t+.155){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';$('phase').textContent=t>=28&&t<36?'SQUISH BREAK':'LEVEL 01 · RICE RICE BABY';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
+function loop(ms){requestAnimationFrame(loop);if(state==='tutorial'){practiceFrame();return;}if(state==='countdown'&&countdownTime()>=COUNTDOWN_DURATION)beginMusic(runId);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){for(const n of notes){if(!n.result&&t-offset/1000>n.t+.155){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';$('phase').textContent=t>=28&&t<36?'SQUISH BREAK':'LEVEL 01 · RICE RICE BABY';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
 const dotAssets={pending:ui+'rhythm/dot-pending.png',hit:ui+'rhythm/dot-hit.png',miss:ui+'rhythm/dot-miss.png',unused:ui+'rhythm/dot-pending.png'};
 const hudDots=Array.from(document.querySelectorAll('.hud-dot'));
 function updateHUD(t){
@@ -260,9 +260,35 @@ function showGameplay(){
  $('pause').hidden=false;$('gameInfo').hidden=false;$('progressTrack').hidden=false;
  $('beatHud').hidden=true;resizeCanvas();
 }
+
+let practiceStarted=0,practiceNotes=[],practiceFx=null;
+function practiceTime(){return (performance.now()-practiceStarted)/1000;}
+function practiceHit(){
+ const t=practiceTime(),judge=t-offset/1000;
+ const n=practiceNotes.filter(n=>!n.result).reduce((a,b)=>!a||Math.abs(b.t-judge)<Math.abs(a.t-judge)?b:a,null);
+ if(n&&Math.abs(n.t-judge)<=.155){n.result=Math.abs(n.t-judge)<=.075?'perfect':'good';practiceFx={n,t};}
+}
+function practiceFrame(){
+ const t=practiceTime();
+ for(const n of practiceNotes)if(!n.result&&t-offset/1000>n.t+.155)n.result='miss';
+ const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
+ const view=viewBounds();image('background',view.left,0,view.width,675);image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);
+ for(const n of practiceNotes){const x=600+(t-n.t)*440;if(x<view.left-180||x>view.left+view.width+180)continue;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',1,n.result==='miss');}
+ const age=practiceFx?t-practiceFx.t:99;hand(600,280+(age<.22?Math.sin(Math.min(1,age/.16)*Math.PI)*105:0),245,age>.32?0:Math.PI/2,age>.32);
+ hudDots.forEach((el,i)=>{const result=practiceNotes[i].result;const key=!result?'pending':result==='miss'?'miss':'hit';el.src=dotAssets[key];el.dataset.result=key;el.alt='Practice '+(i+1)+': '+key;});
+ const done=practiceNotes.every(n=>n.result);$('gotIt').disabled=!done;
+ $('status').textContent=done?'Practice complete. Select GOT IT to start the game.':'Practice: tap or press SPACE as each rice plate reaches the target. Six tries, no music.';
+}
+function drawCountdown(){
+ const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
+ const view=viewBounds();image('background',view.left,0,view.width,675);
+ const count=3-Math.floor(Math.min(countdownTime(),COUNTDOWN_DURATION-.001)/COUNTDOWN_STEP);
+ centeredArt(count>0?count:'go',280,235,195);
+}
+
 function showTutorial(){
  if(state!=='ready')return;
- state='tutorial';$('overlay').hidden=true;$('tutorial').hidden=false;
+ state='tutorial';practiceStarted=performance.now();practiceNotes=Array.from({length:6},(_,i)=>({t:2+i*.5,result:null}));practiceFx=null;canvas.inert=false;$('overlay').hidden=true;$('tutorial').hidden=false;$('beatHud').hidden=false;$('gotIt').disabled=true;
  $('status').textContent='Listen, then tap on the beat. Select GOT IT when ready.';
  resizeCanvas();$('gotIt').focus();
 }
@@ -317,7 +343,7 @@ document.addEventListener('keydown',e=>{
  if(e.target.matches('input'))return;
  if(e.code==='Space'&&!e.repeat){
   if(e.target.matches('button'))return;
-  e.preventDefault();if(state==='ready')showTutorial();else if(state==='tutorial')start();else hit();
+  e.preventDefault();if(state==='ready')showTutorial();else hit();
  }
  if(e.code==='Escape'){
   e.preventDefault();
