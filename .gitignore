@@ -1,3 +1,6 @@
 node_modules/
 .playwright-cli/
 test-output/
+
+# Godot local imports
+godot/.godot/
