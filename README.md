@@ -50,19 +50,21 @@ Download or clone this repository, then open **index.html** in a modern browser.
 
 ### Version scope
 
-The browser prototype plays a bundled soundtrack from [assets/audio](assets/audio/) and uses its playback time to synchronize the fixed chart. Hit and miss effects are synthesized with Web Audio. Audio and input latency still need real-device playtesting.
+On a served page, the game schedules the bundled [soundtrack](assets/audio/) in the same Web Audio context that plays hit and miss effects. The visual countdown runs up to the scheduled song start. The first chart note arrives four beats into the song. Opening `index.html` directly still works offline through the browser's media element. If the browser blocks that playback after the countdown, select **RESUME** to start the song.
+
+The game judges keyboard and pointer events at their timestamps. The browser's audio-output clock, when available, aligns those timestamps with the track. The **Input Offset** slider still compensates for taps that tend to register late (positive values) or early (negative values). For a device playtest, start at 0 ms and record the signed feedback on several hits near the start and end. Repeat on iPhone and Android with speakers, wired headphones, and Bluetooth where available. A consistent shift suggests latency or calibration. A shift that grows through the song merits a drift check.
 
 ### UI integration · 16 November 2026
 
 The start screen, tutorial, countdown, judgment feedback, pause, settings, quit confirmation and results use the supplied UI components. Large headings remain supplied artwork; small runtime text is English in locally bundled IBM Plex Mono. Results display the actual calculated percentage.
 
-The six-note HUD records chart judgments: coral circle = Perfect/Good, cross = missed note, cream = pending. It advances through groups of six using the existing music playback clock and input-offset setting. An extra off-beat press still shows MISS feedback and affects the original score; it does not consume a scheduled note. Dots keep a square aspect ratio and are independent of camera shake.
+The six-note HUD records chart judgments: coral circle = Perfect/Good, cross = missed note, cream = pending. It advances through groups of six using the soundtrack clock and input-offset setting. An extra off-beat press still shows MISS feedback and affects the original score; it does not consume a scheduled note. Dots keep a square aspect ratio and are independent of camera shake.
 
 Canvas resolution follows the displayed size and device pixel ratio (up to 3×); pause and percentage artwork use SVG. Source PNGs are preserved rather than artificially upscaled, so low-resolution source backgrounds can still look soft on large screens. The soundtrack, chart, judgment windows and sound-effect synthesis are unchanged; volume sliders default to the previous levels.
 
 ### Verification
 
-Run `node tests/ui-regression.cjs` for dependency-free HUD, percentage and asset checks. An optional native Canvas integration check is documented in [verification notes](docs/prototype/VERIFICATION.md). For browser checks, install Playwright and Chromium, then run `node verify.cjs`; `PLAYWRIGHT_MODULE` and `BROWSER_PATH` can select an existing installation. The latest UI passed Node and native Canvas integration checks; browser/device visual and audio-latency checks remain to be run on a machine with browser access.
+Run `node tests/ui-regression.cjs` for dependency-free HUD, percentage and asset checks and `node tests/audio-sync.cjs` for deterministic timing and playback checks. An optional native Canvas integration check is documented in [verification notes](docs/prototype/VERIFICATION.md). For browser checks, install Playwright and Chromium, then run `node verify.cjs`; `PLAYWRIGHT_MODULE` and `BROWSER_PATH` can select an existing installation. For the served audio smoke test, run `python -m http.server 8765 --bind 127.0.0.1` and, in a second terminal, `node tests/browser-audio.cjs http://127.0.0.1:8765/`.
 
 ### Font credit
 

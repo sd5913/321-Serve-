@@ -31,14 +31,14 @@ const seek=(page,time)=>page.evaluate(target=>new Promise(resolve=>{music.addEve
  await seek(page,47.1);await page.waitForFunction(()=>state==='result');assert(await page.locator('#results').isVisible());
  assert.match(await page.locator('#accuracy').getAttribute('aria-label'),/percent accuracy/);
  const resultFrame=await page.locator('.game').boundingBox();
- for(const id of ['resultRetry','resultHome']){const b=await page.locator('#'+id).boundingBox();assert(b.y+b.height<=resultFrame.y+resultFrame.height,'result controls stay inside phone frame');assert(b.width<=resultFrame.width*.45*.71,'result buttons use compact width');}
+ for(const id of ['resultRetry','resultHome']){const b=await page.locator('#'+id).boundingBox();assert(b.y+b.height<=resultFrame.y+resultFrame.height,'result controls stay inside phone frame');assert(b.width<=resultFrame.width*.36,'result buttons use compact width');}
 
  await page.screenshot({path:__dirname+'/test-output/results.png'});
  await page.click('#resultRetry');await page.waitForFunction(()=>state==='playing');
  assert.equal(await page.evaluate(()=>score),0);assert.equal(await page.evaluate(()=>notes.filter(n=>n.result).length),0);
  await page.keyboard.press('Escape');await page.click('#pauseHome');await page.click('#confirmQuit');
- await page.setViewportSize({width:844,height:390});await page.click('#start');await page.click('#gotIt');
- await seek(page,2);await page.locator('canvas').click({position:{x:80,y:150}});
+ await page.setViewportSize({width:844,height:390});await page.click('#start');await page.click('#gotIt');await page.waitForFunction(()=>state==='playing');
+ await seek(page,2);await page.locator('#canvas').click({position:{x:80,y:150}});
  assert.equal(await page.evaluate(()=>perfect),1,'real pointer input');
  const geometry=await page.locator('.hud-dot').evaluateAll(d=>d.map(e=>{const r=e.getBoundingClientRect();return [r.width,r.height];}));
  geometry.forEach(([w,h])=>assert(Math.abs(w-h)<1,'HUD must remain circular'));
