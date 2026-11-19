@@ -17,6 +17,10 @@ Download or clone this repository, then open **index.html** in a modern browser.
 - Perfect: ±75 ms. Good: ±155 ms. Late notes miss automatically; extra presses break the combo and reduce accuracy.
 - Open the gear on the start screen to adjust input compensation from −200 to +200 ms. Positive values compensate late input. Reduced-motion mode removes shaking and the close-up camera change.
 
+### Playtest record · 试玩记录
+
+[Playtest observations, next actions and owners · 试玩观察、后续计划与负责人](docs/playtest-log.md)
+
 ### v0.0 UI update · 界面更新
 
 <sub>5 November 2026 · 2026年11月5日</sub>
