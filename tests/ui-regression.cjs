@@ -34,6 +34,7 @@ class El{
  constructor(id,tag='button'){this.id=id;this.tagName=tag;this.hidden=false;this.disabled=false;this.value='0';this.min='0';this.max='100';this.dataset={};this.attrs={};this.textContent='';this.style={setProperty:(k,v)=>{this.style[k]=v;}};}
  setAttribute(k,v){this.attrs[k]=v;}getAttribute(k){return this.attrs[k];}
  focus(){document.activeElement=this;}matches(s){return s===this.tagName;}
+ getBoundingClientRect(){return {top:0,bottom:60,width:1300,height:600};}
  click(){return this.onclick?.({target:this});}
 }
 for(const m of html.matchAll(/<([\w-]+)\b([^>]*\bid="([^"]+)"[^>]*)>/g)){
@@ -42,19 +43,21 @@ for(const m of html.matchAll(/<([\w-]+)\b([^>]*\bid="([^"]+)"[^>]*)>/g)){
  elements.set(e.id,e);
 }
 const canvas=elements.get('canvas');
-canvas.getContext=()=>ctx;canvas.getBoundingClientRect=()=>({width:1300,height:600});
+canvas.getContext=()=>ctx;canvas.getBoundingClientRect=()=>({top:0,width:1300,height:600});
 Object.defineProperty(canvas,'width',{get:()=>raster.width,set:v=>{raster.width=v;}});
 Object.defineProperty(canvas,'height',{get:()=>raster.height,set:v=>{raster.height=v;}});
 let clockMs=0,playCalls=0;
-const music=elements.get('music');music.paused=true;music.currentTime=0;music.volume=1;music.pause=()=>{music.paused=true;};music.play=async()=>{playCalls++;music.paused=false;};
+const music=elements.get('music');music.paused=true;music.currentTime=0;music.volume=1;music.readyState=4;music.playbackRate=1;music.pause=()=>{music.paused=true;};music.play=async()=>{playCalls++;music.paused=false;};
 const dots=Array.from({length:6},(_,i)=>new El('dot'+i,'img')),title=new El('result-title','img'),stage=new El('stage','section');
 const document={hidden:false,getElementById:id=>{assert(elements.has(id),'unknown element '+id);return elements.get(id);},querySelector:s=>s==='.result-title'?title:stage,querySelectorAll:s=>{assert.equal(s,'.hud-dot');return dots;},addEventListener:(k,f)=>{listeners[k]=f;},fonts:{load:async()=>[]}};
 class LocalImage extends Image{set src(s){super.src=fs.readFileSync(path.join(root,s));}}
 const param=()=>({value:0,setValueAtTime(){},exponentialRampToValueAtTime(){},linearRampToValueAtTime(){}});
-const node=()=>({frequency:param(),gain:param(),Q:param(),connect(n){return n;},start(){},stop(){}});
+const node=()=>({frequency:param(),gain:param(),Q:param(),connect(n){return n;},start(){},stop(){},disconnect(){}});
 class Audio{constructor(){this.currentTime=0;this.destination={};}resume(){return Promise.resolve();}suspend(){return Promise.resolve();}createGain(){return node();}createOscillator(){return node();}createBiquadFilter(){return node();}}
 const sandbox={console,document,performance:{now:()=>clockMs},Image:LocalImage,matchMedia:()=>({matches:false}),requestAnimationFrame:()=>0,ResizeObserver:class{observe(){}},window:{AudioContext:Audio,devicePixelRatio:2,addEventListener(){}},ServeUI:UI,Math,Promise};
-vm.createContext(sandbox);vm.runInContext(source,sandbox);
+vm.createContext(sandbox);
+vm.runInContext(fs.readFileSync(path.join(root,'audio-clock.js'),'utf8'),sandbox);
+vm.runInContext(source,sandbox);
 const run=s=>vm.runInContext(s,sandbox);
 (async()=>{
  for(let i=0;i<200 && run('state')==='loading';i++)await new Promise(r=>setTimeout(r,10));
@@ -65,15 +68,16 @@ const run=s=>vm.runInContext(s,sandbox);
  elements.get('start').click();assert.equal(run('state'),'tutorial');
  await elements.get('gotIt').click();assert.equal(run('state'),'countdown');
  assert.equal(playCalls,0,'soundtrack must wait for visual countdown');assert.equal(music.currentTime,0);
- run('draw(time())');const still=Buffer.from(ctx.getImageData(0,900,2600,200).data);
- clockMs=750;run('loop(750);hit()');assert.equal(run('state'),'countdown');assert.equal(run('notes.filter(n=>n.result).length'),0);assert.equal(run('strays'),0);
- assert(still.equals(Buffer.from(ctx.getImageData(0,900,2600,200).data)),'scenery remains still during countdown');
+ const clear=()=>{ctx.resetTransform();ctx.clearRect(0,0,raster.width,raster.height);};
+ clear();run('draw(time())');const still=Buffer.from(ctx.getImageData(1,900,2598,200).data);
+ clear();clockMs=750;run('loop(750);hit()');assert.equal(run('state'),'countdown');assert.equal(run('notes.filter(n=>n.result).length'),0);assert.equal(run('strays'),0);
+ assert(still.equals(Buffer.from(ctx.getImageData(1,900,2598,200).data)),'scenery remains still during countdown');
  run('pause()');const countdownFrozen=run('countdownTime()');clockMs+=5000;assert.equal(run('countdownTime()'),countdownFrozen);
- await elements.get('resume').click();clockMs+=1300;run('loop(7050)');await new Promise(r=>setImmediate(r));
+ await elements.get('resume').click();clockMs+=2000;run('loop(7050)');await new Promise(r=>setImmediate(r));
  assert.equal(run('state'),'playing');assert.equal(playCalls,1);assert.equal(music.currentTime,0,'original soundtrack starts at zero');
  music.currentTime=2;run('hit();draw(time());');
  assert.equal(run('perfect'),1);assert.equal(dots[0].dataset.result,'hit');assert.equal(dots[1].dataset.result,'pending');
- music.currentTime=3.2;run('loop(100);');assert.equal(dots[1].dataset.result,'miss');assert.equal(dots[2].dataset.result,'pending');
+ music.currentTime=3.3;run('loop(100);');assert.equal(dots[1].dataset.result,'miss');assert.equal(dots[2].dataset.result,'pending');
  assert.equal(run('strays'),0);run('pause()');const frozen=run('time()');music.currentTime=3.3;assert.equal(run('time()'),frozen);
  elements.get('settingsToggle').click();assert.equal(elements.get('settings').hidden,false);
  elements.get('settingsBack').click();assert.equal(run('state'),'paused');
@@ -85,7 +89,7 @@ const run=s=>vm.runInContext(s,sandbox);
  fs.writeFileSync(path.join(root,'test-output','squish-hidpi.png'),raster.toBuffer('image/png'));
  music.currentTime=47.1;run('loop(200);');assert.equal(run('state'),'result');assert.equal(elements.get('results').hidden,false);
  assert(elements.get('accuracy').src.endsWith('.png'));assert(!elements.get('accuracy').attrs['aria-label'].startsWith('100 '));
- await elements.get('resultRetry').click();assert.equal(run('state'),'countdown');assert.equal(music.currentTime,0);assert.equal(music.paused,true);clockMs+=2001;run('loop(10000)');await new Promise(r=>setImmediate(r));assert.equal(run('state'),'playing');assert.equal(run('score'),0);assert.equal(run('notes.filter(n=>n.result).length'),0);
+ await elements.get('resultRetry').click();assert.equal(run('state'),'countdown');assert.equal(music.currentTime,0);assert.equal(music.paused,true);clockMs+=2700;run('loop(10000)');await new Promise(r=>setImmediate(r));assert.equal(run('state'),'playing');assert.equal(run('score'),0);assert.equal(run('notes.filter(n=>n.result).length'),0);
  run('updateHUD(2)');assert(dots.every(d=>d.dataset.result==='pending'));
  music.currentTime=2.02;listeners.keydown({target:canvas,code:'Space',repeat:false,preventDefault(){}});assert.equal(run('perfect'),1);
  run('pause()');elements.get('pauseHome').click();elements.get('confirmQuit').click();assert.equal(run('state'),'ready');assert.equal(elements.get('overlay').hidden,false);

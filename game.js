@@ -20,56 +20,160 @@ const assetPaths = {
   1: ui + 'countdown/1.png',
   go: ui + 'countdown/go.png'
 };
-let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],lastFrame=0,offset=0;
+let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],offset=0;
 let reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;$('motion').checked=reduce;
 const chart=[...Array.from({length:16},(_,i)=>4+i*2),...Array.from({length:16},(_,i)=>36+i),...Array.from({length:8},(_,i)=>56+i*2),...Array.from({length:16},(_,i)=>76+i)];
 const END=94*BEAT;
-const time = () => state === 'playing' ? music.currentTime : pausedAt;
-let startingPlayback = false;
-const COUNTDOWN_STEP=BEAT/.75,COUNTDOWN_DURATION=4*COUNTDOWN_STEP;
-let countdownStarted=0,countdownElapsed=0,pausedState='playing',runId=0;
-function countdownTime(){return countdownElapsed+(state==='countdown'?(performance.now()-countdownStarted)/1000:0);}
-async function beginMusic(id){
- if(state!=='countdown'||startingPlayback)return;
- if(!await playMusic()){
-  if(id===runId&&state==='countdown'){pausedState='countdown';countdownElapsed=0;state='paused';$('modal').hidden=false;$('resume').focus();}
-  return;
- }
- if(id!==runId||state!=='countdown'){music.pause();audio.suspend();return;}
- state='playing';$('status').textContent='Listen for four beats. Tap when the rice reaches the red target.';
- if(document.hidden)pause();
+const COUNTDOWN_STEP = BEAT / .75, COUNTDOWN_DURATION = 4 * COUNTDOWN_STEP;
+const HIT_WINDOW = .155, PERFECT_WINDOW = .075;
+// Give queued DOM events a little time to arrive without widening their hit window.
+const INPUT_DISPATCH_GRACE = .1;
+const SCHEDULE_AHEAD = .04;
+
+// A plain local HTML file cannot fetch its neighboring MP3 in common browsers.
+const soundtrackBytes = typeof fetch === 'function' && typeof location !== 'undefined' && /^https?:$/.test(location.protocol)
+  ? fetch(music.getAttribute('src')).then(response => response.ok ? response.arrayBuffer() : null).catch(() => null)
+  : null;
+if (!soundtrackBytes) music.preload = 'auto';
+
+let segmentFrom = 0, segmentStarted = null, pausedState = 'playing';
+let runId = 0, startingPlayback = false;
+let musicBuffer, decodingMusic, soundtrackSource, musicGain, songZero;
+
+function decodeMusic() {
+  if (!soundtrackBytes) return null;
+  decodingMusic ??= soundtrackBytes
+    .then(bytes => bytes ? audio.decodeAudioData(bytes) : null)
+    .then(buffer => { musicBuffer = buffer?.duration >= END ? buffer : null; })
+    .catch(() => {});
+  return decodingMusic;
 }
-function tone(freq,at,len=.08,type='sine',vol=.15,end=freq){if(!audio)return;const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,at);o.frequency.exponentialRampToValueAtTime(Math.max(1,end),at+len);g.gain.setValueAtTime(.001,at);g.gain.linearRampToValueAtTime(vol,at+.004);g.gain.exponentialRampToValueAtTime(.001,at+len);o.connect(g);g.connect(master);o.start(at);o.stop(at+len+.02);}
-async function playMusic() {
-  if (startingPlayback) return false;
+
+function positionAt(at = performance.now()) {
+  if (segmentStarted === null) return pausedAt;
+  const now = performance.now();
+  if (soundtrackSource) return ServeAudio.outputTime(audio, now, at) - songZero;
+  if (state === 'countdown') return Math.min(0, segmentFrom + (at - segmentStarted) / 1000);
+  return ServeAudio.mediaTime(music, now, at);
+}
+
+// A resumed buffer is scheduled slightly ahead. Keep the display at the pause point
+// while the first resumed sample makes its way to the output.
+const position = () => segmentStarted === null ? pausedAt : Math.max(segmentFrom, positionAt());
+const time = () => state === 'countdown' ? 0 : Math.max(0, position());
+const countdownTime = () => Math.min(COUNTDOWN_DURATION, Math.max(0, COUNTDOWN_DURATION + position()));
+
+function applyVolumes() {
+  const musicVolume = Number($('musicVolume').value) / 100;
+  const sfxVolume = Number($('sfxVolume').value) / 100;
+  music.muted = muted;
+  music.volume = musicVolume;
+  if (musicGain) musicGain.gain.value = muted ? 0 : musicVolume;
+  if (master) master.gain.value = muted ? 0 : SFX_VOLUME * sfxVolume;
+}
+
+function stopAudio() {
+  runId++;
+  startingPlayback = false;
+  segmentStarted = null;
+  music.pause();
+  if (soundtrackSource) {
+    soundtrackSource.stop();
+    soundtrackSource.disconnect();
+    soundtrackSource = null;
+  }
+  musicGain?.disconnect();
+  master?.disconnect();
+  musicGain = master = null;
+  audio?.suspend().catch(() => {});
+}
+
+function unlockAudio() {
+  if (!audio) {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) return null;
+    audio = new Audio();
+    audio.addEventListener?.('statechange', () => {
+      if (segmentStarted !== null && audio.state !== 'running') pause();
+    });
+  }
+  // This invocation happens in the start or resume gesture, before any await.
+  return audio.resume();
+}
+
+function enterPlaying() {
+  state = 'playing';
+  $('status').textContent = 'Listen for four beats. Tap when the rice reaches the red target.';
+}
+
+async function startSegment(from, phase) {
+  const id = ++runId;
   startingPlayback = true;
   try {
-    await Promise.all([music.play(), audio.resume()]);
-    return true;
-  } catch {
-    music.pause();
-    $('status').textContent = 'Music could not play. Keep the assets/audio folder with the game and try again.';
-    return false;
+    const unlocked = unlockAudio();
+    // For media fallback, call play synchronously on a resume gesture.
+    let preparing;
+    if (phase === 'countdown' && audio) preparing = decodeMusic();
+    if (phase === 'playing' && !musicBuffer) preparing = music.play();
+    await Promise.all([unlocked, preparing]);
+    if (id !== runId) return;
+    if (document.hidden) {
+      if (state === 'countdown') pause();
+      else stopAudio();
+      return;
+    }
+
+    if (audio && !master) {
+      master = audio.createGain();
+      master.connect(audio.destination);
+    }
+    if (musicBuffer) {
+      musicGain = audio.createGain();
+      musicGain.connect(audio.destination);
+      const source = audio.createBufferSource();
+      source.buffer = musicBuffer;
+      source.connect(musicGain);
+      // Count in on the same timeline as the scheduled first soundtrack sample.
+      songZero = audio.currentTime + SCHEDULE_AHEAD - from;
+      const startOffset = Math.max(0, from);
+      source.start(songZero + startOffset, startOffset);
+      soundtrackSource = source;
+    }
+    applyVolumes();
+    segmentStarted = performance.now();
+    segmentFrom = from;
+    if (phase === 'playing') enterPlaying();
+    else state = phase;
+    $('modal').hidden = true;
+    $('pause').setAttribute('aria-label', 'Pause game');
+    canvas.focus();
+  } catch (error) {
+    if (id !== runId) return;
+    pausedAt = from;
+    pausedState = phase;
+    showPause();
+    $('status').textContent = error?.name === 'NotAllowedError'
+      ? 'Select RESUME to allow music playback.'
+      : 'Music could not play. Keep the assets/audio folder with the game and try again.';
   } finally {
-    startingPlayback = false;
+    if (id === runId) startingPlayback = false;
   }
 }
 
-async function start() {
-  if (state === 'loading' || state === 'playing' || state === 'countdown' || startingPlayback) return;
-  if (!audio) {
-    audio = new (window.AudioContext || window.webkitAudioContext)();
-    master = audio.createGain();
-    master.gain.value = muted ? 0 : SFX_VOLUME * Number($('sfxVolume').value) / 100;
-    master.connect(audio.destination);
-  }
+function updatePlaybackPhase() {
+  if (state !== 'countdown' || segmentStarted === null || startingPlayback || positionAt() < 0) return;
+  if (soundtrackSource) enterPlaying();
+  else startSegment(0, 'playing');
+}
 
-  runId++;
-  music.pause();music.currentTime = 0;
-  // Unlock Web Audio on the user gesture; the unchanged soundtrack starts after the visual prefix.
-  audio.resume().catch(()=>{});
-  countdownElapsed=0;countdownStarted=performance.now();pausedState='countdown';
-  pausedAt = 0;
+function tone(freq,at,len=.08,type='sine',vol=.15,end=freq){if(!master)return;const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,at);o.frequency.exponentialRampToValueAtTime(Math.max(1,end),at+len);g.gain.setValueAtTime(.001,at);g.gain.linearRampToValueAtTime(vol,at+.004);g.gain.exponentialRampToValueAtTime(.001,at+len);o.connect(g);g.connect(master);o.start(at);o.stop(at+len+.02);}
+
+function start() {
+  if (state === 'loading' || state === 'playing' || state === 'countdown') return;
+  stopAudio();
+  music.currentTime = 0;
+  pausedState = 'countdown';
+  pausedAt = -COUNTDOWN_DURATION;
   notes = chart.map((b, i) => ({ t: b * BEAT, i, result: null }));
   combo = best = score = perfect = good = misses = strays = 0;
   particles = [];
@@ -78,30 +182,36 @@ async function start() {
   showGameplay();
   $('score').textContent='000000';$('progress').style.width='0%';$('phase').textContent='GET READY';
   canvas.inert = false;
-  $('modal').hidden = true;
   $('pause').disabled = false;
   $('pause').setAttribute('aria-label', 'Pause game');
   $('status').textContent = 'Get ready. The music starts after the countdown.';
   canvas.focus();
   if (document.hidden) pause();
+  else return startSegment(pausedAt, 'countdown');
 }
-function pause(){
- if(state!=='playing'&&state!=='countdown')return;
- pausedState=state;if(state==='countdown')countdownElapsed=countdownTime();
- pausedAt=time();state='paused';music.pause();audio.suspend();
- $('modal').hidden=false;$('pause').setAttribute('aria-label','Resume game');$('resume').focus();
+
+function showPause() {
+  state = 'paused';
+  stopAudio();
+  $('modal').hidden = false;
+  $('pause').setAttribute('aria-label', 'Resume game');
+  $('resume').focus();
 }
-async function resume() {
-  if (state !== 'paused') return;
-  if(pausedState==='countdown'){countdownStarted=performance.now();state='countdown';audio.resume().catch(()=>{});}
-  else {if(!await playMusic())return;state='playing';}
-  $('modal').hidden = true;
-  $('pause').setAttribute('aria-label', 'Pause game');
-  canvas.focus();
-  if (document.hidden) pause();
+
+function pause() {
+  if (state !== 'playing' && state !== 'countdown') return;
+  pausedAt = Math.min(END, position());
+  pausedState = state === 'countdown' && pausedAt <= 0 ? 'countdown' : 'playing';
+  showPause();
+}
+
+function resume() {
+  if (state !== 'paused' || startingPlayback || document.hidden) return;
+  const phase = pausedState === 'countdown' && pausedAt < 0 ? 'countdown' : 'playing';
+  return startSegment(pausedAt, phase);
 }
 function finish(){
- state='result';pausedAt=END;music.pause();audio.suspend();
+ state='result';pausedAt=END;stopAudio();
  const acc=Math.round((perfect+good*.7)/(notes.length+strays)*100);
  $('modal').hidden=true;$('settings').hidden=true;$('quitDialog').hidden=true;
  $('results').hidden=false;$('beatHud').hidden=true;$('pause').hidden=true;
@@ -112,7 +222,37 @@ function finish(){
  $('resultStats').textContent='PERFECT '+perfect+' / GOOD '+good+' / MISS '+misses+'\nBEST COMBO '+best+' / SCORE '+score.toLocaleString();
  $('pause').disabled=true;$('resultRetry').focus();$('status').textContent='Order complete. Review your result or try again.';
 }
-function hit(){if(state==='tutorial'){practiceHit();return;}if(state!=='playing')return;const t=time(),judge=t-offset/1000;if(t<1.7)return;let n=notes.filter(n=>!n.result).reduce((a,b)=>!a||Math.abs(b.t-judge)<Math.abs(a.t-judge)?b:a,null);if(n&&Math.abs(n.t-judge)<=.155){const delta=judge-n.t;const result=Math.abs(delta)<=.075?'perfect':'good';n.result=result;combo++;best=Math.max(best,combo);result==='perfect'?perfect++:good++;score+=result==='perfect'?1000+Math.min(combo,20)*25:600;feedback(result,t,n,delta);}else{strays++;combo=0;feedback('wrong',t,notes.reduce((a,b)=>Math.abs(b.t-t)<Math.abs(a.t-t)?b:a),0);}}
+function hit(event) {
+  const at = ServeAudio.eventTime(event, performance.now(), performance.timeOrigin);
+  if (state === 'tutorial') { practiceHit(at); return; }
+  updatePlaybackPhase();
+  if (state !== 'playing' || at < segmentStarted) return;
+
+  const t = positionAt(at);
+  if (t < 1.7 || t < segmentFrom) return;
+  const judge = t - offset / 1000;
+  const n = notes.filter(n => !n.result).reduce((a, b) => !a || Math.abs(b.t - judge) < Math.abs(a.t - judge) ? b : a, null);
+  const shownAt = time();
+  if (n && Math.abs(n.t - judge) <= HIT_WINDOW) {
+    const delta = judge - n.t;
+    const result = Math.abs(delta) <= PERFECT_WINDOW ? 'perfect' : 'good';
+    n.result = result;
+    combo++;
+    best = Math.max(best, combo);
+    if (result === 'perfect') {
+      perfect++;
+      score += 1000 + Math.min(combo, 20) * 25;
+    } else {
+      good++;
+      score += 600;
+    }
+    feedback(result, shownAt, n, delta);
+  } else {
+    strays++;
+    combo = 0;
+    feedback('wrong', shownAt, notes.reduce((a, b) => Math.abs(b.t - t) < Math.abs(a.t - t) ? b : a), 0);
+  }
+}
 function riceVoice(at, duration, pitches, formants, volume) {
   const voice = audio.createOscillator();
   voice.type = 'sawtooth';
@@ -140,6 +280,7 @@ function riceVoice(at, duration, pitches, formants, volume) {
 }
 
 function playSquish(double) {
+  if (!master) return;
   const at = audio.currentTime;
   tone(250, at, .025, 'sine', .28, 62);
   if (double) {
@@ -162,7 +303,7 @@ function feedback(kind, t, n, delta) {
     }
     if (combo % 8 === 0) $('status').textContent = combo + ' COMBO! Keep serving.';
   } else {
-    tone(110, audio.currentTime, .18, 'sawtooth', .12, 55);
+    if (master) tone(110, audio.currentTime, .18, 'sawtooth', .12, 55);
     $('status').textContent = kind === 'miss'
       ? 'Missed that note. Catch the next one.'
       : 'Off beat. Wait for the rice to reach the red target.';
@@ -238,12 +379,28 @@ if(state==='playing'||state==='paused'){
 
 }
 drawFeedback(t, close ? 465 : 135);
-if(state==='countdown'||(state==='paused'&&pausedState==='countdown')){
- const count=3-Math.floor(Math.min(countdownTime(),COUNTDOWN_DURATION-.001)/COUNTDOWN_STEP);
- centeredArt(count>0?count:'go',280,235,195);
-}
 c.restore();}
-function loop(ms){requestAnimationFrame(loop);if(state==='tutorial'){practiceFrame();return;}if(state==='countdown'&&countdownTime()>=COUNTDOWN_DURATION)beginMusic(runId);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){for(const n of notes){if(!n.result&&t-offset/1000>n.t+.155){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';$('phase').textContent=t>=28&&t<36?'SQUISH BREAK':'LEVEL 01 · RICE RICE BABY';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
+function loop(ms) {
+  requestAnimationFrame(loop);
+  if (state === 'tutorial') { practiceFrame(); return; }
+  updatePlaybackPhase();
+  const t = state === 'ready' || state === 'loading' ? ms / 1000 : time();
+  if (state === 'playing') {
+    for (const n of notes) {
+      if (!n.result && t - offset / 1000 > n.t + HIT_WINDOW + INPUT_DISPATCH_GRACE) {
+        n.result = 'miss';
+        misses++;
+        combo = 0;
+        feedback('miss', t, n, 0);
+      }
+    }
+    if (t >= END) finish();
+    $('score').textContent = String(score).padStart(6, '0');
+    $('progress').style.width = Math.min(100, Math.max(0, t / END * 100)) + '%';
+    $('phase').textContent = t >= 28 && t < 36 ? 'SQUISH BREAK' : 'LEVEL 01 · RICE RICE BABY';
+  }
+  if (state !== 'paused' && state !== 'result') draw(t);
+}
 const dotAssets={pending:ui+'rhythm/dot-pending.png',hit:ui+'rhythm/dot-hit.png',miss:ui+'rhythm/dot-miss.png',unused:ui+'rhythm/dot-pending.png'};
 const hudDots=Array.from(document.querySelectorAll('.hud-dot'));
 function updateHUD(t){
@@ -263,15 +420,15 @@ function showGameplay(){
 }
 
 let practiceStarted=0,practiceNotes=[],practiceFx=null;
-function practiceTime(){return (performance.now()-practiceStarted)/1000;}
-function practiceHit(){
- const t=practiceTime(),judge=t-offset/1000;
+function practiceTime(at=performance.now()){return (at-practiceStarted)/1000;}
+function practiceHit(at){
+ const t=practiceTime(at),judge=t-offset/1000;
  const n=practiceNotes.filter(n=>!n.result).reduce((a,b)=>!a||Math.abs(b.t-judge)<Math.abs(a.t-judge)?b:a,null);
- if(n&&Math.abs(n.t-judge)<=.155){n.result=Math.abs(n.t-judge)<=.075?'perfect':'good';practiceFx={n,t};}
+ if(n&&Math.abs(n.t-judge)<=HIT_WINDOW){n.result=Math.abs(n.t-judge)<=PERFECT_WINDOW?'perfect':'good';practiceFx={n,t:practiceTime()};}
 }
 function practiceFrame(){
  const t=practiceTime();
- for(const n of practiceNotes)if(!n.result&&t-offset/1000>n.t+.155)n.result='miss';
+ for(const n of practiceNotes)if(!n.result&&t-offset/1000>n.t+HIT_WINDOW+INPUT_DISPATCH_GRACE)n.result='miss';
  const scale=canvas.height/675;c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
  const view=viewBounds();image('background',view.left,0,view.width,675);image('belt',view.left,270,view.width,425);rr(502,474,196,50,8,'#ff684666',RED);
  for(const n of practiceNotes){const x=600+(t-n.t)*440;if(x<view.left-180||x>view.left+view.width+180)continue;image('plate',x-126,430,252,110);rice(x,448,n.result==='perfect'||n.result==='good',1,n.result==='miss');}
@@ -294,7 +451,7 @@ function showTutorial(){
  resizeCanvas();$('gotIt').focus();
 }
 function goHome(){
- runId++;countdownElapsed=0;music.pause();if(audio)audio.suspend();music.currentTime=0;pausedAt=0;state='ready';
+ stopAudio();music.currentTime=0;pausedAt=0;state='ready';
  notes=[];combo=best=score=perfect=good=misses=strays=0;fx=null;particles=[];
  for(const id of ['tutorial','modal','settings','quitDialog','results','beatHud','pause','gameInfo','progressTrack'])$(id).hidden=true;
  $('overlay').hidden=false;canvas.inert=true;$('pause').disabled=true;
@@ -331,20 +488,20 @@ $('pauseHome').onclick=()=>{$('quitDialog').hidden=false;$('cancelQuit').focus()
 $('cancelQuit').onclick=()=>{$('quitDialog').hidden=true;$('resume').focus();};
 $('confirmQuit').onclick=goHome;$('resultHome').onclick=goHome;
 $('startSettings').onclick=openSettings;$('settingsToggle').onclick=openSettings;$('settingsBack').onclick=closeSettings;
-$('sound').onclick=()=>{muted=!muted;music.muted=muted;if(master)master.gain.value=muted?0:SFX_VOLUME*Number($('sfxVolume').value)/100;$('sound').textContent='SOUND '+(muted?'OFF':'ON');$('sound').setAttribute('aria-pressed',String(muted));};
-$('musicVolume').oninput=e=>{music.volume=Number(e.target.value)/100;sliderFill(e.target);};
-$('sfxVolume').oninput=e=>{if(master)master.gain.value=muted?0:SFX_VOLUME*Number(e.target.value)/100;sliderFill(e.target);};
+$('sound').onclick=()=>{muted=!muted;applyVolumes();$('sound').textContent='SOUND '+(muted?'OFF':'ON');$('sound').setAttribute('aria-pressed',String(muted));};
+$('musicVolume').oninput=e=>{applyVolumes();sliderFill(e.target);};
+$('sfxVolume').oninput=e=>{applyVolumes();sliderFill(e.target);};
 $('full').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.querySelector('.game').requestFullscreen().catch(()=>{$('status').textContent='Fullscreen is unavailable in this browser.';});};
 $('offset').oninput=e=>{offset=Number(e.target.value);$('offsetLabel').textContent=offset+' ms';sliderFill(e.target);};
 $('motion').onchange=e=>{reduce=e.target.checked;};
 for(const el of [$('offset'),$('musicVolume'),$('sfxVolume')])sliderFill(el);
 canvas.tabIndex=0;
-canvas.onpointerdown=e=>{if(e.button!==0)return;hit();};
+canvas.onpointerdown=e=>{if(e.button!==0)return;hit(e);};
 document.addEventListener('keydown',e=>{
  if(e.target.matches('input'))return;
  if(e.code==='Space'&&!e.repeat){
   if(e.target.matches('button'))return;
-  e.preventDefault();if(state==='ready')showTutorial();else hit();
+  e.preventDefault();if(state==='ready')showTutorial();else hit(e);
  }
  if(e.code==='Escape'){
   e.preventDefault();
@@ -353,7 +510,11 @@ document.addEventListener('keydown',e=>{
   state==='paused'?resume():pause();
  }
 });
-document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) return;
+  if (state === 'paused' && startingPlayback) stopAudio();
+  else pause();
+});
 Promise.all(Object.entries(assetPaths).map(([n,path])=>new Promise((resolve,reject)=>{
  const img=new Image();img.onload=()=>{assets[n]=img;resolve();};img.onerror=()=>reject(new Error(n));img.src=path;
 }))).then(()=>{state='ready';$('start').disabled=false;resizeCanvas();}).catch(e=>{$('status').textContent='An asset could not load: '+e.message+'. Keep the assets folder beside index.html.';});

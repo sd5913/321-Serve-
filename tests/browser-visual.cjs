@@ -21,11 +21,16 @@ const root=path.resolve(__dirname,'..'),out=path.join(root,'test-output');
  await page.click('#pause');const frozen=await page.evaluate(()=>countdownTime());
  await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>countdownTime()),frozen);
  await page.click('#resume');
- await page.evaluate(()=>{countdownElapsed=1.6;countdownStarted=performance.now();draw(0);});
+ await page.evaluate(()=>{segmentStarted=performance.now()-2100;draw(0);});
  await game.screenshot({path:path.join(out,'countdown-go.png')});
  await page.waitForFunction(()=>state==='playing');
  assert.equal(await page.evaluate(()=>notes.length),56);assert(Math.abs(await page.evaluate(()=>COUNTDOWN_DURATION)-8/3)<.001);
- await page.evaluate(()=>{pause();music.currentTime=2;pausedAt=2;state='playing';hit();pause();draw(2.08);});
+ await page.evaluate(() => new Promise(resolve => {
+  music.addEventListener('seeked', resolve, { once:true });
+  music.currentTime=2;
+ }));
+ await page.keyboard.press('Space');
+ await page.evaluate(()=>{pause();draw(2.08);});
  assert.equal(await page.evaluate(()=>perfect),1);
  assert.equal(await page.locator('.hud-dot').first().getAttribute('data-result'),'hit');
  await page.evaluate(()=>{$('modal').hidden=true;});await game.screenshot({path:path.join(out,'fist-game.png')});
