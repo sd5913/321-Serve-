@@ -41,6 +41,24 @@ The following are review questions to test, not confirmed player findings. Add e
 | Small-text font / 英文小字字体 | IBM Plex Mono; [SIL OFL licence](../assets/fonts/IBM-Plex-Mono-OFL.txt) | Currently used; final status to confirm / 当前使用，最终状态待确认 | Retain the bundled licence / 保留许可文件 |
 | Tools & AI assistance / 工具及 AI 辅助 | Figma design reference; AI assistance described in the README and start-page layer notes / Figma 设计参考，README 与开始页图层说明中的 AI 辅助记录 | Record of process / 过程记录 | Keep credits accurate as assets change / 随素材变化更新来源说明 |
 
+### Confirmed UI choices · 已确认的 UI 设计与资产选择
+
+Confirmed design choices recorded on 19 November 2026. The dates below identify earlier design milestones where provided. These choices do not constitute physical-device playtest results or confirmation of unrelated assets and licences.
+
+以下为 2026年11月19日确认同步的 UI 选择；已提供日期的项目保留原设计节点日期。这些记录不代替真实设备试玩结果，也不代表其他素材及授权已全部确认。
+
+| Item / 项目 | Confirmed direction / 已确定的方向 |
+| --- | --- |
+| Startpage / 开始页方案 | Selected the current design from six Startpage proposals on 5 November 2026 / 2026年11月5日，从6个 Startpage 方案中选定当前版本 |
+| Large headings / 大标题风格 | Confirmed on 9 November 2026: rounded, soft lettering evolved into forward-slanted, angular, heavy display lettering with cut corners, thick dark-navy outlines and cream fills / 2026年11月9日确定：由圆润柔和改为前倾、棱角分明、带切角的粗重字形，配厚深蓝描边与米白字面 |
+| UI components / UI 小组件 | Full UI screens and components refined on 12 November 2026, following the selected Startpage visual language / 2026年11月12日完善全套 UI 页面与小组件，沿用开始页建立的视觉语言 |
+| Small-text font / 小字字体 | IBM Plex Mono; retain the [bundled licence](../assets/fonts/IBM-Plex-Mono-OFL.txt) / 当前选用 IBM Plex Mono，保留随附许可 |
+| Cream color / 统一米白色 | **#FFF0D9** across the page background and cream UI regions / 页面背景及 UI 米白区域统一为 **#FFF0D9** |
+| Screen ratio / 页面比例 | Landscape **19.5:9 (13:6)** / 手机横屏 **19.5:9（13:6）** |
+| Percentages & GO! / 百分比及 GO! | Use the supplied digit/symbol sheet, preserving its lettering and thick outlines; [101 transparent percentage PNGs](../assets/ui/elements/result/percentages/) and [GO! artwork](../assets/ui/elements/countdown/go.png) / 采用已提供的数字与符号图集，保留字形和粗描边 |
+| Startpage animation / 开始页动态 | Follow the approved GIF: sushi characters move to the beat; **clock hands stay fixed**. See [layers and animation notes](../assets/ui/startpage-motion/README.md) and [GIF reference](../assets/ui/startpage-motion/preview.gif) / 以已确认的 GIF 为基础，寿司跟拍活动，**指针固定** |
+| Panel sizes / 面板尺寸 | Settings and quit confirmation use the same panel size as Paused / Settings、退出确认框与 Paused 保持相同面板尺寸 |
+
 ## Weekly updates · 每周更新
 
 Append a row after each review; link screenshots, issue numbers or recordings where available.
