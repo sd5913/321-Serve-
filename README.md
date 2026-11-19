@@ -99,6 +99,7 @@ The full visual design of the game — interface layouts, visual style, and comp
 | [UI asset guide](assets/ui/README.md) | Folder usage, duplicate cleanup and component notes |
 | [assets/game/](assets/game/) | Game asset overview |
 | [docs/Sushi_Rhythm_Design_and_Assets.docx](docs/Sushi_Rhythm_Design_and_Assets.docx) | Chinese transcription of the handwritten game design and asset list, dated 2 November 2026 |
+| [docs/level-design-rhythm-plating.md](docs/level-design-rhythm-plating.md) | Level design for the rhythm plating stage: mechanics, rules and the full required art asset list (English) |
 
 Full screen references and the game asset overview are preserved as supplied. UI components are separated into a dedicated elements directory; see the UI asset guide before implementation. The Chinese design document records an earlier proposal and its open questions; it is not a statement that every listed feature or asset is complete.
 
