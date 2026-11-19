@@ -15,3 +15,35 @@ Passed using Playwright with local Microsoft Edge (headless), against the actual
 - No JavaScript page errors.
 
 Screenshots are stored alongside this document. These automated checks validate state and rendering, not subjective audio/visual synchronization or game feel on physical devices.
+
+
+## UI integration — 2026-11-16
+
+Passed:
+
+- `node --check game.js`, `node --check ui-state.js`, `node --check verify.cjs`.
+- `node tests/ui-regression.cjs`: six-note pages, actual judgment mapping, input offset, partial last page, dynamic percentage, English runtime, asset paths and circular CSS constraints.
+- Native Canvas integration of the actual game code: loaded all assets and local font, high-DPI backing buffer, tutorial/start, timed keyboard hit, missed note, pause/frozen clock, settings, cancel/confirm quit, resume, SQUISH, results and retry reset.
+- Original soundtrack and sound-effect files have identical SHA-256 checksums. Chart and hit-judgment function are unchanged.
+
+Optional integration command (requires @napi-rs/canvas, not needed to play):
+
+```sh
+CANVAS_MODULE=/absolute/path/to/@napi-rs/canvas node tests/ui-regression.cjs
+```
+
+The native Canvas integration supplies a minimal DOM/audio test harness; it does not validate actual browser CSS layout or hardware audio latency. `verify.cjs` has been updated for the new screens but could not be executed here because the available browser could not access the local project. The 12 November browser results above describe the earlier version, not a browser verification of this UI update.
+
+Manual retest: START → GOT IT → count-in → successful hit / intentional miss → pause → settings/back → resume → result percentage → retry → pause/home/quit. Also check landscape phone sizing and hardware timing with the existing music.
+
+### Phone frame and pause panel follow-up — 2026-11-16
+
+All screen states now use 19.5:9. Gameplay keeps its original logical coordinates and uses a uniform centered drawing scale, with the background and conveyor extended to the sides. The pause panel is scaled to two-thirds of its previous size; the Settings link sits beneath Home. Fullscreen retains the same aspect ratio. Native Canvas regression passed at a 1300 × 600 CSS viewport and 2× pixel density, including equal X/Y scales and a centered target. Browser layout checks were added to `verify.cjs` for frame consistency, panel size/centering and non-overlapping controls; they still require a browser-enabled machine. Gameplay and audio logic were not changed.
+
+### Static pre-roll and result layout — 2026-11-16
+
+A separate two-second visual 3/2/1/GO prefix runs before music playback. During this state the scene time is frozen at zero, notes are not judged and presses are ignored. The original soundtrack then plays from zero with its original lead-in, chart and hit windows. Pausing the prefix freezes its wall-clock timer; resuming continues the remaining prefix. Retry also uses this flow.
+
+Results use bounded grid rows so both controls fit within the phone frame. Retry/Home share a narrower centered width, and the live percentage now has thicker cream glyphs, a heavier navy outline and a solid offset base.
+
+Native Canvas integration passed static scenery comparison, ignored prefix input, no premature music play, prefix pause/resume, music starting at zero, ordinary hits/misses and retry. The generated percentage SVG was rendered and checked for visible pixels. Browser checks now include result-control bounds; those CSS checks remain pending a browser-enabled machine.

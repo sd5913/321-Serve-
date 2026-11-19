@@ -34,14 +34,27 @@ A rhythm game about shaping rice balls to the beat.
 
 Download or clone this repository, then open **index.html** in a modern browser. No build step, network connection or runtime dependencies are needed. Keep the assets folder next to the HTML file. On phones, landscape orientation is recommended.
 
-下载仓库后，用 Chrome 或 Edge 打开 [index.html](index.html)，点击 **START**。无需安装依赖，手机试玩推荐横屏。
+下载仓库后，用 Chrome 或 Edge 打开 [index.html](index.html)，点击 **START**，阅读教学后点击 **GOT IT**。无需安装依赖，手机试玩推荐横屏。
 
-- Click **START** and listen for the four-beat count-in. Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
-- **Escape** pauses/resumes; the top bar also includes pause, mute and fullscreen controls.
+- Click **START**, then **GOT IT**. A static **3 → 2 → 1 → GO!** plays before the unchanged soundtrack starts from zero; then listen for its original four-beat lead-in. Press **Space** or tap the game canvas as a rice plate reaches the central red zone.
+- **Escape** pauses/resumes; use the upper-right pause button or the SOUND / FULLSCREEN controls beneath the game.
 - The yellow **SQUISH** section asks for one press every two beats.
 - 120 BPM · 47 seconds · 56 notes · four-beat count-in.
 - Perfect: ±75 ms. Good: ±155 ms. Late notes miss automatically; extra presses break the combo and reduce accuracy.
 - Open the gear on the start screen to adjust input compensation from −200 to +200 ms. Positive values compensate late input. Reduced-motion mode removes shaking and the close-up camera change.
+
+### Playtest record · 试玩记录
+
+[Playtest observations, next actions and owners · 试玩观察、后续计划与负责人](docs/playtest-log.md)
+
+### v0.0 UI update · 界面更新
+
+<sub>5 November 2026 · 2026年11月5日</sub>
+
+- Explored **six Startpage designs** and selected the start-screen direction currently used in the project.
+- Finalized the large-heading style based on the selected Startpage: the initial rounded, soft lettering became **forward-slanted, angular, heavy display lettering with cut corners, a thick dark-navy outline and cream fill**, giving the interface a stronger sense of rhythm and arcade energy. <sub>Typography finalized: 9 November 2026 · 字体确定：2026年11月9日</sub>
+
+11月5日从 **6 个 Startpage 方案**中选定目前使用的开始页方向；11月9日通过开始页确定大标题字形，由最初偏圆润、柔和的字体，调整为现在 **向前倾斜、棱角分明、带切角的粗重字形**，搭配厚深蓝描边与米白色字面，强化节奏感与街机游戏风格。
 
 ### v0.1 UI update · 界面更新
 
@@ -52,13 +65,34 @@ Download or clone this repository, then open **index.html** in a modern browser.
 
 ![Start-screen design reference / 开始页设计参考](assets/ui/complete/Startpage.png)
 
+### v0.2 UI update · 界面更新
+
+<sub>12 November 2026 · 2026年11月12日</sub>
+
+- Extended the selected Startpage and confirmed heading style into the **complete UI set**: start screen, tutorial, **3 → 2 → 1 → GO!**, gameplay HUD, **ON BEAT!/MISS!**, pause, settings, quit confirmation and results.
+- Updated the individual UI components and established consistent typography, colors, thick outlines, buttons, icons and screen layouts across the interface.
+
+以选定的 Startpage 和确定后的标题风格为基础，制定并完善全部 UI 页面与小组件，覆盖开始页、教学、倒计时、游戏 HUD、判定反馈、暂停、设置、退出确认及结算页，并统一字体、配色、厚描边、按钮、图标和页面排版。
+
 ### Version scope
 
 The browser prototype plays a bundled soundtrack from [assets/audio](assets/audio/) and uses its playback time to synchronize the fixed chart. Hit and miss effects are synthesized with Web Audio. Audio and input latency still need real-device playtesting.
 
+### UI integration · 16 November 2026
+
+The start screen, tutorial, countdown, judgment feedback, pause, settings, quit confirmation and results use the supplied UI components. Large headings remain supplied artwork; small runtime text is English in locally bundled IBM Plex Mono. Results display the actual calculated percentage.
+
+The six-note HUD records chart judgments: coral circle = Perfect/Good, cross = missed note, cream = pending. It advances through groups of six using the existing music playback clock and input-offset setting. An extra off-beat press still shows MISS feedback and affects the original score; it does not consume a scheduled note. Dots keep a square aspect ratio and are independent of camera shake.
+
+Canvas resolution follows the displayed size and device pixel ratio (up to 3×); pause and percentage artwork use SVG. Source PNGs are preserved rather than artificially upscaled, so low-resolution source backgrounds can still look soft on large screens. The soundtrack, chart, judgment windows and sound-effect synthesis are unchanged; volume sliders default to the previous levels.
+
 ### Verification
 
-Browser checks cover asset loading, keyboard and pointer hits, off-beat feedback, pause/resume, the squish segment, results, restart, and a 375px viewport. To repeat: install Playwright as a development tool, install its Chromium browser, and run **node verify.cjs**. Optional environment variables PLAYWRIGHT_MODULE and BROWSER_PATH select an existing local installation.
+Run `node tests/ui-regression.cjs` for dependency-free HUD, percentage and asset checks. An optional native Canvas integration check is documented in [verification notes](docs/prototype/VERIFICATION.md). For browser checks, install Playwright and Chromium, then run `node verify.cjs`; `PLAYWRIGHT_MODULE` and `BROWSER_PATH` can select an existing installation. The latest UI passed Node and native Canvas integration checks; browser/device visual and audio-latency checks remain to be run on a machine with browser access.
+
+### Font credit
+
+IBM Plex Mono © IBM Corp., licensed under the SIL Open Font License 1.1. The font and [license](assets/fonts/IBM-Plex-Mono-OFL.txt) are bundled locally. AI assistance was used for UI integration, responsive styling and regression checks; the supplied design artwork remains the visual reference.
 
 This repository holds the visual design and development materials for *321 Serve*.
 
@@ -95,6 +129,7 @@ The full visual design of the game — interface layouts, visual style, and comp
 | [UI asset guide](assets/ui/README.md) | Folder usage, duplicate cleanup and component notes |
 | [assets/game/](assets/game/) | Game asset overview |
 | [docs/Sushi_Rhythm_Design_and_Assets.docx](docs/Sushi_Rhythm_Design_and_Assets.docx) | Chinese transcription of the handwritten game design and asset list, dated 2 November 2026 |
+| [docs/level-design-rhythm-plating.md](docs/level-design-rhythm-plating.md) | Level design for the rhythm plating stage: mechanics, rules and the full required art asset list (English) |
 
 Full screen references and the game asset overview are preserved as supplied. UI components are separated into a dedicated elements directory; see the UI asset guide before implementation. The Chinese design document records an earlier proposal and its open questions; it is not a statement that every listed feature or asset is complete.
 
