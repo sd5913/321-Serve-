@@ -103,6 +103,7 @@
     },
     {
       "png": "select-level-button.png",
+      "svg": "select-level-button.svg",
       "width": 555,
       "height": 135,
       "transparent": true

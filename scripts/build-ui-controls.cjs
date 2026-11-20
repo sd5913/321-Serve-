@@ -12,10 +12,10 @@ async function render(svg,destination){await sharp(Buffer.from(svg)).png({palett
  for(const dir of [out,levelDir,build])fs.mkdirSync(dir,{recursive:true});
  const sources=fs.readdirSync(buttonDir).filter(n=>n.endsWith('.png'));
  for(const name of sources){const data=fs.readFileSync(path.join(buttonDir,name)),m=await sharp(data).metadata(),svg=wrap(m.width,m.height,image(data,m.width,m.height));fs.writeFileSync(path.join(build,name.replace('.png','.svg')),svg);await render(svg,path.join(out,name));}
- const original=fs.readFileSync(path.join(buttonDir,'start.png'));
  const label=fs.readFileSync(path.join(levelDir,'select-level.svg'),'utf8').replace(/<svg /,'<svg x="54" y="11" ').replace(/width="[^"]+"/,'width="447"').replace(/height="[^"]+"/,'height="100"');
- const select=wrap(555,135,image(original,555,135).replace('filter=','preserveAspectRatio="none" filter=')+`<rect x="82" y="20" width="398" height="85" fill="${cream}"/>`+label);
- fs.writeFileSync(path.join(build,'select-level-button.svg'),select);await render(select,path.join(out,'select-level.png'));
+ // Draw a shorter capsule with circular end caps; never scale the original outline.
+ const select=wrap(555,135,`<rect x="4" y="14" width="547" height="117" rx="58.5" fill="${ink}"/><rect x="4" y="4" width="547" height="117" rx="58.5" fill="${cream}" stroke="${ink}" stroke-width="7"/>`+label);
+ fs.writeFileSync(path.join(build,'select-level-button.svg'),select);fs.writeFileSync(path.join(levelDir,'select-level-button.svg'),select);await render(select,path.join(out,'select-level.png'));
  const vectors={
   'arrow-left':`<svg xmlns="http://www.w3.org/2000/svg" width="90" height="95" viewBox="0 0 90 95"><circle cx="45" cy="50" r="45" fill="${ink}"/><circle cx="45" cy="45" r="42.25" fill="${cream}" stroke="${ink}" stroke-width="5.5"/><path d="M51.5 27.9 34.4 45l17.1 17.1" fill="none" stroke="${ink}" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   'arrow-right':`<svg xmlns="http://www.w3.org/2000/svg" width="90" height="95" viewBox="0 0 90 95"><circle cx="45" cy="50" r="45" fill="${ink}"/><circle cx="45" cy="45" r="42.25" fill="${cream}" stroke="${ink}" stroke-width="5.5"/><path d="m38.5 27.9 17.1 17.1-17.1 17.1" fill="none" stroke="${ink}" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
