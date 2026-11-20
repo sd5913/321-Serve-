@@ -1,5 +1,4 @@
 /* The menu uses the user's aligned 1950 × 900 Figma composition. */
-#start .home-select-label{position:absolute;left:7%;top:50%;width:86%;height:auto;transform:translateY(-50%)}
 .level-select-screen{z-index:4;background:#fa2e45;overflow:hidden}
 .level-select-logo{position:absolute;left:3.8%;top:5%;width:14%}
 .level-select-settings{position:absolute;right:3.7%;top:5%;width:4.4%}
