@@ -10,6 +10,8 @@ const names=['Rice Rice Baby','Catch Me If You Can','Sashimi, Baby!','Grill Me M
  const initial=await p.evaluate(()=>({chart:chart.map(n=>({beat:n.beat,action:n.action,slot:n.slot})),bpm:BPM,end:END,perfect:perfectWindow,good:goodWindow}));
  await p.click('#start');assert.equal(await p.evaluate(()=>state),'level-select');assert.equal(await p.locator('#levelSelect').getAttribute('data-level'),'1');assert(await p.locator('#previousLevel').isDisabled());
  const frame=await p.locator('.game').boundingBox(),first=await p.locator('.level-card').nth(0).boundingBox();assert(Math.abs(frame.width/frame.height-13/6)<.01);assert(Math.abs(first.x+first.width/2-(frame.x+frame.width/2))<1);
+ for(const id of ['previousLevel','nextLevel']){const box=await p.locator('#'+id).boundingBox();assert(Math.abs(box.width-box.height)<.1);}
+ const logo=await p.locator('.level-select-logo').boundingBox();assert(Math.abs(logo.width/frame.width-0.09333333333)<.001);
  await p.click('#levelSettings');await p.click('#settingsBack');assert.equal(await p.evaluate(()=>document.activeElement.id),'levelSettings');
  for(let i=1;i<=3;i++){
   await p.click('#nextLevel');await p.waitForTimeout(450);await p.locator('#selectedLevelTitle').evaluate(i=>i.decode());assert.equal(await p.locator('#selectedLevelTitle').getAttribute('alt'),names[i]);
@@ -23,6 +25,7 @@ const names=['Rice Rice Baby','Catch Me If You Can','Sashimi, Baby!','Grill Me M
  await p.evaluate(()=>{clockOrigin=performance.now()/1000-chart[0].beat;hit('a');clockOrigin=performance.now()/1000-chart[1].beat;hit('d');});assert.equal(await p.evaluate(()=>perfect),2);
  await p.click('#pause');await p.click('#pauseHome');await p.click('#confirmQuit');assert.equal(await p.evaluate(()=>state),'ready');await p.click('#start');await p.click('#levelBack');assert(await p.locator('#overlay').isVisible());
  await p.setViewportSize({width:844,height:390});await p.click('#start');const mobile=await p.locator('.game').boundingBox();assert(Math.abs(mobile.width/mobile.height-13/6)<.01);
+ for(const id of ['previousLevel','nextLevel']){const box=await p.locator('#'+id).boundingBox();assert(Math.abs(box.width-box.height)<.1);}
  const client=await context.newCDPSession(p),touch=await p.locator('#levelCarousel').boundingBox();const sx=touch.x+touch.width*.65,ex=touch.x+touch.width*.25,y=touch.y+touch.height*.5;await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:sx,y}]});for(let s=1;s<=8;s++)await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:sx+(ex-sx)*s/8,y}]});await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.equal(await p.locator('#levelSelect').getAttribute('data-level'),'2');
  assert.deepEqual(await p.evaluate(()=>({chart:chart.map(n=>({beat:n.beat,action:n.action,slot:n.slot})),bpm:BPM,end:END,perfect:perfectWindow,good:goodWindow})),initial);
  await p.setViewportSize({width:1998,height:1100});await p.addStyleTag({content:'main{width:1998px;max-width:none}'});await p.waitForTimeout(450);

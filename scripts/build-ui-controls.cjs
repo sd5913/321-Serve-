@@ -13,8 +13,8 @@ async function render(svg,destination){await sharp(Buffer.from(svg)).png({palett
  const sources=fs.readdirSync(buttonDir).filter(n=>n.endsWith('.png'));
  for(const name of sources){const data=fs.readFileSync(path.join(buttonDir,name)),m=await sharp(data).metadata(),svg=wrap(m.width,m.height,image(data,m.width,m.height));fs.writeFileSync(path.join(build,name.replace('.png','.svg')),svg);await render(svg,path.join(out,name));}
  const original=fs.readFileSync(path.join(buttonDir,'start.png'));
- const label=fs.readFileSync(path.join(levelDir,'select-level.svg'),'utf8').replace(/<svg /,'<svg x="54" y="37" ').replace(/width="[^"]+"/,'width="447"').replace(/height="[^"]+"/,'height="100"');
- const select=wrap(555,187,image(original,555,187)+`<rect x="82" y="35" width="398" height="100" fill="${cream}"/>`+label);
+ const label=fs.readFileSync(path.join(levelDir,'select-level.svg'),'utf8').replace(/<svg /,'<svg x="54" y="11" ').replace(/width="[^"]+"/,'width="447"').replace(/height="[^"]+"/,'height="100"');
+ const select=wrap(555,135,image(original,555,135).replace('filter=','preserveAspectRatio="none" filter=')+`<rect x="82" y="20" width="398" height="85" fill="${cream}"/>`+label);
  fs.writeFileSync(path.join(build,'select-level-button.svg'),select);await render(select,path.join(out,'select-level.png'));
  const vectors={
   'arrow-left':`<svg xmlns="http://www.w3.org/2000/svg" width="90" height="95" viewBox="0 0 90 95"><circle cx="45" cy="50" r="45" fill="${ink}"/><circle cx="45" cy="45" r="42.25" fill="${cream}" stroke="${ink}" stroke-width="5.5"/><path d="M51.5 27.9 34.4 45l17.1 17.1" fill="none" stroke="${ink}" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -32,5 +32,5 @@ async function render(svg,destination){await sharp(Buffer.from(svg)).png({palett
  const manifest=JSON.parse(fs.readFileSync(path.join(levelDir,'manifest.json'),'utf8'));manifest.cream=cream.toUpperCase();manifest.assets=[];
  for(const name of fs.readdirSync(levelDir).filter(n=>n.endsWith('.png')).sort()){const m=await sharp(path.join(levelDir,name)).metadata();manifest.assets.push({png:name,...(fs.existsSync(path.join(levelDir,name.replace('.png','.svg')))?{svg:name.replace('.png','.svg')}:{}),width:m.width,height:m.height,transparent:true});}
  fs.writeFileSync(path.join(levelDir,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
- console.log('Built '+sources.length+' unified original controls, SELECT LEVEL with the original START silhouette, and '+manifest.assets.length+' transparent level assets.');
+ console.log('Built '+sources.length+' unified original controls, compact SELECT LEVEL with the START border style, and '+manifest.assets.length+' transparent level assets.');
 })().catch(e=>{console.error(e);process.exitCode=1;});
