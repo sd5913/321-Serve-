@@ -11,4 +11,4 @@
 - squid-slice-1~5 与 squid-slice-curved：六种俯视鱿鱼片
 - salmon-slice-set-a-1~5、set-b-1~5：两组俯视三文鱼片候选
 
-manifest.json 记录每个文件的高清来源、裁切区域及尺寸。只添加素材，不修改游戏逻辑。保留仓库原有 assets/level2，避免覆盖旧饭团素材。
+manifest.json 记录每个文件的高清来源、裁切区域及尺寸。只添加素材，不修改游戏逻辑。保留仓库原有 assets/level1，避免覆盖旧饭团素材。

@@ -6,7 +6,7 @@
 - `game/hands/`: open-hand and fist artwork previously stored at the root.
 - `game/rice/`: loose and formed rice artwork previously stored at the root.
 - `game/Assets-2.png`: existing game-art overview sheet.
-- `level2/`, `level3/`, `level4/`: existing level-specific asset groups; their paths and contents are preserved.
+- `level1/`, `level3/`, `level4/`: existing level-specific asset groups; their filenames and contents are preserved.
 - `ui/backgrounds/`: UI background artwork.
 - `ui/complete/`: complete screen and dialog references, distinct from individual UI elements.
 - `ui/elements/`: individual branding, buttons, countdowns, feedback, titles, panels and other reusable UI parts.
