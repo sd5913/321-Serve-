@@ -1,0 +1,458 @@
+[
+  {
+    "file": "cutting-board-1.png",
+    "source": "exec-c9158cfc-f18f-4306-b717-ad1a0df6bceb.png",
+    "crop": [
+      54,
+      29,
+      2118,
+      204
+    ],
+    "width": 2080,
+    "height": 191
+  },
+  {
+    "file": "cutting-board-2.png",
+    "source": "exec-c9158cfc-f18f-4306-b717-ad1a0df6bceb.png",
+    "crop": [
+      51,
+      274,
+      2121,
+      444
+    ],
+    "width": 2086,
+    "height": 186
+  },
+  {
+    "file": "cutting-board-3.png",
+    "source": "exec-c9158cfc-f18f-4306-b717-ad1a0df6bceb.png",
+    "crop": [
+      47,
+      517,
+      2125,
+      698
+    ],
+    "width": 2094,
+    "height": 197
+  },
+  {
+    "file": "plate-round.png",
+    "source": "exec-b2c9746d-d40c-4cfb-a07f-d111f75e51b7.png",
+    "crop": [
+      272,
+      19,
+      1249,
+      1005
+    ],
+    "width": 993,
+    "height": 1002
+  },
+  {
+    "file": "hand-chopsticks-pinch.png",
+    "source": "exec-eb9ecf51-6ea8-4b79-8997-4040bf486591.png",
+    "crop": [
+      71,
+      117,
+      1024,
+      644
+    ],
+    "width": 969,
+    "height": 543
+  },
+  {
+    "file": "hand-chopsticks-flick-small.png",
+    "source": "exec-eb9ecf51-6ea8-4b79-8997-4040bf486591.png",
+    "crop": [
+      1149,
+      75,
+      2117,
+      640
+    ],
+    "width": 984,
+    "height": 581
+  },
+  {
+    "file": "hand-chopsticks-flick-large.png",
+    "source": "exec-2cb133ba-4e83-456e-be5a-98962e840735.png",
+    "crop": [
+      122,
+      116,
+      1312,
+      976
+    ],
+    "width": 1206,
+    "height": 876
+  },
+  {
+    "file": "squid-character-frightened.png",
+    "source": "exec-3458f94f-0aa9-4faa-b04e-b8ce1e403d55.png",
+    "crop": [
+      975,
+      151,
+      1449,
+      744
+    ],
+    "width": 490,
+    "height": 609
+  },
+  {
+    "file": "salmon-character-style-1-front.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      66,
+      42,
+      354,
+      350
+    ],
+    "width": 304,
+    "height": 324
+  },
+  {
+    "file": "salmon-character-style-2-front.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      399,
+      42,
+      688,
+      350
+    ],
+    "width": 305,
+    "height": 324
+  },
+  {
+    "file": "salmon-character-style-3-front.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      733,
+      42,
+      1027,
+      350
+    ],
+    "width": 310,
+    "height": 324
+  },
+  {
+    "file": "salmon-character-style-1-side-right.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      152,
+      385,
+      269,
+      693
+    ],
+    "width": 133,
+    "height": 324
+  },
+  {
+    "file": "salmon-character-style-2-side-right.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      484,
+      388,
+      601,
+      694
+    ],
+    "width": 133,
+    "height": 322
+  },
+  {
+    "file": "salmon-character-style-3-side-right.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      817,
+      387,
+      935,
+      694
+    ],
+    "width": 134,
+    "height": 323
+  },
+  {
+    "file": "salmon-character-style-1-back.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      66,
+      735,
+      351,
+      1086
+    ],
+    "width": 301,
+    "height": 367
+  },
+  {
+    "file": "salmon-character-style-2-back.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      398,
+      737,
+      684,
+      1086
+    ],
+    "width": 302,
+    "height": 365
+  },
+  {
+    "file": "salmon-character-style-3-back.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      733,
+      737,
+      1025,
+      1086
+    ],
+    "width": 308,
+    "height": 365
+  },
+  {
+    "file": "salmon-character-style-1-side-left.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      151,
+      1086,
+      269,
+      1395
+    ],
+    "width": 134,
+    "height": 325
+  },
+  {
+    "file": "salmon-character-style-2-side-left.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      481,
+      1086,
+      600,
+      1395
+    ],
+    "width": 135,
+    "height": 325
+  },
+  {
+    "file": "salmon-character-style-3-side-left.png",
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png",
+    "crop": [
+      816,
+      1086,
+      936,
+      1395
+    ],
+    "width": 136,
+    "height": 325
+  },
+  {
+    "file": "salmon-chunk-happy-1.png",
+    "source": "exec-33432a14-dfc9-4eb6-a5a1-ca1e2fe86357.png",
+    "crop": [
+      26,
+      70,
+      512,
+      494
+    ],
+    "width": 502,
+    "height": 440
+  },
+  {
+    "file": "salmon-chunk-happy-2.png",
+    "source": "exec-33432a14-dfc9-4eb6-a5a1-ca1e2fe86357.png",
+    "crop": [
+      1037,
+      83,
+      1509,
+      497
+    ],
+    "width": 488,
+    "height": 430
+  },
+  {
+    "file": "squid-slice-1.png",
+    "source": "exec-b627b99d-7c96-4fec-aa57-7897e9c03ccd.png",
+    "crop": [
+      26,
+      191,
+      591,
+      379
+    ],
+    "width": 581,
+    "height": 204
+  },
+  {
+    "file": "squid-slice-2.png",
+    "source": "exec-b627b99d-7c96-4fec-aa57-7897e9c03ccd.png",
+    "crop": [
+      591,
+      138,
+      1136,
+      410
+    ],
+    "width": 561,
+    "height": 288
+  },
+  {
+    "file": "squid-slice-3.png",
+    "source": "exec-b627b99d-7c96-4fec-aa57-7897e9c03ccd.png",
+    "crop": [
+      1183,
+      157,
+      1745,
+      400
+    ],
+    "width": 578,
+    "height": 259
+  },
+  {
+    "file": "squid-slice-4.png",
+    "source": "exec-b627b99d-7c96-4fec-aa57-7897e9c03ccd.png",
+    "crop": [
+      224,
+      564,
+      807,
+      734
+    ],
+    "width": 599,
+    "height": 186
+  },
+  {
+    "file": "squid-slice-5.png",
+    "source": "exec-b627b99d-7c96-4fec-aa57-7897e9c03ccd.png",
+    "crop": [
+      935,
+      535,
+      1520,
+      778
+    ],
+    "width": 601,
+    "height": 259
+  },
+  {
+    "file": "salmon-slice-set-a-1.png",
+    "source": "exec-01c31afa-5ce7-4dd1-bd5a-73681ad0641c.png",
+    "crop": [
+      22,
+      178,
+      512,
+      427
+    ],
+    "width": 506,
+    "height": 265
+  },
+  {
+    "file": "salmon-slice-set-a-2.png",
+    "source": "exec-01c31afa-5ce7-4dd1-bd5a-73681ad0641c.png",
+    "crop": [
+      512,
+      157,
+      1024,
+      434
+    ],
+    "width": 528,
+    "height": 293
+  },
+  {
+    "file": "salmon-slice-set-a-3.png",
+    "source": "exec-01c31afa-5ce7-4dd1-bd5a-73681ad0641c.png",
+    "crop": [
+      1024,
+      173,
+      1515,
+      433
+    ],
+    "width": 507,
+    "height": 276
+  },
+  {
+    "file": "salmon-slice-set-a-4.png",
+    "source": "exec-01c31afa-5ce7-4dd1-bd5a-73681ad0641c.png",
+    "crop": [
+      58,
+      584,
+      768,
+      871
+    ],
+    "width": 726,
+    "height": 303
+  },
+  {
+    "file": "salmon-slice-set-a-5.png",
+    "source": "exec-01c31afa-5ce7-4dd1-bd5a-73681ad0641c.png",
+    "crop": [
+      768,
+      559,
+      1456,
+      878
+    ],
+    "width": 704,
+    "height": 335
+  },
+  {
+    "file": "salmon-slice-set-b-1.png",
+    "source": "exec-e5e0d0d3-9966-4afc-a24d-c8f1e6357e18.png",
+    "crop": [
+      25,
+      190,
+      591,
+      380
+    ],
+    "width": 582,
+    "height": 206
+  },
+  {
+    "file": "salmon-slice-set-b-2.png",
+    "source": "exec-e5e0d0d3-9966-4afc-a24d-c8f1e6357e18.png",
+    "crop": [
+      591,
+      136,
+      1182,
+      411
+    ],
+    "width": 607,
+    "height": 291
+  },
+  {
+    "file": "salmon-slice-set-b-3.png",
+    "source": "exec-e5e0d0d3-9966-4afc-a24d-c8f1e6357e18.png",
+    "crop": [
+      1182,
+      156,
+      1746,
+      402
+    ],
+    "width": 580,
+    "height": 262
+  },
+  {
+    "file": "salmon-slice-set-b-4.png",
+    "source": "exec-e5e0d0d3-9966-4afc-a24d-c8f1e6357e18.png",
+    "crop": [
+      221,
+      561,
+      809,
+      736
+    ],
+    "width": 604,
+    "height": 191
+  },
+  {
+    "file": "salmon-slice-set-b-5.png",
+    "source": "exec-e5e0d0d3-9966-4afc-a24d-c8f1e6357e18.png",
+    "crop": [
+      933,
+      532,
+      1523,
+      779
+    ],
+    "width": 606,
+    "height": 263
+  },
+  {
+    "file": "squid-slice-curved.png",
+    "source": "exec-4820da65-0d01-482e-b02a-69d769fd64eb.png",
+    "crop": [
+      56,
+      76,
+      1711,
+      820
+    ],
+    "width": 1671,
+    "height": 760
+  }
+]
