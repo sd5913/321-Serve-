@@ -15,7 +15,7 @@ async function render(svg,destination){await sharp(Buffer.from(svg)).png({palett
  const label=fs.readFileSync(path.join(levelDir,'select-level.svg'),'utf8').replace(/<svg /,'<svg x="54" y="11" ').replace(/width="[^"]+"/,'width="447"').replace(/height="[^"]+"/,'height="100"');
  // Draw a shorter capsule with circular end caps; never scale the original outline.
  const select=wrap(555,135,`<rect x="4" y="14" width="547" height="117" rx="58.5" fill="${ink}"/><rect x="4" y="4" width="547" height="117" rx="58.5" fill="${cream}" stroke="${ink}" stroke-width="7"/>`+label);
- fs.writeFileSync(path.join(build,'select-level-button.svg'),select);fs.writeFileSync(path.join(levelDir,'select-level-button.svg'),select);await render(select,path.join(out,'select-level.png'));
+ fs.writeFileSync(path.join(build,'select-level-button.svg'),select);fs.writeFileSync(path.join(out,'select-level.svg'),select);await render(select,path.join(out,'select-level.png'));
  const vectors={
   'arrow-left':`<svg xmlns="http://www.w3.org/2000/svg" width="90" height="95" viewBox="0 0 90 95"><circle cx="45" cy="50" r="45" fill="${ink}"/><circle cx="45" cy="45" r="42.25" fill="${cream}" stroke="${ink}" stroke-width="5.5"/><path d="M51.5 27.9 34.4 45l17.1 17.1" fill="none" stroke="${ink}" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
   'arrow-right':`<svg xmlns="http://www.w3.org/2000/svg" width="90" height="95" viewBox="0 0 90 95"><circle cx="45" cy="50" r="45" fill="${ink}"/><circle cx="45" cy="45" r="42.25" fill="${cream}" stroke="${ink}" stroke-width="5.5"/><path d="m38.5 27.9 17.1 17.1-17.1 17.1" fill="none" stroke="${ink}" stroke-width="7.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -26,10 +26,9 @@ async function render(svg,destination){await sharp(Buffer.from(svg)).png({palett
  vectors['highlight-left']=`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="155" viewBox="0 0 100 155">${rays}</svg>`;
  vectors['highlight-right']=`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="155" viewBox="0 0 100 155"><g transform="translate(100 0) scale(-1 1)">${rays}</g></svg>`;
  for(const [name,svg]of Object.entries(vectors))fs.writeFileSync(path.join(levelDir,name+'.svg'),svg);
- for(const [from,name]of [['start.png','start-button'],['back.png','back-button'],['settings-gear.png','settings'],['select-level.png','select-level-button']])fs.copyFileSync(path.join(out,from),path.join(levelDir,name+'.png'));
  const logo=fs.readFileSync(path.join(root,'assets/ui/elements/branding/logo-321-serve.png')),m=await sharp(logo).metadata();await render(wrap(m.width,m.height,image(logo,m.width,m.height)),path.join(levelDir,'logo.png'));
  for(const name of fs.readdirSync(levelDir).filter(n=>n.endsWith('.svg')))await render(fs.readFileSync(path.join(levelDir,name),'utf8'),path.join(levelDir,name.replace('.svg','.png')));
- const manifest=JSON.parse(fs.readFileSync(path.join(levelDir,'manifest.json'),'utf8'));manifest.cream=cream.toUpperCase();manifest.assets=[];
+ const manifest=JSON.parse(fs.readFileSync(path.join(levelDir,'manifest.json'),'utf8'));manifest.cream=cream.toUpperCase();manifest.sharedControls={start:'../elements/buttons/unified/start.png',back:'../elements/buttons/unified/back.png',settings:'../elements/buttons/unified/settings-gear.png',selectLevel:'../elements/buttons/unified/select-level.png',selectLevelSvg:'../elements/buttons/unified/select-level.svg'};manifest.assets=[];
  for(const name of fs.readdirSync(levelDir).filter(n=>n.endsWith('.png')).sort()){const m=await sharp(path.join(levelDir,name)).metadata();manifest.assets.push({png:name,...(fs.existsSync(path.join(levelDir,name.replace('.png','.svg')))?{svg:name.replace('.png','.svg')}:{}),width:m.width,height:m.height,transparent:true});}
  fs.writeFileSync(path.join(levelDir,'manifest.json'),JSON.stringify(manifest,null,2)+'\n');
  console.log('Built '+sources.length+' unified original controls, compact SELECT LEVEL with the START border style, and '+manifest.assets.length+' transparent level assets.');

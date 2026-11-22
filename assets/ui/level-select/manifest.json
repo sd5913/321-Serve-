@@ -34,12 +34,6 @@
       "transparent": true
     },
     {
-      "png": "back-button.png",
-      "width": 627,
-      "height": 123,
-      "transparent": true
-    },
-    {
       "png": "dot-active.png",
       "svg": "dot-active.svg",
       "width": 24,
@@ -102,29 +96,10 @@
       "transparent": true
     },
     {
-      "png": "select-level-button.png",
-      "svg": "select-level-button.svg",
-      "width": 555,
-      "height": 135,
-      "transparent": true
-    },
-    {
       "png": "select-level.png",
       "svg": "select-level.svg",
       "width": 1124,
       "height": 150,
-      "transparent": true
-    },
-    {
-      "png": "settings.png",
-      "width": 103,
-      "height": 105,
-      "transparent": true
-    },
-    {
-      "png": "start-button.png",
-      "width": 555,
-      "height": 187,
       "transparent": true
     },
     {
@@ -155,5 +130,12 @@
       "height": 150,
       "transparent": true
     }
-  ]
+  ],
+  "sharedControls": {
+    "start": "../elements/buttons/unified/start.png",
+    "back": "../elements/buttons/unified/back.png",
+    "settings": "../elements/buttons/unified/settings-gear.png",
+    "selectLevel": "../elements/buttons/unified/select-level.png",
+    "selectLevelSvg": "../elements/buttons/unified/select-level.svg"
+  }
 }
