@@ -135,7 +135,6 @@ async function start() {
   if (!await prepareAudio()) return;
   studio.stopTimeline();
   await studio.ready;
-  await studio.waveformsReady;
   soundtrack.editor = studio;
   beginRound('demo', 0);
 }
@@ -146,7 +145,7 @@ function pause(){
 }
 async function resume(){
  if(state!=='paused'||!await prepareAudio())return;
- studio.stopTimeline();await studio.waveformsReady;
+ studio.stopTimeline();
  clockOrigin=audio.currentTime-pausedAt;state='playing';$('modal').hidden=true;canvas.focus();
 }
 function finish(){

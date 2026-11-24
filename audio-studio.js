@@ -237,7 +237,6 @@ class AudioStudio {
     this.savedDraft=this.currentDraft();
     this.historyDraft=this.currentDraft();
     this.render();
-    await this.waveformsReady;
     if (failed) this.message('部分已保存的音频无法读取，可以重新导入对应文件。');
   }
   async writeFile(kind, record) {
@@ -470,8 +469,10 @@ class AudioStudio {
   }
   async renderWaveforms() {
     const renderId = this.waveformRender = Symbol();
-    await Promise.all(this.baseTracks.map(async ([kind])=>{
-      if(this.files[kind] || this.isTrackDeleted(kind))return;
+    for(const [kind] of this.baseTracks){
+      if(this.waveformRender!==renderId || this.panel.hidden)break;
+      if(this.files[kind] || this.isTrackDeleted(kind))continue;
+      await new Promise(resolve=>setTimeout(resolve,0));
       const source=await this.synthBuffer(kind);
       if(this.waveformRender!==renderId)return;
       const track=this.panel.querySelector('.studio-track[data-kind="'+kind+'"]');
@@ -480,7 +481,7 @@ class AudioStudio {
         this.paintClip(clip,this.audioBuffer(kind) ?? source);
         if(!clip.querySelector('[data-trim-edge]'))clip.insertAdjacentHTML('beforeend',this.trimHandles(kind));
       }
-    }));
+    }
     if(this.waveformRender!==renderId)return;
     const kinds = new Set(Object.keys(this.project.drafts));
     if (this.draftKind) kinds.add(this.draftKind);
@@ -616,9 +617,9 @@ class AudioStudio {
     this.updateSelection();
     this.updateClipEditor();
     this.updatePreviewControls();
-    this.waveformsReady=this.renderWaveforms().then(()=>{
+    this.waveformsReady=wasOpen ? this.renderWaveforms().then(()=>{
       if(this.editTarget)this.updateClipEditor();
-    });
+    }) : Promise.resolve();
   }
   draftMarks(end) {
     let html='';
@@ -793,7 +794,7 @@ class AudioStudio {
     this.toggle.onclick=()=>{
       this.panel.hidden=!this.panel.hidden;
       this.toggle.setAttribute('aria-expanded',String(!this.panel.hidden));
-      if(!this.panel.hidden){this.pauseGame();this.panel.scrollIntoView({block:'start',behavior:'smooth'});}
+      if(!this.panel.hidden){this.pauseGame();this.render();this.panel.scrollIntoView({block:'start',behavior:'smooth'});}
       else this.stopTimeline();
     };
     this.panel.addEventListener('click',e=>{
