@@ -1,0 +1,270 @@
+{
+  "duration": 76.85224489795918,
+  "groups": [
+    {
+      "kind": "rice",
+      "seconds": 1.3,
+      "confidence": 0.741,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 3.0,
+      "confidence": 0.78,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 4.7,
+      "confidence": 0.666,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 7.0333,
+      "confidence": 0.748,
+      "reference": "捏到海绵"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 7.9,
+      "confidence": 0.701,
+      "reference": "拍走海绵"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 8.7333,
+      "confidence": 0.79,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 9.8,
+      "confidence": 0.777,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 10.8667,
+      "confidence": 0.778,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "triple",
+      "seconds": 12.0333,
+      "confidence": 0.809,
+      "reference": "三个饭团弹出+捏捏捏+拍"
+    },
+    {
+      "kind": "rice",
+      "seconds": 15.4333,
+      "confidence": 0.725,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 17.1333,
+      "confidence": 0.739,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 18.8333,
+      "confidence": 0.757,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 20.5332,
+      "confidence": 0.674,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 22.4667,
+      "confidence": 0.623,
+      "reference": "捏到海绵"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 23.3333,
+      "confidence": 0.62,
+      "reference": "捏到海绵"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 24.2,
+      "confidence": 0.633,
+      "reference": "捏到海绵"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 25.0666,
+      "confidence": 0.634,
+      "reference": "捏到海绵"
+    },
+    {
+      "kind": "triple",
+      "seconds": 25.8,
+      "confidence": 0.78,
+      "reference": "三个饭团弹出+捏捏捏+拍"
+    },
+    {
+      "kind": "rice",
+      "seconds": 29.2333,
+      "confidence": 0.77,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 30.9332,
+      "confidence": 0.752,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 32.8666,
+      "confidence": 0.872,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 33.9332,
+      "confidence": 0.874,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 34.9999,
+      "confidence": 0.898,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "rice",
+      "seconds": 36.0666,
+      "confidence": 0.776,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 37.7666,
+      "confidence": 0.772,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 39.4666,
+      "confidence": 0.767,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 41.1665,
+      "confidence": 0.714,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 42.8666,
+      "confidence": 0.775,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 44.5666,
+      "confidence": 0.729,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "triple",
+      "seconds": 46.3,
+      "confidence": 0.766,
+      "reference": "三个饭团弹出+捏捏捏+拍"
+    },
+    {
+      "kind": "rice",
+      "seconds": 49.6999,
+      "confidence": 0.721,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 51.4333,
+      "confidence": 0.74,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 53.1665,
+      "confidence": 0.718,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 54.8666,
+      "confidence": 0.685,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 56.6332,
+      "confidence": 0.801,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "bounce",
+      "seconds": 57.6999,
+      "confidence": 0.753,
+      "reference": "反弹+捏+拍"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 59.3332,
+      "confidence": 0.739,
+      "reference": "捏到海绵"
+    },
+    {
+      "kind": "sponge",
+      "seconds": 60.1999,
+      "confidence": 0.733,
+      "reference": "捏到海绵"
+    },
+    {
+      "kind": "triple",
+      "seconds": 61.2999,
+      "confidence": 0.815,
+      "reference": "三个饭团弹出+捏捏捏+拍"
+    },
+    {
+      "kind": "rice",
+      "seconds": 65.1665,
+      "confidence": 0.679,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 66.8665,
+      "confidence": 0.635,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 68.5665,
+      "confidence": 0.689,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "rice",
+      "seconds": 70.2666,
+      "confidence": 0.634,
+      "reference": "正常弹出+捏+扫"
+    },
+    {
+      "kind": "triple",
+      "seconds": 71.9998,
+      "confidence": 0.744,
+      "reference": "三个饭团弹出+捏捏捏+拍"
+    }
+  ],
+  "note": "Locations matched by normalized cross-correlation with supplied composite. Sponge remains D-only; reference squeeze replaced by interactive response."
+}

@@ -1,10 +1,10 @@
 'use strict';
 const $=id=>document.getElementById(id), canvas=$('canvas'),c=canvas.getContext('2d');
 let clockOrigin = 0;
-const perfectWindow = .24;
-const goodWindow = .4;
+const perfectWindow = .24 * BEAT;
+const goodWindow = .4 * BEAT;
 const SFX_VOLUME = .9;
-const INK='#142342',CREAM='#fffbed',RED='#ff583f',YELLOW='#ffe879',BPM=60,BEAT=60/BPM;
+const INK='#142342',CREAM='#fffbed',RED='#ff583f',YELLOW='#ffe879';
 const assets = {};
 const ui = 'assets/ui/elements/';
 const assetPaths = {
@@ -28,36 +28,41 @@ let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,
 let reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;$('motion').checked=reduce;
 const servings = [];
 const chart = [];
-const phrases = {
-  rice:   { length: 1, charge: .17, landing: 1/3, keys: [1/3, 2/3] },
-  bounce: { length: 2, charge: .87, landing: 1.6, keys: [1.6, 1.8] },
-  triple: { length: 1.5, charge: .23, landing: .5, keys: [.5, .75, 1, 1.25] },
-  sponge: { length: 1, charge: .24, landing: .5, keys: [.5] }
+// Seconds within each supplied phrase; beat coordinates are derived without quantizing.
+const phraseSeconds = {
+  rice:{charge:.60,landing:.94,keys:[1.04,1.50],cueKind:'cueRice'},
+  triple:{charge:.18,landing:1.70,launches:[.18,.65,1.18],keys:[1.84,2.2733,2.74,3.03],cueKind:'cueTriple'},
+  bounce:{charge:.015,landing:.55,bounces:[.07,.30],keys:[.61,.86],cueKind:'cueBounce'},
+  sponge:{charge:.02,landing:.35,keys:[.49],cueKind:'cueSponge'}
 };
-const pattern = ['rice','rice','rice','bounce','bounce','triple','triple','bounce','bounce','rice','rice','sponge'];
-let cursor = 4;
-for (let i = 0; i < 30; i++) {
-  const kind = pattern[i % pattern.length];
-  const phrase = phrases[kind];
-  const count = kind === 'triple' ? 3 : 1;
-  // One full empty beat follows ejection and every input, including the
-  // last input before the next batch begins.
-  const firstAction = phrase.landing + 1;
-  const length = firstAction + 2 * phrase.keys.length;
-  const group = { ...phrase, beat: cursor, kind, count, length };
+const phrases=Object.fromEntries(Object.entries(phraseSeconds).map(([kind,p])=>[kind,{
+  ...p,charge:p.charge/BEAT,landing:p.landing/BEAT,keys:p.keys.map(t=>t/BEAT),
+  launches:p.launches?.map(t=>t/BEAT),bounces:p.bounces?.map(t=>t/BEAT),length:(p.keys.at(-1)+.25)/BEAT
+}]));
+for(let i=0;i<RICE_SCORE.groups.length;i++){
+  const entry=RICE_SCORE.groups[i],phrase=phrases[entry.kind];
+  const next=RICE_SCORE.groups[i+1]?.seconds ?? RICE_SCORE.duration;
+  const group={...phrase,beat:entry.seconds/BEAT,kind:entry.kind,count:entry.kind==='triple'?3:1,
+    length:(next-entry.seconds)/BEAT};
   servings.push(group);
-  phrase.keys.forEach((offset, slot) => {
-    chart.push({beat: cursor + firstAction + slot * 2, group, slot,
-      action: slot === phrase.keys.length - 1 ? 'd' : 'a'});
-  });
-  cursor += length;
+  phrase.keys.forEach((key,slot)=>chart.push({beat:group.beat+key,group,slot,
+    action:slot===phrase.keys.length-1?'d':'a'}));
 }
-const END = cursor * BEAT + .8;
-const time = () => state === 'playing' ? performance.now()/1000 - clockOrigin : pausedAt;
+const levelServings=servings.slice(),levelChart=chart.slice();
+const levelEnd=RICE_SCORE.duration;
+let END = levelEnd;
+const lessons = [
+  {kind:'rice', title:'正常出饭', hint:'听机器运转；A 捏成形，D 向下扫走。'},
+  {kind:'triple', title:'故障连出', hint:'听红灯与烟声；从右到左按三次 A，再按 D。'},
+  {kind:'bounce', title:'故障反弹', hint:'听卡顿机器与反弹声；饭落稳后 A 捏、D 扫。'},
+  {kind:'sponge', title:'海绵', hint:'听挤压声与“吧唧”；只按 D 拍走，A 捏住是错误分支。'}
+];
+let lessonMode = 'level', lessonIndex = -1;
+const time = () => state === 'playing' ? audio.currentTime - clockOrigin : pausedAt;
 let startingPlayback = false;
 let gesture = null;
 let soundtrack;
-function tone(freq,at,len=.08,type='sine',vol=.15,end=freq){if(!audio)return;const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,at);o.frequency.exponentialRampToValueAtTime(Math.max(1,end),at+len);g.gain.setValueAtTime(.001,at);g.gain.linearRampToValueAtTime(vol,at+.004);g.gain.exponentialRampToValueAtTime(.001,at+len);o.connect(g);g.connect(master);o.start(at);o.stop(at+len+.02);}
+let studio;
 async function prepareAudio() {
   if (startingPlayback) return false;
   startingPlayback = true;
@@ -73,10 +78,53 @@ async function prepareAudio() {
   }
 }
 
+function actionSound(kind,slot,action) {
+  if(kind==='sponge')return action==='a'?'spongePinch':'spongeSlap';
+  if(kind==='bounce')return action==='a'?'bouncePinch':'bounceSlap';
+  if(kind==='triple' && action==='a')return 'triplePinch'+(slot+1);
+  return action==='a'?'pinch':'slap';
+}
+function beginRound(mode, index = -1) {
+  const continuing=mode!=='level' && lessonMode!=='level' && lessonIndex===index;
+  const musicOffset=continuing ? (soundtrack.musicOffset ?? 0)+time() : 0;
+  lessonMode = mode;
+  lessonIndex = index;
+  if (mode === 'level') {
+    servings.splice(0, servings.length, ...levelServings);
+    chart.splice(0, chart.length, ...levelChart);
+    END = levelEnd;
+  } else {
+    const kind = lessons[index].kind, phrase = phrases[kind];
+    const group = {...phrase, beat:2, kind, count:kind==='triple'?3:1,
+      length:phrase.length+1};
+    servings.splice(0, servings.length, group);
+    chart.splice(0, chart.length, ...phrase.keys.map((_, slot) => ({
+      beat:group.beat+phrase.keys[slot], group, slot,
+      action:slot===phrase.keys.length-1?'d':'a'
+    })));
+    END = (group.beat+group.length)*BEAT+.3;
+  }
+  pausedAt = 0;
+  soundtrack.reset(servings, chart, mode === 'level');
+  soundtrack.musicOffset=musicOffset;
+  notes = chart.map((event, i) => ({...event, t:event.beat*BEAT, i, result:null}));
+  combo = best = score = perfect = good = misses = strays = 0;
+  particles = []; fx = null; gesture = null;
+  for (const group of servings) {delete group.exit; group.pinches=[];}
+  clockOrigin = audio.currentTime;
+  state = 'playing';
+  $('overlay').hidden = true; canvas.inert = false; $('modal').hidden = true;
+  $('pause').disabled = false; $('pause').textContent = 'Ⅱ';
+  $('status').textContent = mode === 'level'
+    ? '音乐关卡：跟随音乐捏饭、拍走；海绵只按 D，A 是误捏。'
+    : '教学 '+(index+1)+'/4 · '+(mode==='demo'?'先看示范：':'轮到你：')+lessons[index].hint+' 短音响起时按键，前后 0.4 拍内算跟上。';
+  canvas.focus();
+  if (document.hidden) pause();
+}
 async function start() {
   if (state === 'loading' || state === 'playing' || startingPlayback) return;
   if (!audio) {
-    audio = new (window.AudioContext || window.webkitAudioContext)();
+    audio = new (window.AudioContext || window.webkitAudioContext)({latencyHint:'interactive'});
     master = audio.createGain();
     master.gain.value = muted ? 0 : SFX_VOLUME;
     master.connect(audio.destination);
@@ -85,29 +133,18 @@ async function start() {
 
 
   if (!await prepareAudio()) return;
-  pausedAt = 0;
-  soundtrack.reset(servings);
-  notes = chart.map((event, i) => ({ ...event, t: event.beat * BEAT, i, result: null }));
-  combo = best = score = perfect = good = misses = strays = 0;
-  particles = [];
-  fx = null;
-  gesture = null;
-  for (const group of servings) { delete group.exit; group.pinches = []; }
-  clockOrigin = performance.now()/1000 - pausedAt;
-  state = 'playing';
-  $('overlay').hidden = true;
-  canvas.inert = false;
-  $('modal').hidden = true;
-  $('pause').disabled = false;
-  $('pause').textContent = 'Ⅱ';
-  $('status').textContent = 'A 捏饭，D 扫走；海绵按 A 甩走或 D 扫走。右下圆环收拢时出手。';
-  canvas.focus();
-  if (document.hidden) pause();
+  studio.stopTimeline();
+  await studio.ready;
+  await studio.waveformsReady;
+  soundtrack.editor = studio;
+  beginRound('demo', 0);
 }
 function pause(){if(state!=='playing')return;pausedAt=time();soundtrack.stop(pausedAt);state='paused';audio.suspend();$('modalLabel').textContent='TAKE A BREATHER';$('modalTitle').textContent='休息一拍';$('modalBody').textContent='饭团也在等你。准备好了就继续。';$('resume').hidden=false;$('resume').textContent='继续开饭';$('modal').hidden=false;$('pause').textContent='▶';$('resume').focus();}
 async function resume() {
   if (state !== 'paused' || !await prepareAudio()) return;
-  clockOrigin = performance.now()/1000 - pausedAt;
+  studio.stopTimeline();
+  await studio.waveformsReady;
+  clockOrigin = audio.currentTime - pausedAt;
   state = 'playing';
   $('modal').hidden = true;
   $('pause').textContent = 'Ⅱ';
@@ -115,11 +152,45 @@ async function resume() {
   if (document.hidden) pause();
 }
 function finish(){soundtrack.stop(END);state='result';pausedAt=END;audio.suspend();const acc=Math.round((perfect+good*.7)/(notes.length+strays)*100);$('modalLabel').textContent='ORDER COMPLETE / 关卡完成';$('modalTitle').textContent=acc>=85?'NICE SQUISH!':'再来一份？';$('modalBody').textContent='准确率 '+acc+'%  ·  最高连击 '+best+'\nPERFECT '+perfect+'  /  GOOD '+good+'  /  MISS '+misses+'\n得分 '+score.toLocaleString();$('resume').hidden=true;$('retry').textContent='再捏一局';$('modal').hidden=false;$('pause').disabled=true;$('retry').focus();$('status').textContent='关卡完成，查看本次成绩。';}
+function demonstrate(t) {
+  for (const n of notes) {
+    if (n.result || t < n.t) continue;
+    const group = n.group;
+    if (n.action === 'a' && group.kind !== 'sponge') {
+      group.pinches.push({t:n.t, clean:true});
+    } else {
+      group.exit = {t:n.t, action:n.action, inputAt:n.t};
+    }
+    gesture = {action:n.action, t:n.t, note:n};
+    if (n.action === 'd') {
+      const kind=actionSound(group.kind,n.slot,'d');
+      for (let i=0;i<1;i++) soundtrack.add(n.t+studio.hitOffset(kind,0)+i*.045,kind,1+i*.05);
+    } else {
+      const kind=actionSound(group.kind,n.slot,'a');
+      soundtrack.add(n.t+studio.hitOffset(kind,0),kind);
+    }
+    n.result = 'demo';
+  }
+}
+function advanceTutorial() {
+  if (lessonMode === 'demo') {
+    beginRound('practice', lessonIndex);
+    return;
+  }
+  const passed = misses === 0 && strays === 0 &&
+    notes.every(n => n.result === 'perfect' || n.result === 'good');
+  if (!passed) {
+    beginRound('practice', lessonIndex);
+    $('status').textContent = '再练一次 · '+lessons[lessonIndex].hint;
+  } else if (lessonIndex < lessons.length-1) {
+    beginRound('demo', lessonIndex+1);
+  } else beginRound('level');
+}
 function hit(action = 'a') {
-  if (state !== 'playing') return;
+  if (state !== 'playing' || lessonMode === 'demo') return;
   const t = time(), beat = t / BEAT, judge = t - offset / 1000;
   gesture = {action, t};
-  if (beat < 4) return;
+  if (beat < (lessonMode === 'level' ? 4 : 2)) return;
   const current = servings.find(g => beat >= g.beat && beat < g.beat + g.length);
   const settled = current && beat >= current.beat + current.landing;
   const active = settled && !current.exit;
@@ -131,16 +202,20 @@ function hit(action = 'a') {
     current.pinches.push({t, clean: Math.abs(n.t - judge) <= goodWindow});
   } else if (active && (action === 'd' || current.kind === 'sponge') &&
              (current.count === 1 || slot === current.count)) {
-    n = notes.find(note => note.group === current && note.action === 'd');
+    n = notes.find(note => note.group === current && (current.kind === 'sponge' || note.action === 'd'));
     current.exit = {t: t + (action === 'a' ? .25 : 0), action, inputAt: t};
   }
   gesture.note = n;
-  if (n) {
-    const sponge = current.kind === 'sponge';
-    if (action === 'a') soundtrack.add(t+.06, sponge ? 'spongePinch' : 'pinch');
-    else for (let i=0;i<current.count;i++) soundtrack.add(t+.13+i*.045, sponge ? 'spongeSlap' : 'slap',1+i*.05);
+  if (n && (lessonMode !== 'level' || action !== n.action || !studio.isClipDeleted('hit' + n.i))) {
+    if (action === 'a') {
+      const kind=actionSound(current.kind,n.slot,'a');
+      soundtrack.playInput(kind);
+    } else {
+      const kind=actionSound(current.kind,n.slot,'d');
+      soundtrack.playInput(kind);
+    }
   }
-  if (n && !n.result && Math.abs(n.t-judge) <= goodWindow) {
+  if (n && !n.result && action === n.action && Math.abs(n.t-judge) <= goodWindow) {
     const delta = judge - n.t;
     n.result = Math.abs(delta) <= perfectWindow ? 'perfect' : 'good';
     n.hitAt = t;
@@ -150,6 +225,7 @@ function hit(action = 'a') {
     score += n.result === 'perfect' ? 1000 + Math.min(combo,20)*25 : 600;
     feedback(n.result,t,n,delta);
   } else {
+    if (n && !n.result) n.result = 'wrong';
     strays++; combo=0;
     feedback('wrong',t,n,0);
   }
@@ -167,7 +243,7 @@ function feedback(kind, t, n, delta) {
     }
     if (combo % 8 === 0) $('status').textContent = combo + ' 连击！饭团很开心。';
   } else {
-    tone(110, audio.currentTime, .18, 'sawtooth', .12, 55);
+    soundtrack.effect('mistake', audio.currentTime);
     $('status').textContent = kind === 'miss'
       ? '漏拍了！饭团生气了，跟上下一拍。'
       : '拍子偏了！看清物品，按 A 捏饭或 D 扫走。';
@@ -256,7 +332,7 @@ function draw(t) {
   const beat = playing ? t / BEAT : -10;
   const group = servings.find(g => beat >= g.beat && beat < g.beat + g.length);
   const local = group ? beat - group.beat : 0;
-  const fault = group && group.kind !== 'rice';
+  const fault = group && (group.kind === 'triple' || group.kind === 'bounce');
   const charging = group && local < group.charge;
   const pressure = charging ? easeIn(local / group.charge) : 0;
   const releaseAge = group ? local - group.charge : -1;
@@ -290,14 +366,14 @@ function draw(t) {
       let y = 450-65*Math.sin(Math.PI*flight);
       let squash = 0;
       if (batch.count === 3) {
-        const launch = batch.charge + i * ((.5-batch.charge)/3);
+        const launch = batch.launches?.[i] ?? batch.charge + i * ((.5-batch.charge)/3);
         if (age < launch) continue;
-        const travelTime = (.5-batch.charge)/3;
+        const travelTime = batch.launches ? .20/BEAT : (.5-batch.charge)/3;
         const u = clamp01((age-launch)/travelTime);
         x = 485 + (target-485)*easeOut(u);
         y = 450 - 35*Math.sin(Math.PI*u);
         for (let k=Math.max(1,i); k<3; k++) {
-          const impact = age - (batch.charge+(k+1)*travelTime);
+          const impact = age - ((batch.launches?.[k] ?? batch.charge+k*travelTime)+travelTime);
           if (impact >= 0 && impact < .32) {
             const pulse = Math.exp(-13*impact);
             x += (i===k ? -22 : 30)*Math.sin(24*impact)*pulse;
@@ -307,7 +383,8 @@ function draw(t) {
       }
       if (batch.kind === 'bounce') {
         const points = [[485,450],[850,375],[1170,125],[1780,380],[target,450]];
-        const times = [batch.charge,1,1.20,1.40,batch.landing];
+        const impacts=batch.bounces ?? [1.2,1.4];
+        const times = [batch.charge,(batch.charge+impacts[0])/2,...impacts,batch.landing];
         const seg = times.slice(1).findIndex(end => age < end);
         if (seg >= 0) {
           const u = clamp01((age-times[seg])/(times[seg+1]-times[seg]));
@@ -316,8 +393,8 @@ function draw(t) {
           x = points[seg][0]+(points[seg+1][0]-points[seg][0])*f;
           y = points[seg][1]+(points[seg+1][1]-points[seg][1])*f-35*Math.sin(Math.PI*u);
         }
-        for (const [at,axis] of [[1.2,1],[1.4,-1],[1.6,1]]) {
-          if (at < 1.6) impactFlash(at===1.2?1170:1850,at===1.2?55:380,age-at,.3,120);
+        for (const [at,axis] of [[impacts[0],1],[impacts[1],-1],[batch.landing,1]]) {
+          if (at < batch.landing) impactFlash(at===impacts[0]?1170:1850,at===impacts[0]?55:380,age-at,.3,120);
           const dt = age-at;
           if (dt>=-.045 && dt<.22) squash += axis*.44*(dt<0 ? easeIn(1+dt/.045) : Math.cos(dt*36)*Math.exp(-dt*18));
         }
@@ -357,7 +434,7 @@ function draw(t) {
   c.restore();
   if (fault) {
     ellipse(machineX-89.5,machineY-203.5,21,21,'#ff2020');
-    drawSmoke(local, group.charge, machineX+285, machineY-8);
+    if (group.kind === 'triple') drawSmoke(local, group.charge, machineX+285, machineY-8);
   }
   const age = gesture ? t - gesture.t : 99;
   if (age >= 0 && age < .48) {
@@ -383,28 +460,58 @@ function draw(t) {
     c.globalAlpha = 1;
   }
   c.restore();
+  if (playing && lessonMode !== 'level' && t < 1.7) {
+    rr(329, 75, 542, 102, 18, 'rgba(255,251,237,.94)', INK);
+    txt('教学 '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title,600,116,24,INK,'center');
+    txt(lessonMode==='demo'?'先看一遍，记住声音与动作':'轮到你：听短音，在节奏点按键',600,151,19,INK,'center');
+  }
   const next = notes.find(n => !n.result);
   const waiting = next && next.t - t > .45 && !charging;
-  const instruction = waiting ? '准备 · 等下一拍' : charging ? (fault ? '红灯蓄力 · 等待出饭' : '蓄力出饭') : next?.action === 'd' ? 'D · 向下扫走' : 'A · 捏饭团';
+  const instruction = waiting ? '准备 · 听下一拍' : charging ? (fault ? '红灯蓄力 · 等待出饭' : '蓄力出饭') : next?.action === 'd' ? 'D · 向下扫走' : 'A · 捏饭团';
   txt(playing ? instruction : 'A 捏饭 · D 手刀 · 海绵直接拍走', 600, 645, 22, INK, 'center');
   if (playing) {
     txt(combo + ' COMBO', 35, 645, 18);
     const phase = group ? {rice:'正常出饭',bounce:'蓄力弹饭',triple:'连续三份',sponge:'小心海绵'}[group.kind] : '准备下一句';
-    $('phase').textContent = 'RICE RICE BABY · ' + phase;
+    $('phase').textContent = lessonMode === 'level' ? 'RICE RICE BABY · '+phase
+      : '教学 '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title+' · '+(lessonMode==='demo'?'看示范':'你来操作');
     if (next) {
       const distance = (next.t - t) / BEAT;
-      c.strokeStyle = '#142342'; c.lineWidth = 3;
-      c.beginPath(); c.arc(1125, 642, 17 + Math.max(0, Math.min(2, distance)) * 12, 0, Math.PI * 2); c.stroke();
+      const onBeat = Math.abs(distance) <= .14;
+      c.strokeStyle = onBeat ? RED : INK; c.lineWidth = onBeat ? 6 : 3;
+      c.beginPath(); c.arc(1040, 150, 20 + Math.max(0, Math.min(2, distance)) * 11, 0, Math.PI * 2); c.stroke();
+      txt(next.action.toUpperCase(),1040,158,24,onBeat?RED:INK,'center');
+      txt(onBeat?'现在按！':'圆环收拢时按',1040,210,16,onBeat?RED:INK,'center');
     }
-    if (beat < 4) {
-      const count = 3 - Math.floor(t / BEAT);
+    if (beat < (lessonMode === 'level' ? 4 : 2)) {
+      const count = (lessonMode === 'level' ? 3 : 2) - Math.floor(t / BEAT);
       if (count > 0) centeredArt(count, 300, 200, 180);
       else txt('GO!',600,330,90,INK,'center');
     }
   }
   drawFeedback(t, 100);
 }
-function loop(ms){requestAnimationFrame(loop);const t=state==='ready'||state==='loading'?ms/1000:time();if(state==='playing'){soundtrack.tick(t);for(const n of notes){if(!n.result&&t-offset/1000>n.t+goodWindow){n.result='miss';misses++;combo=0;feedback('miss',t,n,0);}}if(t>=END){finish();} $('score').textContent=String(score).padStart(6,'0');$('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';}if(state!=='paused'&&state!=='result')draw(t);lastFrame=ms;}
+function loop(ms){
+  requestAnimationFrame(loop);
+  let t=state==='ready'||state==='loading'?ms/1000:time();
+  if(state==='playing'){
+    if (lessonMode === 'demo') demonstrate(t);
+    soundtrack.tick(t);
+    if (lessonMode !== 'demo') for(const n of notes){
+      if(!n.result && t-offset/1000>n.t+goodWindow){
+        const visible = !n.group.exit && t < (n.group.beat+n.group.length)*BEAT;
+        n.result = visible ? 'miss' : 'skipped';
+        // Once an item has left the table, this note cannot be missed again.
+        if (visible) {misses++; combo=0; feedback('miss',t,n,0);}
+      }
+    }
+    if(t>=END){if (lessonMode==='level') finish(); else {advanceTutorial(); t=time();}}
+    $('score').textContent=String(score).padStart(6,'0');
+    $('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';
+  }
+  if (lessonMode === 'level' && state === 'playing') studio?.updatePlayhead(t / BEAT);
+  if(state!=='paused'&&state!=='result')draw(t);
+  lastFrame=ms;
+}
 $('start').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;$('pause').onclick=()=>state==='paused'?resume():pause();
 $('sound').onclick=()=>{muted=!muted;if(master)master.gain.value=muted?0:SFX_VOLUME;$('sound').textContent='声音 '+(muted?'OFF':'ON');$('sound').setAttribute('aria-pressed',String(muted));};
 $('full').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.querySelector('.game').requestFullscreen().catch(()=>{$('status').textContent='此浏览器不支持全屏，可使用浏览器缩放。';});};
@@ -421,5 +528,6 @@ for (const button of settingsButtons) {
     }
   };
 }$('offset').oninput=e=>{offset=Number(e.target.value);$('offsetLabel').textContent=offset+' ms';};$('motion').onchange=e=>{reduce=e.target.checked;};
-canvas.tabIndex=0;canvas.onpointerdown=e=>{if(e.button!==0)return;const bounds=canvas.getBoundingClientRect();hit(e.clientX-bounds.left>bounds.width/2?'d':'a');};document.addEventListener('keydown',e=>{if(e.target.matches('input'))return;if(['KeyA','KeyD','Space'].includes(e.code)&&!e.repeat){if(e.code==='Space' && e.target.matches('button'))return;e.preventDefault();if(state==='ready')start();else hit(e.code === 'KeyD' ? 'd' : 'a');}if(e.code==='Escape'){e.preventDefault();state==='paused'?resume():pause();}});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+canvas.tabIndex=0;canvas.onpointerdown=e=>{if(e.button!==0)return;const bounds=canvas.getBoundingClientRect();hit(e.clientX-bounds.left>bounds.width/2?'d':'a');};document.addEventListener('keydown',e=>{if(e.target.matches('input')||e.target.closest('#audioStudio'))return;if(['KeyA','KeyD','Space'].includes(e.code)&&!e.repeat){if(e.code==='Space' && e.target.matches('button'))return;e.preventDefault();if(state==='ready')start();else hit(e.code === 'KeyD' ? 'd' : 'a');}if(e.code==='Escape'){e.preventDefault();state==='paused'?resume():pause();}});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+studio = new AudioStudio({groups:levelServings,chart:levelChart,getAudio:()=>audio,getSoundtrack:()=>soundtrack,pauseGame:pause});
 Promise.all(Object.entries(assetPaths).map(([n,path])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{assets[n]=img;resolve();};img.onerror=()=>reject(new Error(n));img.src=path;}))).then(()=>{state='ready';$('start').disabled=false;}).catch(e=>{$('status').textContent='素材未能加载：'+e.message+'。请保持 assets 文件夹与页面放在一起。';});requestAnimationFrame(loop);
