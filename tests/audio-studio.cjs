@@ -293,7 +293,7 @@ function wav() {
       await page.locator('#audioStudio').screenshot({path:process.env.STUDIO_SCREENSHOT});
     }
 
-    await page.click('#start');
+    await page.click('#start');await page.click('#playLevel');await page.click('#gotIt');
     await page.waitForFunction(()=>state==='playing');
     await page.waitForTimeout(120);
     const playback=await page.evaluate(()=>{

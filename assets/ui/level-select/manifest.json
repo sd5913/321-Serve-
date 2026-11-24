@@ -1,0 +1,141 @@
+{
+  "levels": [
+    {
+      "name": "Rice Rice Baby",
+      "color": "#87DCB0"
+    },
+    {
+      "name": "Catch Me If You Can",
+      "color": "#357CFF"
+    },
+    {
+      "name": "Sashimi, Baby!",
+      "color": "#FF786E"
+    },
+    {
+      "name": "Grill Me Maybe",
+      "color": "#FDE880"
+    }
+  ],
+  "cream": "#FCEBD1",
+  "assets": [
+    {
+      "png": "arrow-left.png",
+      "svg": "arrow-left.svg",
+      "width": 90,
+      "height": 95,
+      "transparent": true
+    },
+    {
+      "png": "arrow-right.png",
+      "svg": "arrow-right.svg",
+      "width": 90,
+      "height": 95,
+      "transparent": true
+    },
+    {
+      "png": "dot-active.png",
+      "svg": "dot-active.svg",
+      "width": 24,
+      "height": 24,
+      "transparent": true
+    },
+    {
+      "png": "dot-inactive.png",
+      "svg": "dot-inactive.svg",
+      "width": 24,
+      "height": 24,
+      "transparent": true
+    },
+    {
+      "png": "highlight-left.png",
+      "svg": "highlight-left.svg",
+      "width": 100,
+      "height": 155,
+      "transparent": true
+    },
+    {
+      "png": "highlight-right.png",
+      "svg": "highlight-right.svg",
+      "width": 100,
+      "height": 155,
+      "transparent": true
+    },
+    {
+      "png": "level-1.png",
+      "svg": "level-1.svg",
+      "width": 1024,
+      "height": 1024,
+      "transparent": true
+    },
+    {
+      "png": "level-2.png",
+      "svg": "level-2.svg",
+      "width": 1024,
+      "height": 1024,
+      "transparent": true
+    },
+    {
+      "png": "level-3.png",
+      "svg": "level-3.svg",
+      "width": 1024,
+      "height": 1024,
+      "transparent": true
+    },
+    {
+      "png": "level-4.png",
+      "svg": "level-4.svg",
+      "width": 1024,
+      "height": 1024,
+      "transparent": true
+    },
+    {
+      "png": "logo.png",
+      "width": 824,
+      "height": 475,
+      "transparent": true
+    },
+    {
+      "png": "select-level.png",
+      "svg": "select-level.svg",
+      "width": 1124,
+      "height": 150,
+      "transparent": true
+    },
+    {
+      "png": "title-1.png",
+      "svg": "title-1.svg",
+      "width": 1216,
+      "height": 150,
+      "transparent": true
+    },
+    {
+      "png": "title-2.png",
+      "svg": "title-2.svg",
+      "width": 1584,
+      "height": 150,
+      "transparent": true
+    },
+    {
+      "png": "title-3.png",
+      "svg": "title-3.svg",
+      "width": 1171,
+      "height": 150,
+      "transparent": true
+    },
+    {
+      "png": "title-4.png",
+      "svg": "title-4.svg",
+      "width": 1257,
+      "height": 150,
+      "transparent": true
+    }
+  ],
+  "sharedControls": {
+    "start": "../elements/buttons/unified/start.png",
+    "back": "../elements/buttons/unified/back.png",
+    "settings": "../elements/buttons/unified/settings-gear.png",
+    "selectLevel": "../elements/buttons/unified/select-level.png",
+    "selectLevelSvg": "../elements/buttons/unified/select-level.svg"
+  }
+}

@@ -8,18 +8,18 @@ const INK='#142342',CREAM='#fffbed',RED='#ff583f',YELLOW='#ffe879';
 const assets = {};
 const ui = 'assets/ui/elements/';
 const assetPaths = {
-  table: 'assets/level2/table.png',
-  machine: 'assets/level2/imgMachineNormal1.png',
-  loose: 'assets/level2/imgRiceBefore1.png',
-  shaped: 'assets/level2/imgRiceShaped1.png',
-  inaccurate: 'assets/level2/imgRiceInaccurate1.png',
-  open: 'assets/level2/imgImage1.png',
-  pinch: 'assets/level2/imgImage4.png',
-  chop: 'assets/level2/imgImage5.png',
-  smoke: 'assets/level2/imgBlackSmoke2.png',
-  sponge: 'assets/level2/imgSpongeNormal1.png',
-  squeezed: 'assets/level2/imgSpongeSqueezed1.png',
-  drops: 'assets/level2/imgWaterDrops2.png',
+  table: 'assets/level1/table.png',
+  machine: 'assets/level1/imgMachineNormal1.png',
+  loose: 'assets/level1/imgRiceBefore1.png',
+  shaped: 'assets/level1/imgRiceShaped1.png',
+  inaccurate: 'assets/level1/imgRiceInaccurate1.png',
+  open: 'assets/level1/imgImage1.png',
+  pinch: 'assets/level1/imgImage4.png',
+  chop: 'assets/level1/imgImage5.png',
+  smoke: 'assets/level1/imgBlackSmoke2.png',
+  sponge: 'assets/level1/imgSpongeNormal1.png',
+  squeezed: 'assets/level1/imgSpongeSqueezed1.png',
+  drops: 'assets/level1/imgWaterDrops2.png',
   onBeat: ui + 'feedback/on-beat.png',
   miss: ui + 'feedback/miss.png',
   3: ui + 'countdown/3.png', 2: ui + 'countdown/2.png', 1: ui + 'countdown/1.png'
@@ -113,8 +113,8 @@ function beginRound(mode, index = -1) {
   for (const group of servings) {delete group.exit; group.pinches=[];}
   clockOrigin = audio.currentTime;
   state = 'playing';
-  $('overlay').hidden = true; canvas.inert = false; $('modal').hidden = true;
-  $('pause').disabled = false; $('pause').textContent = 'Ⅱ';
+  showGameplay(); canvas.inert = false; $('modal').hidden = true;
+  $('pause').disabled = false; $('pause').setAttribute('aria-label','Pause game');
   $('status').textContent = mode === 'level'
     ? '音乐关卡：跟随音乐捏饭、拍走；海绵只按 D，A 是误捏。'
     : '教学 '+(index+1)+'/4 · '+(mode==='demo'?'先看示范：':'轮到你：')+lessons[index].hint+' 短音响起时按键，前后 0.4 拍内算跟上。';
@@ -128,7 +128,7 @@ async function start() {
     master = audio.createGain();
     master.gain.value = muted ? 0 : SFX_VOLUME;
     master.connect(audio.destination);
-    soundtrack = new KitchenSoundtrack(audio, master);
+    soundtrack = new KitchenSoundtrack(audio, master);bindUIAudio(soundtrack,audio,master);
   }
 
 
@@ -139,19 +139,26 @@ async function start() {
   soundtrack.editor = studio;
   beginRound('demo', 0);
 }
-function pause(){if(state!=='playing')return;pausedAt=time();soundtrack.stop(pausedAt);state='paused';audio.suspend();$('modalLabel').textContent='TAKE A BREATHER';$('modalTitle').textContent='休息一拍';$('modalBody').textContent='饭团也在等你。准备好了就继续。';$('resume').hidden=false;$('resume').textContent='继续开饭';$('modal').hidden=false;$('pause').textContent='▶';$('resume').focus();}
-async function resume() {
-  if (state !== 'paused' || !await prepareAudio()) return;
-  studio.stopTimeline();
-  await studio.waveformsReady;
-  clockOrigin = audio.currentTime - pausedAt;
-  state = 'playing';
-  $('modal').hidden = true;
-  $('pause').textContent = 'Ⅱ';
-  canvas.focus();
-  if (document.hidden) pause();
+function pause(){
+ if(state!=='playing')return;
+ pausedAt=time();soundtrack.stop(pausedAt);state='paused';audio.suspend();
+ $('modal').hidden=false;$('resume').focus();
 }
-function finish(){soundtrack.stop(END);state='result';pausedAt=END;audio.suspend();const acc=Math.round((perfect+good*.7)/(notes.length+strays)*100);$('modalLabel').textContent='ORDER COMPLETE / 关卡完成';$('modalTitle').textContent=acc>=85?'NICE SQUISH!':'再来一份？';$('modalBody').textContent='准确率 '+acc+'%  ·  最高连击 '+best+'\nPERFECT '+perfect+'  /  GOOD '+good+'  /  MISS '+misses+'\n得分 '+score.toLocaleString();$('resume').hidden=true;$('retry').textContent='再捏一局';$('modal').hidden=false;$('pause').disabled=true;$('retry').focus();$('status').textContent='关卡完成，查看本次成绩。';}
+async function resume(){
+ if(state!=='paused'||!await prepareAudio())return;
+ studio.stopTimeline();await studio.waveformsReady;
+ clockOrigin=audio.currentTime-pausedAt;state='playing';$('modal').hidden=true;canvas.focus();
+}
+function finish(){
+ soundtrack.stop(END);state='result';pausedAt=END;audio.suspend();
+ const acc=Math.round((perfect+good*.7)/(notes.length+strays)*100);
+ for(const id of ['modal','settings','quitDialog','beatHud','pause','gameInfo','progressTrack'])$(id).hidden=true;
+ $('results').hidden=false;
+ $('accuracy').src=ui+'result/percentages/'+String(acc).padStart(3,'0')+'.png';
+ $('accuracy').alt=acc+'%';$('accuracy').setAttribute('aria-label',acc+' percent accuracy');
+ $('resultStats').textContent='PERFECT '+perfect+' / GOOD '+good+' / MISS '+misses+'\nBEST COMBO '+best+' / SCORE '+score.toLocaleString();
+ $('resultRetry').focus();$('status').textContent='Order complete.';
+}
 function demonstrate(t) {
   for (const n of notes) {
     if (n.result || t < n.t) continue;
@@ -190,7 +197,7 @@ function hit(action = 'a') {
   if (state !== 'playing' || lessonMode === 'demo') return;
   const t = time(), beat = t / BEAT, judge = t - offset / 1000;
   gesture = {action, t};
-  if (beat < (lessonMode === 'level' ? 4 : 2)) return;
+  if (beat < (lessonMode === 'level' ? 0 : 2)) return;
   const current = servings.find(g => beat >= g.beat && beat < g.beat + g.length);
   const settled = current && beat >= current.beat + current.landing;
   const active = settled && !current.exit;
@@ -322,7 +329,9 @@ function drawSmoke(age,charge,outletX,outletY) {
   }
 }
 function draw(t) {
-  c.clearRect(0, 0, 1200, 675);
+  const scale=canvas.height/675;
+  c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
+  c.clearRect(0,0,1200,675);
   c.save();
   c.translate(0, 61);
   c.scale(1200 / 1950, 1200 / 1950);
@@ -482,7 +491,7 @@ function draw(t) {
       txt(next.action.toUpperCase(),1040,158,24,onBeat?RED:INK,'center');
       txt(onBeat?'现在按！':'圆环收拢时按',1040,210,16,onBeat?RED:INK,'center');
     }
-    if (beat < (lessonMode === 'level' ? 4 : 2)) {
+    if (beat < (lessonMode === 'level' ? 0 : 2)) {
       const count = (lessonMode === 'level' ? 3 : 2) - Math.floor(t / BEAT);
       if (count > 0) centeredArt(count, 300, 200, 180);
       else txt('GO!',600,330,90,INK,'center');
@@ -508,26 +517,34 @@ function loop(ms){
     $('score').textContent=String(score).padStart(6,'0');
     $('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';
   }
+  if (state === 'playing')updateHUD(t);
   if (lessonMode === 'level' && state === 'playing') studio?.updatePlayhead(t / BEAT);
   if(state!=='paused'&&state!=='result')draw(t);
   lastFrame=ms;
 }
-$('start').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;$('pause').onclick=()=>state==='paused'?resume():pause();
-$('sound').onclick=()=>{muted=!muted;if(master)master.gain.value=muted?0:SFX_VOLUME;$('sound').textContent='声音 '+(muted?'OFF':'ON');$('sound').setAttribute('aria-pressed',String(muted));};
-$('full').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.querySelector('.game').requestFullscreen().catch(()=>{$('status').textContent='此浏览器不支持全屏，可使用浏览器缩放。';});};
-const settingsButtons = [$('settingsToggle'), $('startSettings')];
-for (const button of settingsButtons) {
-  button.onclick = () => {
-    const settings = $('settings');
-    settings.hidden = !settings.hidden;
-    for (const toggle of settingsButtons) {
-      toggle.setAttribute('aria-expanded', String(!settings.hidden));
-    }
-    if (button.id === 'startSettings' && !settings.hidden) {
-      $('offset').focus();
-    }
-  };
-}$('offset').oninput=e=>{offset=Number(e.target.value);$('offsetLabel').textContent=offset+' ms';};$('motion').onchange=e=>{reduce=e.target.checked;};
-canvas.tabIndex=0;canvas.onpointerdown=e=>{if(e.button!==0)return;const bounds=canvas.getBoundingClientRect();hit(e.clientX-bounds.left>bounds.width/2?'d':'a');};document.addEventListener('keydown',e=>{if(e.target.matches('input')||e.target.closest('#audioStudio'))return;if(['KeyA','KeyD','Space'].includes(e.code)&&!e.repeat){if(e.code==='Space' && e.target.matches('button'))return;e.preventDefault();if(state==='ready')start();else hit(e.code === 'KeyD' ? 'd' : 'a');}if(e.code==='Escape'){e.preventDefault();state==='paused'?resume():pause();}});document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
-studio = new AudioStudio({groups:levelServings,chart:levelChart,getAudio:()=>audio,getSoundtrack:()=>soundtrack,pauseGame:pause});
-Promise.all(Object.entries(assetPaths).map(([n,path])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{assets[n]=img;resolve();};img.onerror=()=>reject(new Error(n));img.src=path;}))).then(()=>{state='ready';$('start').disabled=false;}).catch(e=>{$('status').textContent='素材未能加载：'+e.message+'。请保持 assets 文件夹与页面放在一起。';});requestAnimationFrame(loop);
+const hudDots=Array.from(document.querySelectorAll('.hud-dot'));
+function paintDots(list){hudDots.forEach((el,i)=>{const r=list[i]?.result;const key=!r?'pending':r==='miss'?'miss':'hit';if(el.dataset.result!==key){el.src=ui+'rhythm/dot-'+key+'.png';el.dataset.result=key;}el.alt='Note '+(i+1)+': '+key;});}
+function updateHUD(t){let page=0;for(let i=6;i<notes.length;i+=6)if(t-offset/1000>=notes[i].t-goodWindow)page=i/6;else break;$('beatHud').hidden=false;paintDots(notes.slice(page*6,page*6+6));}
+function showGameplay(){for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
+function showTutorial(){if(state!=='ready')return;state='tutorial';$('overlay').hidden=true;$('tutorial').hidden=false;canvas.inert=true;$('gotIt').disabled=false;$('gotIt').focus();}
+function goHome(){if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','modal','settings','quitDialog','results','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
+function openSettings(){if(state==='playing')pause();$('settings').hidden=false;$('musicVolume').focus();}
+function sliderFill(el){el.style.setProperty('--fill',((Number(el.value)-Number(el.min||0))/(Number(el.max||100)-Number(el.min||0))*100)+'%');}
+function resizeCanvas(){const r=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,3);canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));if(state==='paused')draw(pausedAt);}
+new ResizeObserver(resizeCanvas).observe(canvas);window.addEventListener('resize',resizeCanvas);
+$('start').onclick=showTutorial;$('gotIt').onclick=start;$('resultRetry').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;
+$('pause').onclick=()=>state==='paused'?resume():pause();
+$('pauseHome').onclick=()=>{$('quitDialog').hidden=false;$('cancelQuit').focus();};
+$('cancelQuit').onclick=()=>{$('quitDialog').hidden=true;$('resume').focus();};
+$('confirmQuit').onclick=goHome;$('resultHome').onclick=goHome;
+$('startSettings').onclick=openSettings;$('settingsToggle').onclick=openSettings;$('settingsBack').onclick=()=>{$('settings').hidden=true;(state==='paused'?$('resume'):$('startSettings')).focus();};
+$('sound').onclick=()=>{muted=!muted;if(master)master.gain.value=muted?0:SFX_VOLUME;$('sound').textContent='SOUND '+(muted?'OFF':'ON');$('sound').setAttribute('aria-pressed',String(muted));};
+$('musicVolume').oninput=e=>{if(soundtrack)soundtrack.uiMusicGain.gain.value=Number(e.target.value)/100;sliderFill(e.target);};
+$('sfxVolume').oninput=e=>{if(soundtrack)soundtrack.uiSfxGain.gain.value=Number(e.target.value)/100;sliderFill(e.target);};
+$('full').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.querySelector('.game').requestFullscreen().catch(()=>{});};
+$('offset').oninput=e=>{offset=Number(e.target.value);$('offsetLabel').textContent=offset+' ms';};$('motion').onchange=e=>{reduce=e.target.checked;};
+canvas.tabIndex=0;canvas.onpointerdown=e=>{if(e.button!==0)return;const bounds=canvas.getBoundingClientRect();hit(e.clientX-bounds.left>bounds.width/2?'d':'a');};
+document.addEventListener('keydown',e=>{if(e.target.matches('input')||e.target.closest('#audioStudio'))return;if(['KeyA','KeyD','Space'].includes(e.code)&&!e.repeat){if(e.code==='Space'&&e.target.matches('button'))return;e.preventDefault();if(state==='ready')showTutorial();else hit(e.code==='KeyD'?'d':'a');}if(e.code==='Escape'&&state==='playing'){e.preventDefault();pause();}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
+studio=new AudioStudio({groups:levelServings,chart:levelChart,getAudio:()=>audio,getSoundtrack:()=>soundtrack,pauseGame:pause});
+Promise.all(Object.entries(assetPaths).map(([n,path])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{assets[n]=img;resolve();};img.onerror=()=>reject(new Error(n));img.src=path;}))).then(()=>{state='ready';$('start').disabled=false;}).catch(e=>{$('status').textContent='素材未能加载：'+e.message;});requestAnimationFrame(loop);

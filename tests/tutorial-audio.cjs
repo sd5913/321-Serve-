@@ -9,7 +9,7 @@ const assert = require('node:assert/strict');
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('file://' + process.cwd() + '/index.html');
     await page.waitForFunction(() => state === 'ready');
-    await page.click('#start');
+    await page.click('#start');await page.click('#playLevel');await page.click('#gotIt');
     await page.waitForFunction(() => state === 'playing');
     await page.evaluate(() => {clockOrigin = audio.currentTime - END - .1;});
     await page.waitForFunction(() => lessonMode === 'practice');

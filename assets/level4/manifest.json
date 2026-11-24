@@ -1,0 +1,398 @@
+[
+  {
+    "file": "level4-flame-01.png",
+    "width": 674,
+    "height": 401,
+    "source": "output/grill-level-options/flames.png"
+  },
+  {
+    "file": "level4-flame-02.png",
+    "width": 696,
+    "height": 357,
+    "source": "output/grill-level-options/flames.png"
+  },
+  {
+    "file": "level4-flame-03.png",
+    "width": 687,
+    "height": 417,
+    "source": "output/grill-level-options/flames.png"
+  },
+  {
+    "file": "level4-blowtorch-01.png",
+    "width": 698,
+    "height": 481,
+    "source": "output/grill-level-options/nozzles-shortened-v2.png"
+  },
+  {
+    "file": "level4-blowtorch-02.png",
+    "width": 724,
+    "height": 489,
+    "source": "output/grill-level-options/nozzles-shortened-v2.png"
+  },
+  {
+    "file": "level4-blowtorch-03.png",
+    "width": 720,
+    "height": 477,
+    "source": "output/grill-level-options/nozzles-shortened-v2.png"
+  },
+  {
+    "file": "level4-salmon-small-v1-front.png",
+    "width": 312,
+    "height": 332,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v1-left.png",
+    "width": 141,
+    "height": 332,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v1-back.png",
+    "width": 309,
+    "height": 375,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v1-right.png",
+    "width": 142,
+    "height": 333,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v2-front.png",
+    "width": 313,
+    "height": 332,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v2-left.png",
+    "width": 141,
+    "height": 330,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v2-back.png",
+    "width": 309,
+    "height": 373,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v2-right.png",
+    "width": 143,
+    "height": 333,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v3-front.png",
+    "width": 317,
+    "height": 332,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v3-left.png",
+    "width": 142,
+    "height": 331,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v3-back.png",
+    "width": 316,
+    "height": 373,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-small-v3-right.png",
+    "width": 144,
+    "height": 333,
+    "source": "exec-f6bb39cf-5be4-441e-bb01-ce345b6f8c26.png"
+  },
+  {
+    "file": "level4-salmon-raw-front.png",
+    "width": 389,
+    "height": 415,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-charred-front.png",
+    "width": 392,
+    "height": 423,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-raw-left.png",
+    "width": 304,
+    "height": 416,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-charred-left.png",
+    "width": 304,
+    "height": 424,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-raw-back.png",
+    "width": 344,
+    "height": 416,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-charred-back.png",
+    "width": 348,
+    "height": 424,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-raw-right.png",
+    "width": 317,
+    "height": 415,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-charred-right.png",
+    "width": 318,
+    "height": 424,
+    "source": "output/grill-level-options/salmon-four-views-charred.png"
+  },
+  {
+    "file": "level4-salmon-cooked-front.png",
+    "width": 542,
+    "height": 619,
+    "source": "output/grill-level-options/salmon-cooked-four-views.png"
+  },
+  {
+    "file": "level4-salmon-cooked-left.png",
+    "width": 442,
+    "height": 622,
+    "source": "output/grill-level-options/salmon-cooked-four-views.png"
+  },
+  {
+    "file": "level4-salmon-cooked-back.png",
+    "width": 503,
+    "height": 617,
+    "source": "output/grill-level-options/salmon-cooked-four-views.png"
+  },
+  {
+    "file": "level4-salmon-cooked-right.png",
+    "width": 476,
+    "height": 620,
+    "source": "output/grill-level-options/salmon-cooked-four-views.png"
+  },
+  {
+    "file": "level4-squid-raw-front.png",
+    "width": 331,
+    "height": 419,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-charred-front.png",
+    "width": 337,
+    "height": 426,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-raw-left.png",
+    "width": 163,
+    "height": 420,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-charred-left.png",
+    "width": 163,
+    "height": 423,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-raw-back.png",
+    "width": 335,
+    "height": 417,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-charred-back.png",
+    "width": 340,
+    "height": 423,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-raw-right.png",
+    "width": 162,
+    "height": 421,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-charred-right.png",
+    "width": 163,
+    "height": 426,
+    "source": "output/grill-level-options/squid-four-views-charred.png"
+  },
+  {
+    "file": "level4-squid-cooked-front.png",
+    "width": 497,
+    "height": 643,
+    "source": "output/grill-level-options/squid-cooked-four-views.png"
+  },
+  {
+    "file": "level4-squid-cooked-left.png",
+    "width": 243,
+    "height": 642,
+    "source": "output/grill-level-options/squid-cooked-four-views.png"
+  },
+  {
+    "file": "level4-squid-cooked-back.png",
+    "width": 511,
+    "height": 642,
+    "source": "output/grill-level-options/squid-cooked-four-views.png"
+  },
+  {
+    "file": "level4-squid-cooked-right.png",
+    "width": 243,
+    "height": 644,
+    "source": "output/grill-level-options/squid-cooked-four-views.png"
+  },
+  {
+    "file": "level4-face-happy-01.png",
+    "width": 259,
+    "height": 139,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-04.png",
+    "width": 259,
+    "height": 150,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-07.png",
+    "width": 306,
+    "height": 155,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-02.png",
+    "width": 261,
+    "height": 172,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-05.png",
+    "width": 259,
+    "height": 165,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-08.png",
+    "width": 272,
+    "height": 167,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-03.png",
+    "width": 258,
+    "height": 140,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-06.png",
+    "width": 303,
+    "height": 156,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-happy-09.png",
+    "width": 282,
+    "height": 152,
+    "source": "exec-062edd3d-d28d-47ae-98ae-ecdaa58a0302.png"
+  },
+  {
+    "file": "level4-face-frightened-01.png",
+    "width": 344,
+    "height": 283,
+    "source": "exec-c3978d4c-5c8c-4e17-986e-b12c70458466.png"
+  },
+  {
+    "file": "level4-face-frightened-03.png",
+    "width": 341,
+    "height": 292,
+    "source": "exec-c3978d4c-5c8c-4e17-986e-b12c70458466.png"
+  },
+  {
+    "file": "level4-face-frightened-02.png",
+    "width": 336,
+    "height": 297,
+    "source": "exec-c3978d4c-5c8c-4e17-986e-b12c70458466.png"
+  },
+  {
+    "file": "level4-face-frightened-04.png",
+    "width": 347,
+    "height": 282,
+    "source": "exec-c3978d4c-5c8c-4e17-986e-b12c70458466.png"
+  },
+  {
+    "file": "level4-face-shocked-01.png",
+    "width": 402,
+    "height": 339,
+    "source": "output/grill-level-options/shocked-no-brows-white-eyes.png"
+  },
+  {
+    "file": "level4-face-shocked-03.png",
+    "width": 338,
+    "height": 358,
+    "source": "output/grill-level-options/shocked-no-brows-white-eyes.png"
+  },
+  {
+    "file": "level4-face-shocked-02.png",
+    "width": 423,
+    "height": 327,
+    "source": "output/grill-level-options/shocked-no-brows-white-eyes.png"
+  },
+  {
+    "file": "level4-face-shocked-04.png",
+    "width": 399,
+    "height": 354,
+    "source": "output/grill-level-options/shocked-no-brows-white-eyes.png"
+  },
+  {
+    "file": "level4-face-gasp-01.png",
+    "width": 424,
+    "height": 407,
+    "source": "exec-cce5e899-16b8-42f0-ae4c-b76e26bd0b9f.png"
+  },
+  {
+    "file": "level4-face-gasp-03.png",
+    "width": 360,
+    "height": 429,
+    "source": "exec-cce5e899-16b8-42f0-ae4c-b76e26bd0b9f.png"
+  },
+  {
+    "file": "level4-face-gasp-02.png",
+    "width": 440,
+    "height": 358,
+    "source": "exec-cce5e899-16b8-42f0-ae4c-b76e26bd0b9f.png"
+  },
+  {
+    "file": "level4-face-gasp-04.png",
+    "width": 402,
+    "height": 358,
+    "source": "exec-cce5e899-16b8-42f0-ae4c-b76e26bd0b9f.png"
+  },
+  {
+    "file": "level4-smoke.png",
+    "width": 913,
+    "height": 867,
+    "source": "output/321-serve-assets-final/black-smoke.png"
+  },
+  {
+    "file": "level4-swear-symbols.png",
+    "width": 1111,
+    "height": 915,
+    "source": "output/321-serve-revisions-v2/fault-symbols.png"
+  },
+  {
+    "file": "level4-grill.png",
+    "width": 4256,
+    "height": 1214,
+    "source": "codex-clipboard-27082d88-72db-4e91-a358-0aa64b09f16a.png"
+  }
+]

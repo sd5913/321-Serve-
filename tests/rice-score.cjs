@@ -12,7 +12,7 @@ const assert=require('node:assert/strict');
    valid:levelChart.every(n=>n.beat>=n.group.beat+n.group.landing && n.beat<n.group.beat+n.group.length),
    cues:KitchenSoundtrack.buildEvents(levelServings,levelChart).length}));
   assert.equal(data.groups,44);assert.equal(data.cues,44);assert(data.valid);assert(data.distinct);assert(Math.abs(data.music-data.end)<.05);
-  await page.click('#start');await page.waitForFunction(()=>state==='playing');
+  await page.click('#start');await page.click('#playLevel');await page.click('#gotIt');await page.waitForFunction(()=>state==='playing');
   await page.evaluate(()=>beginRound('level'));await page.waitForTimeout(180);
   assert(await page.evaluate(()=>soundtrack.musicSource && !soundtrack.musicSource.loop && soundtrack.musicSource.buffer===studio.audioBuffer('music')));
   assert(await page.evaluate(()=>soundtrack.events.every(e=>e.kind.startsWith('cue'))),'no pre-scheduled button sounds');

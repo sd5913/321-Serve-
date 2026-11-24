@@ -1,7 +1,7 @@
 const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const assert=require('node:assert/strict');
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_PATH});try{
- const page=await browser.newPage();await page.goto('file://'+process.cwd()+'/index.html');await page.waitForFunction(()=>state==='ready');await page.click('#start');await page.waitForFunction(()=>state==='playing');
+ const page=await browser.newPage();await page.goto('file://'+process.cwd()+'/index.html');await page.waitForFunction(()=>state==='ready');await page.click('#start');await page.click('#playLevel');await page.click('#gotIt');await page.waitForFunction(()=>state==='playing');
  const result=await page.evaluate(()=>{
   beginRound('level');const n=notes[0];clockOrigin=audio.currentTime-n.t;
   studio.project.hitOffsets.pinch=2;studio.project.positions.hit0=n.beat+.8;
