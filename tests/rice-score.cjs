@@ -37,7 +37,7 @@ const assert=require('node:assert/strict');
     beginRound('demo',2);const next=soundtrack.musicOffset;
     return {bg,demoSounds,same,next};
   });
-  assert(tutorial.bg);assert.deepEqual(tutorial.demoSounds,['triplePinch1','triplePinch2','triplePinch3','slap']);assert(tutorial.same>=2);assert.equal(tutorial.next,0);
+  assert(tutorial.bg);assert.deepEqual(tutorial.demoSounds,['triplePinch1','triplePinch2','triplePinch3','tripleSlap']);assert(tutorial.same>=2);assert.equal(tutorial.next,0);
   await page.evaluate(()=>{for(const g of servings)for(const dt of [0,g.charge,g.landing,...g.keys])draw((g.beat+dt)*BEAT)});
   assert.deepEqual(errors,[]);console.log('PASS rice score',data,branch);
  }finally{await browser.close()}

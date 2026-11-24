@@ -1,19 +1,27 @@
 (function(){
  'use strict';
- const canvas=document.getElementById('startMotion'),screen=canvas.parentElement,ctx=canvas.getContext('2d');
+ const canvas=document.getElementById('startMotion'),ctx=canvas.getContext('2d');
  const names=['background','salmon-red','egg','salmon-orange','clock-hands','accent'];
- const images={};let origin=null;
+ const images={};let origin=null,lastDraw=-Infinity;
+ const overlay=document.getElementById('overlay');
+ const motionControl=document.getElementById('motion');
+ const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+ let size;
+ new ResizeObserver(([entry])=>{size=entry.contentRect;lastDraw=-Infinity;}).observe(canvas);
  const bounce=p=>p>=0&&p<1?Math.sin(p*Math.PI)*Math.exp(-p*1.8):0;
  Promise.all(names.map(name=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[name]=img;resolve();};img.onerror=reject;img.src='assets/ui/startpage-motion/'+name+'.png';}))).then(()=>requestAnimationFrame(frame)).catch(()=>{/* Keep the static artwork fallback if a layer cannot load. */});
  function frame(now){
   requestAnimationFrame(frame);
-  if(document.hidden||document.getElementById('overlay').hidden){origin=null;return;}
+  if(document.hidden||overlay.hidden){origin=null;lastDraw=-Infinity;return;}
+  if(!size || size.width<=0 || size.height<=0 || now-lastDraw<32)return;
+  lastDraw=now;
   if(origin===null)origin=now;
-  const rect=screen.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,3),w=Math.round(rect.width*.39*dpr),h=Math.round(rect.height*dpr);
+  const scale=Math.min(window.devicePixelRatio||1,2,640/size.width,800/size.height);
+  const w=Math.max(1,Math.round(size.width*scale)),h=Math.max(1,Math.round(size.height*scale));
   if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
-  ctx.setTransform(rect.width*dpr/1104,0,0,rect.height*dpr/512,0,0);ctx.clearRect(0,0,1104*.39,512);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  ctx.setTransform(w/(1104*.39),0,0,h/512,0,0);ctx.clearRect(0,0,1104*.39,512);ctx.imageSmoothingEnabled=true;
   ctx.drawImage(images.background,0,0,1104*.39,512);
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches||document.getElementById('motion').checked;
+  const reduced=reducedMotion.matches||motionControl.checked;
   const beat=reduced?0:((now-origin)/500)%4;
   const hand=images['clock-hands'],hw=280,hh=hw*hand.naturalHeight/hand.naturalWidth;
   // The approved clock hands are fixed; no rotation or scaling animation.

@@ -29,7 +29,7 @@ class AudioStudio {
     this.redoStack = [];
     this.duration = Math.ceil(groups.at(-1).beat + groups.at(-1).length + 1);
     this.baseTracks = [
-      ['music','纯音乐 · 背景'],['bouncePinch','反弹饭 · 捏'],['bounceSlap','反弹饭 · 拍'],['triplePinch1','三连 · 第一捏'],['triplePinch2','三连 · 第二捏'],['triplePinch3','三连 · 第三捏'],['cueRice','正常出饭预备'],['cueTriple','连出三份预备'],['cueBounce','反弹预备'],['cueSponge','海绵出场预备'],['motor','正常机器运转'],['normal','正常弹出'],
+      ['music','纯音乐 · 背景'],['bouncePinch','反弹饭 · 捏'],['bounceSlap','反弹饭 · 拍'],['triplePinch1','三连 · 第一捏'],['triplePinch2','三连 · 第二捏'],['triplePinch3','三连 · 第三捏'],['tripleSlap','三连 · 拍走'],['cueRice','正常出饭预备'],['cueTriple','连出三份预备'],['cueBounce','反弹预备'],['cueSponge','海绵出场预备'],['motor','正常机器运转'],['normal','正常弹出'],
       ['motorFault','故障机器运转'],['warning','红灯闪烁'],['smoke','黑烟'],
       ['fault','连续弹出'],['collision','饭团碰撞'],
       ['motorStutter','卡顿机器运转'],['bounceOut','猛力弹出'],['bounce','墙面反弹'],
@@ -226,11 +226,22 @@ class AudioStudio {
             try {fallback=localStorage.getItem('serve-rice-actions-20261124-audio-file-' + kind);} catch {}
             record=fallback ? (fallback==='null'?null:this.unpackFile(JSON.parse(fallback))) : await read(kind);
           }
-          if (!record && !saved && RICE_AUDIO[kind])record=this.unpackFile({name:kind+(kind==='music'?'.mp3':'.wav'),type:kind==='music'?'audio/mpeg':'audio/wav',data:RICE_AUDIO[kind]});
+          if (!record && (!saved || kind==='tripleSlap') && RICE_AUDIO[kind])record=this.unpackFile({name:kind+(kind==='music'?'.mp3':'.wav'),type:kind==='music'?'audio/mpeg':'audio/wav',data:RICE_AUDIO[kind]});
           if (!record) return;
-          const blob = record.blob ?? new Blob([record.bytes], {type:record.type});
+          let blob = record.blob ?? new Blob([record.bytes], {type:record.type});
+          let bytes = await blob.arrayBuffer();
+          // Upgrade a saved copy of the old bundled sound while preserving user imports.
+          const oldHashes = RICE_TRIPLE_OLD_HASHES[kind];
+          if (oldHashes && crypto.subtle && record.name === kind+'.wav') {
+            const digest = await crypto.subtle.digest('SHA-256', bytes);
+            const hash = Array.from(new Uint8Array(digest), byte=>byte.toString(16).padStart(2,'0')).join('');
+            if (oldHashes.includes(hash)) {
+              blob = this.unpackFile({name:record.name,type:'audio/wav',data:RICE_AUDIO[kind]}).blob;
+              bytes = await blob.arrayBuffer();
+            }
+          }
           this.files[kind] = {name:record.name,type:record.type,blob};
-          this.buffers[kind] = await context.decodeAudioData(await blob.arrayBuffer());
+          this.buffers[kind] = await context.decodeAudioData(bytes);
         } catch {failed = true;}
       }));
     } finally {db?.close();}

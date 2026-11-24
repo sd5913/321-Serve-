@@ -31,7 +31,7 @@ const chart = [];
 // Seconds within each supplied phrase; beat coordinates are derived without quantizing.
 const phraseSeconds = {
   rice:{charge:.60,landing:.94,keys:[1.04,1.50],cueKind:'cueRice'},
-  triple:{charge:.18,landing:1.70,launches:[.18,.65,1.18],keys:[1.84,2.2733,2.74,3.03],cueKind:'cueTriple'},
+  triple:{charge:.18,landing:1.70,launches:[.18,.65,1.18],keys:[1.84,2.2733,2.74,3.19],cueKind:'cueTriple'},
   bounce:{charge:.015,landing:.55,bounces:[.07,.30],keys:[.61,.86],cueKind:'cueBounce'},
   sponge:{charge:.02,landing:.35,keys:[.49],cueKind:'cueSponge'}
 };
@@ -81,7 +81,7 @@ async function prepareAudio() {
 function actionSound(kind,slot,action) {
   if(kind==='sponge')return action==='a'?'spongePinch':'spongeSlap';
   if(kind==='bounce')return action==='a'?'bouncePinch':'bounceSlap';
-  if(kind==='triple' && action==='a')return 'triplePinch'+(slot+1);
+  if(kind==='triple')return action==='a'?'triplePinch'+(slot+1):'tripleSlap';
   return action==='a'?'pinch':'slap';
 }
 function beginRound(mode, index = -1) {
@@ -480,8 +480,10 @@ function draw(t) {
   if (playing) {
     txt(combo + ' COMBO', 35, 645, 18);
     const phase = group ? {rice:'正常出饭',bounce:'蓄力弹饭',triple:'连续三份',sponge:'小心海绵'}[group.kind] : '准备下一句';
-    $('phase').textContent = lessonMode === 'level' ? 'RICE RICE BABY · '+phase
+    const phaseText = lessonMode === 'level' ? 'RICE RICE BABY · '+phase
       : '教学 '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title+' · '+(lessonMode==='demo'?'看示范':'你来操作');
+    const phaseLabel = $('phase');
+    if(phaseLabel.textContent!==phaseText)phaseLabel.textContent=phaseText;
     if (next) {
       const distance = (next.t - t) / BEAT;
       const onBeat = Math.abs(distance) <= .14;
@@ -500,36 +502,47 @@ function draw(t) {
 }
 function loop(ms){
   requestAnimationFrame(loop);
-  let t=state==='ready'||state==='loading'?ms/1000:time();
-  if(state==='playing'){
-    if (lessonMode === 'demo') demonstrate(t);
-    soundtrack.tick(t);
-    if (lessonMode !== 'demo') for(const n of notes){
-      if(!n.result && t-offset/1000>n.t+goodWindow){
-        const visible = !n.group.exit && t < (n.group.beat+n.group.length)*BEAT;
-        n.result = visible ? 'miss' : 'skipped';
-        // Once an item has left the table, this note cannot be missed again.
-        if (visible) {misses++; combo=0; feedback('miss',t,n,0);}
-      }
+  if(state!=='playing')return;
+  let t=time();
+  if (lessonMode === 'demo') demonstrate(t);
+  soundtrack.tick(t);
+  if (lessonMode !== 'demo') for(const n of notes){
+    if(!n.result && t-offset/1000>n.t+goodWindow){
+      const visible = !n.group.exit && t < (n.group.beat+n.group.length)*BEAT;
+      n.result = visible ? 'miss' : 'skipped';
+      // Once an item has left the table, this note cannot be missed again.
+      if (visible) {misses++; combo=0; feedback('miss',t,n,0);}
     }
-    if(t>=END){if (lessonMode==='level') finish(); else {advanceTutorial(); t=time();}}
-    $('score').textContent=String(score).padStart(6,'0');
-    $('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';
   }
+  if(t>=END){if (lessonMode==='level') finish(); else {advanceTutorial(); t=time();}}
+  const scoreText=String(score).padStart(6,'0');
+  const scoreLabel=$('score');
+  if(scoreLabel.textContent!==scoreText)scoreLabel.textContent=scoreText;
+  $('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';
   if (state === 'playing')updateHUD(t);
-  if (lessonMode === 'level' && state === 'playing') studio?.updatePlayhead(t / BEAT);
   if(state!=='paused'&&state!=='result')draw(t);
   lastFrame=ms;
 }
 const hudDots=Array.from(document.querySelectorAll('.hud-dot'));
-function paintDots(list){hudDots.forEach((el,i)=>{const r=list[i]?.result;const key=!r?'pending':r==='miss'?'miss':'hit';if(el.dataset.result!==key){el.src=ui+'rhythm/dot-'+key+'.png';el.dataset.result=key;}el.alt='Note '+(i+1)+': '+key;});}
+function paintDots(list){hudDots.forEach((el,i)=>{const r=list[i]?.result;const key=!r?'pending':r==='miss'?'miss':'hit';if(el.dataset.result!==key){el.src=ui+'rhythm/dot-'+key+'.png';el.dataset.result=key;el.alt='Note '+(i+1)+': '+key;}});}
 function updateHUD(t){let page=0;for(let i=6;i<notes.length;i+=6)if(t-offset/1000>=notes[i].t-goodWindow)page=i/6;else break;$('beatHud').hidden=false;paintDots(notes.slice(page*6,page*6+6));}
 function showGameplay(){for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
 function showTutorial(){if(state!=='ready')return;state='tutorial';$('overlay').hidden=true;$('tutorial').hidden=false;canvas.inert=true;$('gotIt').disabled=false;$('gotIt').focus();}
 function goHome(){if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','modal','settings','quitDialog','results','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
 function openSettings(){if(state==='playing')pause();$('settings').hidden=false;$('musicVolume').focus();}
 function sliderFill(el){el.style.setProperty('--fill',((Number(el.value)-Number(el.min||0))/(Number(el.max||100)-Number(el.min||0))*100)+'%');}
-function resizeCanvas(){const r=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,3);canvas.width=Math.max(1,Math.round(r.width*dpr));canvas.height=Math.max(1,Math.round(r.height*dpr));if(state==='paused')draw(pausedAt);}
+function resizeCanvas(){
+  const {width,height}=canvas.getBoundingClientRect();
+  if(width<=0 || height<=0)return;
+  // Keep the number of pixels cleared and painted per frame bounded on Retina displays.
+  const scale=Math.min(window.devicePixelRatio||1,2,1600/width,900/height);
+  const targetWidth=Math.max(1,Math.round(width*scale));
+  const targetHeight=Math.max(1,Math.round(height*scale));
+  if(canvas.width===targetWidth && canvas.height===targetHeight)return;
+  canvas.width=targetWidth;
+  canvas.height=targetHeight;
+  if(state==='paused')draw(pausedAt);
+}
 new ResizeObserver(resizeCanvas).observe(canvas);window.addEventListener('resize',resizeCanvas);
 $('start').onclick=showTutorial;$('gotIt').onclick=start;$('resultRetry').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;
 $('pause').onclick=()=>state==='paused'?resume():pause();
