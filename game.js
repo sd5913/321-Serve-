@@ -113,7 +113,7 @@ function beginRound(mode, index = -1) {
   for (const group of servings) {delete group.exit; group.pinches=[];}
   clockOrigin = audio.currentTime;
   state = 'playing';
-  showGameplay(); canvas.inert = false; $('modal').hidden = true;
+  showGameplay(); updateHUD(0); canvas.inert = false; $('modal').hidden = true;
   $('pause').disabled = false; $('pause').setAttribute('aria-label','Pause game');
   $('status').textContent = mode === 'level'
     ? '音乐关卡：跟随音乐捏饭、拍走；海绵只按 D，A 是误捏。'
@@ -121,7 +121,7 @@ function beginRound(mode, index = -1) {
   canvas.focus();
   if (document.hidden) pause();
 }
-async function start() {
+async function start(mode = 'demo') {
   if (state === 'loading' || state === 'playing' || startingPlayback) return;
   if (!audio) {
     audio = new (window.AudioContext || window.webkitAudioContext)({latencyHint:'interactive'});
@@ -136,7 +136,7 @@ async function start() {
   studio.stopTimeline();
   await studio.ready;
   soundtrack.editor = studio;
-  beginRound('demo', 0);
+  beginRound(mode === 'level' ? 'level' : 'demo', mode === 'level' ? -1 : 0);
 }
 function pause(){
  if(state!=='playing')return;
@@ -523,12 +523,69 @@ function loop(ms){
   if(state!=='paused'&&state!=='result')draw(t);
   lastFrame=ms;
 }
-const hudDots=Array.from(document.querySelectorAll('.hud-dot'));
-function paintDots(list){hudDots.forEach((el,i)=>{const r=list[i]?.result;const key=!r?'pending':r==='miss'?'miss':'hit';if(el.dataset.result!==key){el.src=ui+'rhythm/dot-'+key+'.png';el.dataset.result=key;el.alt='Note '+(i+1)+': '+key;}});}
-function updateHUD(t){let page=0;for(let i=6;i<notes.length;i+=6)if(t-offset/1000>=notes[i].t-goodWindow)page=i/6;else break;$('beatHud').hidden=false;paintDots(notes.slice(page*6,page*6+6));}
-function showGameplay(){for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
-function showTutorial(){if(state!=='ready')return;state='tutorial';$('overlay').hidden=true;$('tutorial').hidden=false;canvas.inert=true;$('gotIt').disabled=false;$('gotIt').focus();}
-function goHome(){if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','modal','settings','quitDialog','results','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
+// Display-only HUD: tutorial groups keep their own slots; the level scrolls a four-input queue.
+// Geometry matches the approved normal/slim transparent bar assets (60-unit dots, 36-unit gaps).
+let hudRound = null, hudStart = 0, hudResults = new WeakMap(), hudSignature = "";
+function paintDots(list, first, count, animate = false) {
+  const track = $('beatHud').querySelector('.hud-track');
+  const existing = new Map(Array.from(track.children, el => [Number(el.dataset.index), el]));
+  const wanted = new Set(Array.from({length:count}, (_, i) => first + i));
+  for (const [index, el] of existing) if (!wanted.has(index)) el.remove();
+  for (let slot = 0; slot < count; slot++) {
+    const index = first + slot, note = list[index];
+    const el = existing.get(index) || document.createElement('span');
+    el.className = 'hud-dot'; el.dataset.index = String(index);
+    const result = !note ? 'unused' : !note.result ? 'pending'
+      : ['perfect','good','demo'].includes(note.result) ? 'hit' : 'miss';
+    el.dataset.result = result;
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', note ? 'Input '+(index+1)+' '+note.action.toUpperCase()+': '+result : 'No further input');
+    track.appendChild(el);
+    if (animate && !reduce) {
+      el.getAnimations().forEach(animation => animation.cancel());
+      const step = el.getBoundingClientRect().width * 1.6;
+      el.animate([{transform:'translateX('+step+'px)'},{transform:'translateX(0)'}],
+        {duration:180,easing:'ease-out'});
+    }
+  }
+}
+function updateHUD(t) {
+  const tutorial = lessonMode !== 'level', count = tutorial ? notes.length : 4;
+  const fresh = hudRound !== notes;
+  if (fresh) {
+    hudRound = notes; hudStart = 0; hudResults = new WeakMap(); hudSignature = "";
+    $('beatHud').querySelector('.hud-track').replaceChildren();
+  }
+  let advanced = false;
+  if (!tutorial) {
+    for (const note of notes) if (note.result && !hudResults.has(note)) hudResults.set(note,t);
+    while (hudStart < notes.length && notes[hudStart].result && t - hudResults.get(notes[hudStart]) >= .22) {
+      hudStart++; advanced = true;
+    }
+  }
+  const first = tutorial ? 0 : hudStart;
+  const signature = lessonMode+':'+first+':'+count+':'+notes.slice(first,first+count).map(n=>n.result || 'pending').join(',');
+  if (!fresh && signature === hudSignature) return;
+  hudSignature = signature;
+  const pad = tutorial ? 48 : 24, height = tutorial ? 120 : 92;
+  const hud = $('beatHud');
+  hud.style.setProperty('--hud-width', String(pad*2 + count*60 + (count-1)*36));
+  hud.style.setProperty('--hud-height', String(height));
+  hud.style.setProperty('--hud-padding', String(pad));
+  hud.dataset.variant = tutorial ? 'normal' : 'slim';
+  hud.dataset.count = String(count); hud.dataset.start = String(hudStart);
+  hud.setAttribute('aria-label', tutorial ? 'Tutorial: '+count+' inputs' : 'Next four inputs');
+  hud.hidden = false;
+  paintDots(notes, tutorial ? 0 : hudStart, count, advanced && !fresh);
+}
+async function skipTutorial() {
+  if (startingPlayback) return;
+  if (state === 'tutorial') await start('level');
+  else if (state === 'playing' && lessonMode !== 'level') beginRound('level');
+}
+function showGameplay(){$('skipTutorial').hidden=lessonMode==='level';for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
+function showTutorial(){if(state!=='ready')return;state='tutorial';$('skipTutorial').hidden=false;$('overlay').hidden=true;$('tutorial').hidden=false;canvas.inert=true;$('gotIt').disabled=false;$('gotIt').focus();}
+function goHome(){if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','skipTutorial','modal','settings','quitDialog','results','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
 function openSettings(){if(state==='playing')pause();$('settings').hidden=false;$('musicVolume').focus();}
 function sliderFill(el){el.style.setProperty('--fill',((Number(el.value)-Number(el.min||0))/(Number(el.max||100)-Number(el.min||0))*100)+'%');}
 function resizeCanvas(){
@@ -544,6 +601,7 @@ function resizeCanvas(){
   if(state==='paused')draw(pausedAt);
 }
 new ResizeObserver(resizeCanvas).observe(canvas);window.addEventListener('resize',resizeCanvas);
+$('skipTutorial').onclick=skipTutorial;
 $('start').onclick=showTutorial;$('gotIt').onclick=start;$('resultRetry').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;
 $('pause').onclick=()=>state==='paused'?resume():pause();
 $('pauseHome').onclick=()=>{$('quitDialog').hidden=false;$('cancelQuit').focus();};
