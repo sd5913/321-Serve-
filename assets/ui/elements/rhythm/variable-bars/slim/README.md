@@ -1,8 +1,8 @@
 # 细框版节奏条 / Slim rhythm bars
 
-此目录是 1–6 点节奏条的细框备选版，供之后实际接入游戏时对比测试。仅新增素材，未替换原版，也未修改游戏引用。
+此目录包含 1–6 点细框版素材。当前教学 HUD 按每组操作数使用 slim 样式，正式关卡使用四点一组的 slim 样式；四个点全部判定后才切换下一组。原版素材保留，方便对比。
 
-This folder contains alternative slim rhythm bars with 1–6 dots for future in-game comparison. These assets are not wired into gameplay and do not replace the existing versions.
+This folder contains slim rhythm bars with 1–6 dots. The tutorial HUD uses the appropriate slim slot count for each lesson. The main level keeps four judgments on screen and advances only when all four slots have been judged. Original assets are preserved for comparison.
 
 - 每款均有透明 PNG 和可编辑 SVG。Each variant includes a transparent PNG and an editable SVG.
 - 圆点直径与点间距沿用上一套预览。Dot diameter and spacing match the earlier variable-bar previews.

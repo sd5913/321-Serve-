@@ -523,8 +523,8 @@ function loop(ms){
   if(state!=='paused'&&state!=='result')draw(t);
   lastFrame=ms;
 }
-// Display-only HUD: tutorial groups keep their own slots; the level scrolls a four-input queue.
-// Geometry matches the approved normal/slim transparent bar assets (60-unit dots, 36-unit gaps).
+// Display-only HUD: tutorial groups use slim slots; level judgments stay in four-input pages.
+// Geometry matches the approved slim transparent bars (60-unit dots, 36-unit gaps).
 let hudRound = null, hudStart = 0, hudResults = new WeakMap(), hudSignature = "";
 function paintDots(list, first, count, animate = false) {
   const track = $('beatHud').querySelector('.hud-track');
@@ -543,9 +543,7 @@ function paintDots(list, first, count, animate = false) {
     track.appendChild(el);
     if (animate && !reduce) {
       el.getAnimations().forEach(animation => animation.cancel());
-      const step = el.getBoundingClientRect().width * 1.6;
-      el.animate([{transform:'translateX('+step+'px)'},{transform:'translateX(0)'}],
-        {duration:180,easing:'ease-out'});
+      el.animate([{opacity:0},{opacity:1}], {duration:140,easing:'ease-out'});
     }
   }
 }
@@ -559,22 +557,27 @@ function updateHUD(t) {
   let advanced = false;
   if (!tutorial) {
     for (const note of notes) if (note.result && !hudResults.has(note)) hudResults.set(note,t);
-    while (hudStart < notes.length && notes[hudStart].result && t - hudResults.get(notes[hudStart]) >= .22) {
-      hudStart++; advanced = true;
+    // Keep every result in its slot until this entire page has been judged.
+    // A stray press does not judge a note and therefore cannot move the page.
+    while (hudStart + 4 < notes.length) {
+      const page = notes.slice(hudStart, hudStart + 4);
+      if (!page.every(note => note.result) ||
+          page.some(note => t - hudResults.get(note) < .22)) break;
+      hudStart += 4; advanced = true;
     }
   }
   const first = tutorial ? 0 : hudStart;
   const signature = lessonMode+':'+first+':'+count+':'+notes.slice(first,first+count).map(n=>n.result || 'pending').join(',');
   if (!fresh && signature === hudSignature) return;
   hudSignature = signature;
-  const pad = tutorial ? 48 : 24, height = tutorial ? 120 : 92;
+  const pad = 24, height = 92;
   const hud = $('beatHud');
   hud.style.setProperty('--hud-width', String(pad*2 + count*60 + (count-1)*36));
   hud.style.setProperty('--hud-height', String(height));
   hud.style.setProperty('--hud-padding', String(pad));
-  hud.dataset.variant = tutorial ? 'normal' : 'slim';
+  hud.dataset.variant = 'slim';
   hud.dataset.count = String(count); hud.dataset.start = String(hudStart);
-  hud.setAttribute('aria-label', tutorial ? 'Tutorial: '+count+' inputs' : 'Next four inputs');
+  hud.setAttribute('aria-label', tutorial ? 'Tutorial: '+count+' inputs' : 'Four-input judgment group');
   hud.hidden = false;
   paintDots(notes, tutorial ? 0 : hudStart, count, advanced && !fresh);
 }
