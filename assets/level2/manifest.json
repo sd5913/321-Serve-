@@ -1,0 +1,1252 @@
+[
+  {
+    "file": "cutting-board-01.png",
+    "source": "01-cutting-board.png",
+    "crop": [
+      0,
+      0,
+      887,
+      443
+    ],
+    "size": [
+      859,
+      240
+    ],
+    "sha256": "179b400fffd002d15323c883d812a681a5b71931310c8ccab7a36597c93f931f"
+  },
+  {
+    "file": "cutting-board-02.png",
+    "source": "01-cutting-board.png",
+    "crop": [
+      887,
+      0,
+      1774,
+      443
+    ],
+    "size": [
+      861,
+      238
+    ],
+    "sha256": "97fa7662801b5f0cb877542e15fb483011d9ee0230652586f9f6bc5a836d0452"
+  },
+  {
+    "file": "cutting-board-03.png",
+    "source": "01-cutting-board.png",
+    "crop": [
+      0,
+      443,
+      887,
+      887
+    ],
+    "size": [
+      879,
+      255
+    ],
+    "sha256": "6dc245d9388348a47e83ab9b00cd6ea432fcb97543f34e95ccb4a5f5a18b37e3"
+  },
+  {
+    "file": "cutting-board-04.png",
+    "source": "01-cutting-board.png",
+    "crop": [
+      887,
+      443,
+      1774,
+      887
+    ],
+    "size": [
+      880,
+      262
+    ],
+    "sha256": "697586fbf72502f64388479582078195e3b0a17becc85571c118514038514707"
+  },
+  {
+    "file": "fish-lying-standard-01.png",
+    "source": "02-fish-current-length.png",
+    "crop": [
+      0,
+      0,
+      768,
+      512
+    ],
+    "size": [
+      692,
+      409
+    ],
+    "sha256": "4f78696033dfa38f5682728a8a116fa4a1bfd7d7fb1835ced2ecba7e0410f6a3"
+  },
+  {
+    "file": "fish-lying-standard-02.png",
+    "source": "02-fish-current-length.png",
+    "crop": [
+      768,
+      0,
+      1536,
+      512
+    ],
+    "size": [
+      705,
+      406
+    ],
+    "sha256": "0e3e7b5d41f34b17fe30a03573da29b00252eb5cab1cde4f08ca3f713770bb8b"
+  },
+  {
+    "file": "fish-lying-standard-03.png",
+    "source": "02-fish-current-length.png",
+    "crop": [
+      0,
+      512,
+      768,
+      1024
+    ],
+    "size": [
+      707,
+      390
+    ],
+    "sha256": "5f64dd4dd479d67679e4e14cc2b20abce8831e42ed4b66943a6bdacf17b92789"
+  },
+  {
+    "file": "fish-lying-standard-04.png",
+    "source": "02-fish-current-length.png",
+    "crop": [
+      768,
+      512,
+      1536,
+      1024
+    ],
+    "size": [
+      725,
+      388
+    ],
+    "sha256": "64fefc5d8109b3b1e72bcbf77aa1d29a85dae205acb85bb861c9222a2c9349d9"
+  },
+  {
+    "file": "fish-lying-long-01.png",
+    "source": "02-fish-long.png",
+    "crop": [
+      0,
+      0,
+      768,
+      512
+    ],
+    "size": [
+      709,
+      356
+    ],
+    "sha256": "8a61aaa4398452e84b1f76686545004336968e36020023c7384625bc9413761b"
+  },
+  {
+    "file": "fish-lying-long-02.png",
+    "source": "02-fish-long.png",
+    "crop": [
+      768,
+      0,
+      1536,
+      512
+    ],
+    "size": [
+      738,
+      357
+    ],
+    "sha256": "44a0da607dba948106c958240ed448d72b520fdee2318594b741bb593614fc19"
+  },
+  {
+    "file": "fish-lying-long-03.png",
+    "source": "02-fish-long.png",
+    "crop": [
+      0,
+      512,
+      768,
+      1024
+    ],
+    "size": [
+      711,
+      352
+    ],
+    "sha256": "8b74a44f655a3434e09a3577db58da016356abeae5c5f5445e5d333d76d5abc2"
+  },
+  {
+    "file": "fish-lying-long-04.png",
+    "source": "02-fish-long.png",
+    "crop": [
+      768,
+      512,
+      1536,
+      1024
+    ],
+    "size": [
+      741,
+      349
+    ],
+    "sha256": "3535bfb63e529e5b0da8f974552a2f3e0fbf3c9c3e5b99e518da5e0c08e7d877"
+  },
+  {
+    "file": "fish-curved-jump-three-tone-01.png",
+    "source": "03-fish-twisted.png",
+    "crop": [
+      0,
+      0,
+      768,
+      512
+    ],
+    "size": [
+      590,
+      500
+    ],
+    "sha256": "7e7757d7a7fdd4d3e0465a3ed4a86cd6ba9453738c1617ee03068bd6565c4814"
+  },
+  {
+    "file": "fish-curved-jump-three-tone-02.png",
+    "source": "03-fish-twisted.png",
+    "crop": [
+      768,
+      0,
+      1536,
+      512
+    ],
+    "size": [
+      609,
+      508
+    ],
+    "sha256": "87522069f3817e06f2add6af50917ff05cf0aed97fb731b3fea07727f73f2bf3"
+  },
+  {
+    "file": "fish-curved-jump-three-tone-03.png",
+    "source": "03-fish-twisted.png",
+    "crop": [
+      0,
+      512,
+      768,
+      1024
+    ],
+    "size": [
+      610,
+      522
+    ],
+    "sha256": "989c4edba51240105c3d56ca07551eac9c3a8fbf37fff47695f197791cd5c8c5"
+  },
+  {
+    "file": "fish-curved-jump-three-tone-04.png",
+    "source": "03-fish-twisted.png",
+    "crop": [
+      768,
+      512,
+      1536,
+      1024
+    ],
+    "size": [
+      647,
+      512
+    ],
+    "sha256": "f367f662d5fed3c62c2d42c4335f776bd907b437c380fabcb220f5858180b0f9"
+  },
+  {
+    "file": "fish-upright-jump-two-eyes-01.png",
+    "source": "04-fish-straight.png",
+    "crop": [
+      0,
+      0,
+      543,
+      724
+    ],
+    "size": [
+      356,
+      679
+    ],
+    "sha256": "e55b0ffbf579eb152582632dd8feb55892a68d53bf8968c0135b9871a4fa9301"
+  },
+  {
+    "file": "fish-upright-jump-two-eyes-02.png",
+    "source": "04-fish-straight.png",
+    "crop": [
+      543,
+      0,
+      1086,
+      724
+    ],
+    "size": [
+      345,
+      684
+    ],
+    "sha256": "2a1ce19512406c63c4ef1f0430fec17aa2b4664cfccdb4339fea2983df828949"
+  },
+  {
+    "file": "fish-upright-jump-two-eyes-03.png",
+    "source": "04-fish-straight.png",
+    "crop": [
+      0,
+      724,
+      543,
+      1448
+    ],
+    "size": [
+      378,
+      711
+    ],
+    "sha256": "a75e0903c1042b480c8aab04096ebe330be74bf95b8a9bdcba63bf7543a2ac43"
+  },
+  {
+    "file": "fish-upright-jump-two-eyes-04.png",
+    "source": "04-fish-straight.png",
+    "crop": [
+      543,
+      724,
+      1086,
+      1448
+    ],
+    "size": [
+      350,
+      708
+    ],
+    "sha256": "0cc7ce7bc422faaaf010cb12a91b7f5057d90346271c10a0916f372a01ff68e4"
+  },
+  {
+    "file": "fish-upright-eyes-low-01.png",
+    "source": "04-fish-straight-middle-eyes.png",
+    "crop": [
+      0,
+      0,
+      543,
+      724
+    ],
+    "size": [
+      327,
+      682
+    ],
+    "sha256": "f36994cae6d995677e1bd14cb7d5cccacc79a81e62139d24c794af56fb4d30d9"
+  },
+  {
+    "file": "fish-upright-eyes-low-02.png",
+    "source": "04-fish-straight-middle-eyes.png",
+    "crop": [
+      543,
+      0,
+      1086,
+      724
+    ],
+    "size": [
+      319,
+      684
+    ],
+    "sha256": "ba37d7f39ee22508be0239d47e008fe54b291e4a098b410e197e4fdf1595dd45"
+  },
+  {
+    "file": "fish-upright-eyes-low-03.png",
+    "source": "04-fish-straight-middle-eyes.png",
+    "crop": [
+      0,
+      724,
+      543,
+      1448
+    ],
+    "size": [
+      329,
+      710
+    ],
+    "sha256": "4d628e842b4f1f38d8d181ce9094fdb705d0a2937aff31e7d976ed8741e54ba0"
+  },
+  {
+    "file": "fish-upright-eyes-low-04.png",
+    "source": "04-fish-straight-middle-eyes.png",
+    "crop": [
+      543,
+      724,
+      1086,
+      1448
+    ],
+    "size": [
+      328,
+      710
+    ],
+    "sha256": "084fa605f850747e24156adbbe33e431aa3c9c97260c094172d35852ec2b17b0"
+  },
+  {
+    "file": "fish-upright-single-eye-center-01.png",
+    "source": "04-fish-single-eye-centered.png",
+    "crop": [
+      0,
+      0,
+      543,
+      724
+    ],
+    "size": [
+      361,
+      683
+    ],
+    "sha256": "422bba8979e2c33d071523b4f68446c5d6ef2b144aa60f990234438130e7c79b"
+  },
+  {
+    "file": "fish-upright-single-eye-center-02.png",
+    "source": "04-fish-single-eye-centered.png",
+    "crop": [
+      543,
+      0,
+      1086,
+      724
+    ],
+    "size": [
+      348,
+      685
+    ],
+    "sha256": "e11e279d84ef0a5ced615c98e3f90c2bd94e5250ef498f8f27bdcbac9a9cbee4"
+  },
+  {
+    "file": "fish-upright-single-eye-center-03.png",
+    "source": "04-fish-single-eye-centered.png",
+    "crop": [
+      0,
+      724,
+      543,
+      1448
+    ],
+    "size": [
+      379,
+      711
+    ],
+    "sha256": "d789969f87f28074591c68922b0bdc6015063325382624483314daabff1c2c1d"
+  },
+  {
+    "file": "fish-upright-single-eye-center-04.png",
+    "source": "04-fish-single-eye-centered.png",
+    "crop": [
+      543,
+      724,
+      1086,
+      1448
+    ],
+    "size": [
+      352,
+      710
+    ],
+    "sha256": "ac22ff696de417feea1c86d0a57577e4921b64b47fe19a7921ea36e20bfc1ca1"
+  },
+  {
+    "file": "fish-upright-single-eye-left-01.png",
+    "source": "04-fish-single-eye-side.png",
+    "crop": [
+      0,
+      0,
+      543,
+      724
+    ],
+    "size": [
+      363,
+      683
+    ],
+    "sha256": "2f971759f30324063b4c5a25f8bf870c9c862878dbd1229994a0eb5deb286cc0"
+  },
+  {
+    "file": "fish-upright-single-eye-left-02.png",
+    "source": "04-fish-single-eye-side.png",
+    "crop": [
+      543,
+      0,
+      1086,
+      724
+    ],
+    "size": [
+      348,
+      687
+    ],
+    "sha256": "04934d74f67a4e9b3c60e92bbcb56ab415eaa343eadfee5a2875a5e790d583e0"
+  },
+  {
+    "file": "fish-upright-single-eye-left-03.png",
+    "source": "04-fish-single-eye-side.png",
+    "crop": [
+      0,
+      724,
+      543,
+      1448
+    ],
+    "size": [
+      381,
+      713
+    ],
+    "sha256": "7a5636082df050bf700ce948eced3dd3509777c142d6d60dfb2c5e3a1284f9ac"
+  },
+  {
+    "file": "fish-upright-single-eye-left-04.png",
+    "source": "04-fish-single-eye-side.png",
+    "crop": [
+      543,
+      724,
+      1086,
+      1448
+    ],
+    "size": [
+      353,
+      713
+    ],
+    "sha256": "21ff7f16547276d953935a7fe23de5d5c189a385d07ab525d9ee2f1664a22cfe"
+  },
+  {
+    "file": "fish-upright-single-eye-right-01.png",
+    "source": "04-fish-single-eye-right-side.png",
+    "crop": [
+      0,
+      0,
+      543,
+      724
+    ],
+    "size": [
+      364,
+      685
+    ],
+    "sha256": "a177ef34c2eb0aa516c533987ff2471f551ee54f88c6a4216cf8a13812d0b4bf"
+  },
+  {
+    "file": "fish-upright-single-eye-right-02.png",
+    "source": "04-fish-single-eye-right-side.png",
+    "crop": [
+      543,
+      0,
+      1086,
+      724
+    ],
+    "size": [
+      349,
+      688
+    ],
+    "sha256": "301104aec4078726010c6966cf79bdeceb1f8784f033c263002da1b8041a31ea"
+  },
+  {
+    "file": "fish-upright-single-eye-right-03.png",
+    "source": "04-fish-single-eye-right-side.png",
+    "crop": [
+      0,
+      724,
+      543,
+      1448
+    ],
+    "size": [
+      382,
+      715
+    ],
+    "sha256": "8833e8ee2a55b058ddf9682e39b46d726525f16ead61fa7546344abaaf51c4e0"
+  },
+  {
+    "file": "fish-upright-single-eye-right-04.png",
+    "source": "04-fish-single-eye-right-side.png",
+    "crop": [
+      543,
+      724,
+      1086,
+      1448
+    ],
+    "size": [
+      353,
+      715
+    ],
+    "sha256": "3d02c61c97bcbd5bd21a1047a1e10690252f05c36953b67d96a6b64957d5e4ac"
+  },
+  {
+    "file": "fish-side-single-eye-expression-01.png",
+    "source": "fish-side-profile-four-expressions.png",
+    "crop": [
+      0,
+      0,
+      887,
+      443
+    ],
+    "size": [
+      787,
+      423
+    ],
+    "sha256": "e671faf163fa066d8f6e46c08d5dc15e73abfc81117192d6e288e7620b66f209"
+  },
+  {
+    "file": "fish-side-single-eye-expression-02.png",
+    "source": "fish-side-profile-four-expressions.png",
+    "crop": [
+      887,
+      0,
+      1774,
+      443
+    ],
+    "size": [
+      787,
+      423
+    ],
+    "sha256": "1805002d69b85d8e7186ba10a301a4d64dad7f6888e2cf5e4a20884fc53828d7"
+  },
+  {
+    "file": "fish-side-single-eye-expression-03.png",
+    "source": "fish-side-profile-four-expressions.png",
+    "crop": [
+      0,
+      443,
+      887,
+      887
+    ],
+    "size": [
+      787,
+      423
+    ],
+    "sha256": "8359dbb61bf98c0aa51fe794b8538bdfc921e58b1fbf9f481b722f0e6eec0dda"
+  },
+  {
+    "file": "fish-side-single-eye-expression-04.png",
+    "source": "fish-side-profile-four-expressions.png",
+    "crop": [
+      887,
+      443,
+      1774,
+      887
+    ],
+    "size": [
+      787,
+      423
+    ],
+    "sha256": "a001fc729c0e3b4ec967b3cafd011f065cf1cef39d5b8c3733cf5cd2bd4f467a"
+  },
+  {
+    "file": "hand-reaching-01.png",
+    "source": "05-hand-reaching.png",
+    "crop": [
+      0,
+      0,
+      656,
+      599
+    ],
+    "size": [
+      508,
+      472
+    ],
+    "sha256": "433ab2e2b3639a50c9b023eaa3a9a36e508045cf06697ad0dd22d5374d18888b"
+  },
+  {
+    "file": "hand-reaching-02.png",
+    "source": "05-hand-reaching.png",
+    "crop": [
+      656,
+      0,
+      1312,
+      599
+    ],
+    "size": [
+      496,
+      461
+    ],
+    "sha256": "7e71001b887fd56bf9ffb5c8720caeaceab915353403cabe6adf02fff45ae98d"
+  },
+  {
+    "file": "hand-reaching-03.png",
+    "source": "05-hand-reaching.png",
+    "crop": [
+      0,
+      599,
+      656,
+      1199
+    ],
+    "size": [
+      547,
+      491
+    ],
+    "sha256": "5f936c0940bcd53ca09a4d49e0374ce0299a863236c939b77b14ea87dc1a0158"
+  },
+  {
+    "file": "hand-reaching-04.png",
+    "source": "05-hand-reaching.png",
+    "crop": [
+      656,
+      599,
+      1312,
+      1199
+    ],
+    "size": [
+      521,
+      477
+    ],
+    "sha256": "ce7cc237d33d0b49eb5e8ed631b02c5c23b7692b7179297e149f9185d35c1f7b"
+  },
+  {
+    "file": "hand-grabbing-down-01.png",
+    "source": "06-hand-grabbing.png",
+    "crop": [
+      0,
+      0,
+      656,
+      599
+    ],
+    "size": [
+      458,
+      499
+    ],
+    "sha256": "68fb5709b49ae06fb310519202554a72dbdd39fd739b90ce34c269d537dec5b4"
+  },
+  {
+    "file": "hand-grabbing-down-02.png",
+    "source": "06-hand-grabbing.png",
+    "crop": [
+      656,
+      0,
+      1312,
+      599
+    ],
+    "size": [
+      445,
+      467
+    ],
+    "sha256": "1954255c5466efa60903850910aba21b7582c8d4ed0e95e31fd8ebb213278095"
+  },
+  {
+    "file": "hand-grabbing-down-03.png",
+    "source": "06-hand-grabbing.png",
+    "crop": [
+      0,
+      599,
+      656,
+      1199
+    ],
+    "size": [
+      476,
+      503
+    ],
+    "sha256": "480f5ee0d9f06c007fd7f3f4302ca5ad1cd9afa457e9b75a386db6fdaaa58953"
+  },
+  {
+    "file": "hand-grabbing-down-04.png",
+    "source": "06-hand-grabbing.png",
+    "crop": [
+      656,
+      599,
+      1312,
+      1199
+    ],
+    "size": [
+      445,
+      496
+    ],
+    "sha256": "b966dadc86cb9da255623add57a000b27492effaaacc8c77348a79dfa4e1d199"
+  },
+  {
+    "file": "net-reaching-short-01.png",
+    "source": "07-net-reaching.png",
+    "crop": [
+      0,
+      0,
+      768,
+      512
+    ],
+    "size": [
+      748,
+      501
+    ],
+    "sha256": "9163b5a1aa7ad74f5472b8d626e377a6e914ceec452302c34613263571d00f7a"
+  },
+  {
+    "file": "net-reaching-short-02.png",
+    "source": "07-net-reaching.png",
+    "crop": [
+      768,
+      0,
+      1536,
+      512
+    ],
+    "size": [
+      740,
+      509
+    ],
+    "sha256": "a4fd0673a4622404edc6b98b445771cba47e922fc4cd0ed9a7271be3bad8bbce"
+  },
+  {
+    "file": "net-reaching-short-03.png",
+    "source": "07-net-reaching.png",
+    "crop": [
+      0,
+      512,
+      768,
+      1024
+    ],
+    "size": [
+      757,
+      503
+    ],
+    "sha256": "fa9db5e00fbd0250c46cb80cd29e1d039c828886e88053cd40556d35d9015e2c"
+  },
+  {
+    "file": "net-reaching-short-04.png",
+    "source": "07-net-reaching.png",
+    "crop": [
+      768,
+      512,
+      1536,
+      1024
+    ],
+    "size": [
+      749,
+      514
+    ],
+    "sha256": "00951e5664a8d91eb97a0ea505eef66c1bf852d69d23359947cab054f892c549"
+  },
+  {
+    "file": "net-sweeping-short-01.png",
+    "source": "08-net-sweeping.png",
+    "crop": [
+      0,
+      0,
+      768,
+      512
+    ],
+    "size": [
+      723,
+      468
+    ],
+    "sha256": "4bb90974b728af4826fb24a1dc005f353f8cb91600bd3383684a28a1a590cadf"
+  },
+  {
+    "file": "net-sweeping-short-02.png",
+    "source": "08-net-sweeping.png",
+    "crop": [
+      768,
+      0,
+      1536,
+      512
+    ],
+    "size": [
+      701,
+      482
+    ],
+    "sha256": "5f69a0ec69e5037f65c70c0ea4c022702fafcc62e87ece085cc6b8d82729d185"
+  },
+  {
+    "file": "net-sweeping-short-03.png",
+    "source": "08-net-sweeping.png",
+    "crop": [
+      0,
+      512,
+      768,
+      1024
+    ],
+    "size": [
+      744,
+      483
+    ],
+    "sha256": "12c1273e364d98d1a8f909d496100f47f6a6c9d2e5f283ca64c1957482c5d9c9"
+  },
+  {
+    "file": "net-sweeping-short-04.png",
+    "source": "08-net-sweeping.png",
+    "crop": [
+      768,
+      512,
+      1536,
+      1024
+    ],
+    "size": [
+      748,
+      481
+    ],
+    "sha256": "cbe41edceb86ee0aee55d932c1cd4772a32864fb2220e8999449d5e91f6ee693"
+  },
+  {
+    "file": "net-reaching-long-01.png",
+    "source": "01-reaching-long-handle.png",
+    "crop": [
+      0,
+      0,
+      768,
+      512
+    ],
+    "size": [
+      731,
+      449
+    ],
+    "sha256": "743329d337586c064d59c318fba488c8f93d2ac0ffd64227cb4b7e8ce411f9d4"
+  },
+  {
+    "file": "net-reaching-long-02.png",
+    "source": "01-reaching-long-handle.png",
+    "crop": [
+      768,
+      0,
+      1536,
+      512
+    ],
+    "size": [
+      731,
+      449
+    ],
+    "sha256": "0807eeb1a014f79ab52595042624c2504d8216d1ef3be5e998a1618837556c62"
+  },
+  {
+    "file": "net-reaching-long-03.png",
+    "source": "01-reaching-long-handle.png",
+    "crop": [
+      0,
+      512,
+      768,
+      1024
+    ],
+    "size": [
+      734,
+      449
+    ],
+    "sha256": "44ff3bc7fff8d094a2b1e8ef175442aa39076bb2c0ab2bbbff4205a647cf3740"
+  },
+  {
+    "file": "net-reaching-long-04.png",
+    "source": "01-reaching-long-handle.png",
+    "crop": [
+      768,
+      512,
+      1536,
+      1024
+    ],
+    "size": [
+      735,
+      449
+    ],
+    "sha256": "d8eb77cdd6111bde5620ce3d29aa39064c7f36bff3ea02623f6a5c825cf0b121"
+  },
+  {
+    "file": "net-sweeping-long-01.png",
+    "source": "02-sweeping-long-handle.png",
+    "crop": [
+      0,
+      0,
+      768,
+      512
+    ],
+    "size": [
+      706,
+      470
+    ],
+    "sha256": "97557623d856631ae7bf97d335e4019aa857dcb03a28f902577d1c9e916d624a"
+  },
+  {
+    "file": "net-sweeping-long-02.png",
+    "source": "02-sweeping-long-handle.png",
+    "crop": [
+      768,
+      0,
+      1536,
+      512
+    ],
+    "size": [
+      714,
+      470
+    ],
+    "sha256": "2d45d524a8b34d174eafa7b744491411dbc91592e619a675052ca27fb61ed98a"
+  },
+  {
+    "file": "net-sweeping-long-03.png",
+    "source": "02-sweeping-long-handle.png",
+    "crop": [
+      0,
+      512,
+      768,
+      1024
+    ],
+    "size": [
+      706,
+      471
+    ],
+    "sha256": "c4f62e9a1b49799c3fc6bd87f3a9caf4511116a09b5d81b27aee70de04636776"
+  },
+  {
+    "file": "net-sweeping-long-04.png",
+    "source": "02-sweeping-long-handle.png",
+    "crop": [
+      768,
+      512,
+      1536,
+      1024
+    ],
+    "size": [
+      713,
+      472
+    ],
+    "sha256": "ffbfc9e519a581dc4565c9c87b520ca3b8f286de2aa71dd240820ba2876acb7f"
+  },
+  {
+    "file": "fish-side-single-eye-base.png",
+    "source": "fish-single-eye-reference-style.png",
+    "crop": null,
+    "size": [
+      1391,
+      688
+    ],
+    "sha256": "4e3cc4aa7addeb13474b46aae8d3ed84cfd9294071047ff384ff06f3821abe0f"
+  },
+  {
+    "file": "fish-curved-jump-original-01.png",
+    "source": "exec-16a134e3-5d4d-40fe-ad05-8dc66688ac88.png",
+    "crop": [
+      0,
+      0,
+      645,
+      609
+    ],
+    "size": [
+      478,
+      623
+    ],
+    "sha256": "a2ead84c11b0a75705e00c7b2ac7a0aafeca66d81007e9d7e25bba9e5f5354f6"
+  },
+  {
+    "file": "fish-curved-jump-original-02.png",
+    "source": "exec-16a134e3-5d4d-40fe-ad05-8dc66688ac88.png",
+    "crop": [
+      645,
+      0,
+      1291,
+      609
+    ],
+    "size": [
+      520,
+      576
+    ],
+    "sha256": "ab882f98768161da50d5a8271efd58a401469c80f64600d2d8b70ab1d75a9e9e"
+  },
+  {
+    "file": "fish-curved-jump-original-03.png",
+    "source": "exec-16a134e3-5d4d-40fe-ad05-8dc66688ac88.png",
+    "crop": [
+      0,
+      609,
+      645,
+      1218
+    ],
+    "size": [
+      492,
+      591
+    ],
+    "sha256": "44601c3a357c1ca5c9950d6fb86392e90ee0d36f26eae09f0fb3cda3136ae391"
+  },
+  {
+    "file": "fish-curved-jump-original-04.png",
+    "source": "exec-16a134e3-5d4d-40fe-ad05-8dc66688ac88.png",
+    "crop": [
+      645,
+      609,
+      1291,
+      1218
+    ],
+    "size": [
+      519,
+      570
+    ],
+    "sha256": "3d58daf5d11cce7c7273546e712f2599af4e96fbcfe974f18f9a7df47a67a120"
+  },
+  {
+    "file": "fish-upright-jump-original-01.png",
+    "source": "exec-02633310-d9fa-45fd-ae38-4fcac754303a.png",
+    "crop": [
+      0,
+      0,
+      617,
+      637
+    ],
+    "size": [
+      337,
+      613
+    ],
+    "sha256": "fe02e4cc1ef017e9b4fb62b8b3e478f84fcfda7aadb7037117dde09d13f5ac63"
+  },
+  {
+    "file": "fish-upright-jump-original-02.png",
+    "source": "exec-02633310-d9fa-45fd-ae38-4fcac754303a.png",
+    "crop": [
+      617,
+      0,
+      1234,
+      637
+    ],
+    "size": [
+      342,
+      613
+    ],
+    "sha256": "ec92e01f274d3a7f133b8f72784c5033370cd6c00c27e61d15002d4646713fa1"
+  },
+  {
+    "file": "fish-upright-jump-original-03.png",
+    "source": "exec-02633310-d9fa-45fd-ae38-4fcac754303a.png",
+    "crop": [
+      0,
+      637,
+      617,
+      1275
+    ],
+    "size": [
+      338,
+      624
+    ],
+    "sha256": "afea82eebc3511195abf273408016a7ea78543e1013637692e837487702c7156"
+  },
+  {
+    "file": "fish-upright-jump-original-04.png",
+    "source": "exec-02633310-d9fa-45fd-ae38-4fcac754303a.png",
+    "crop": [
+      617,
+      637,
+      1234,
+      1275
+    ],
+    "size": [
+      338,
+      621
+    ],
+    "sha256": "163b98a42e93724a4ff26df83f01ff86f8939f15b9a0fc92c0a2290242c744d6"
+  },
+  {
+    "file": "tv-frame.png",
+    "source": "01-tv-frame-transparent.png",
+    "crop": null,
+    "size": [
+      1532,
+      867
+    ],
+    "sha256": "b544f11e111f3c542454fd4baddfd57a160dc8d1cf75f94fef5ec964adf0aec8"
+  },
+  {
+    "file": "tv-screen-background-abstract.png",
+    "source": "04-tv-content-abstract-background.png",
+    "crop": null,
+    "size": [
+      1704,
+      973
+    ],
+    "sha256": "bc9cb10daa701a9883609b8e7a5a5e1fcc4e7574795c5fcb26ecb570845ef6c8"
+  },
+  {
+    "file": "tv-screen-background-kitchen.png",
+    "source": "02-tv-content-background.png",
+    "crop": null,
+    "size": [
+      1704,
+      973
+    ],
+    "sha256": "be633f004a483aa19ab5c8e846a0ead9de7102fb5b0441b5f12525ef2040a95a"
+  },
+  {
+    "file": "tv-with-abstract-screen.png",
+    "source": "01-tv-frame-transparent.png",
+    "crop": null,
+    "size": [
+      1532,
+      867
+    ],
+    "sha256": "ccb8cebc7e18ada56c703c3e4c270509d2a8fe68120dbbcea7bf142cd3138f48"
+  },
+  {
+    "file": "net-large-three-fish-01.png",
+    "source": "03-large-three-fish-net.png",
+    "crop": [
+      19,
+      70,
+      761,
+      488
+    ],
+    "size": [
+      775,
+      451
+    ],
+    "sha256": "6901cdbeecb69fe0c7b9cc0c3b86543e3dd7d35422a849a0ac54786e960828a5"
+  },
+  {
+    "file": "net-large-three-fish-02.png",
+    "source": "03-large-three-fish-net.png",
+    "crop": [
+      771,
+      70,
+      1466,
+      503
+    ],
+    "size": [
+      728,
+      466
+    ],
+    "sha256": "a147debb26a8b9c553422aed85dac35a4f339373d7155501500c08953803abea"
+  },
+  {
+    "file": "net-large-three-fish-03.png",
+    "source": "03-large-three-fish-net.png",
+    "crop": [
+      19,
+      548,
+      747,
+      958
+    ],
+    "size": [
+      760,
+      443
+    ],
+    "sha256": "cceec82c8473ffeeeb16441bbded4bce12a7ad8500a02a238f99797c2e241926"
+  },
+  {
+    "file": "net-large-three-fish-04.png",
+    "source": "03-large-three-fish-net.png",
+    "crop": [
+      759,
+      548,
+      1514,
+      906
+    ],
+    "size": [
+      789,
+      390
+    ],
+    "sha256": "7b49a486cc7476d728a8bd52ba448a09b084e1d22179b21690d634ff84c7e43e"
+  },
+  {
+    "file": "fish-curved-jump-two-tone-01.png",
+    "source": "exec-338353b8-a5d4-40dd-8fca-6702ca461f04.png",
+    "crop": [
+      169,
+      15,
+      620,
+      512
+    ],
+    "size": [
+      483,
+      530
+    ],
+    "sha256": "0f99a15379a4a212efa0ef09d1add6bd623fa802bd4004fa41aacbde73e41658"
+  },
+  {
+    "file": "fish-curved-jump-two-tone-02.png",
+    "source": "exec-338353b8-a5d4-40dd-8fca-6702ca461f04.png",
+    "crop": [
+      858,
+      18,
+      1344,
+      513
+    ],
+    "size": [
+      519,
+      529
+    ],
+    "sha256": "da43e6e394fd04a9b61dc90fe6e07e91b4692435fb6d50cf6d07cff7369b164e"
+  },
+  {
+    "file": "fish-curved-jump-two-tone-03.png",
+    "source": "exec-338353b8-a5d4-40dd-8fca-6702ca461f04.png",
+    "crop": [
+      164,
+      496,
+      650,
+      1014
+    ],
+    "size": [
+      519,
+      551
+    ],
+    "sha256": "ef5d32513eb29387928a90b29ef88bbb8da2edd322b1033fcc6d7311f545b0f3"
+  },
+  {
+    "file": "fish-curved-jump-two-tone-04.png",
+    "source": "exec-338353b8-a5d4-40dd-8fca-6702ca461f04.png",
+    "crop": [
+      853,
+      513,
+      1375,
+      998
+    ],
+    "size": [
+      556,
+      519
+    ],
+    "sha256": "8ecdaaf00e7b7d321a87f714b002b32fa085646a7d6ecbdf7a395c67022bbeb5"
+  }
+]
