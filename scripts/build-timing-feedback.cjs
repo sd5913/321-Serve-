@@ -10,6 +10,9 @@ function lettering(text){let x=0,paths='',previous='';for(const ch of text){if(c
  for(const [name,text]of [['too-early','TOO EARLY!'],['too-late','TOO LATE!']]){
   const {x,paths}=lettering(text),art=`<g fill-rule="evenodd" stroke-linejoin="round" transform="translate(54 132) rotate(-7) skewX(-13)"><g fill="${NAVY}" stroke="${NAVY}" stroke-width="22" transform="translate(3 7)">${paths}</g><g fill="#FF5537" stroke="${NAVY}" stroke-width="17" paint-order="stroke fill">${paths}</g></g>`;
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${x+120}" height="280" viewBox="0 0 ${x+120} 280" role="img" aria-label="${text}">${art}</svg>`;fs.writeFileSync(path.join(out,name+'.svg'),svg);
+  const bounds=await sharp(Buffer.from(svg),{density:144}).trim({background:'#00000000'}).png().toBuffer({resolveWithObject:true});
+  const box=[-bounds.info.trimOffsetLeft/2-8,-bounds.info.trimOffsetTop/2-8,bounds.info.width/2+16,bounds.info.height/2+16];
+  fs.writeFileSync(path.join(out,name+'.svg'),svg.replace(/width="[^"]+"/,'width="'+box[2]+'"').replace(/height="[^"]+"/,'height="'+box[3]+'"').replace(/viewBox="[^"]+"/,'viewBox="'+box.join(' ')+'"'));
   const raw=await sharp(Buffer.from(svg),{density:144}).trim({background:'#00000000'}).extend({top:16,bottom:16,left:16,right:16,background:'#00000000'}).png().toBuffer();const png=(await normalizeRaster(raw)).buffer;fs.writeFileSync(path.join(out,name+'.png'),png);const m=await sharp(png).metadata();previews.push({png,width:m.width,height:m.height});
  }
  const width=Math.max(...previews.map(a=>a.width))+80,height=previews.reduce((s,a)=>s+a.height,0)+120;let top=40;

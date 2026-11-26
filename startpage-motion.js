@@ -16,10 +16,10 @@
   if(!size || size.width<=0 || size.height<=0 || now-lastDraw<32)return;
   lastDraw=now;
   if(origin===null)origin=now;
-  const scale=Math.min(window.devicePixelRatio||1,2,640/size.width,800/size.height);
+  const scale=Math.min(window.devicePixelRatio||1,3,1536/size.width,2048/size.height);
   const w=Math.max(1,Math.round(size.width*scale)),h=Math.max(1,Math.round(size.height*scale));
   if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}
-  ctx.setTransform(w/(1104*.39),0,0,h/512,0,0);ctx.clearRect(0,0,1104*.39,512);ctx.imageSmoothingEnabled=true;
+  ctx.setTransform(w/(1104*.39),0,0,h/512,0,0);ctx.clearRect(0,0,1104*.39,512);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   ctx.drawImage(images.background,0,0,1104*.39,512);
   const reduced=reducedMotion.matches||motionControl.checked;
   const beat=reduced?0:((now-origin)/500)%4;

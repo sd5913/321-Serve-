@@ -20,10 +20,10 @@ const assetPaths = {
   sponge: 'assets/level1/imgSpongeNormal1.png',
   squeezed: 'assets/level1/imgSpongeSqueezed1.png',
   drops: 'assets/level1/imgWaterDrops2.png',
-  onBeat: ui + 'feedback/on-beat.png',
-  tooEarly: ui + 'feedback/too-early.png',
-  tooLate: ui + 'feedback/too-late.png',
-  3: ui + 'countdown/3.png', 2: ui + 'countdown/2.png', 1: ui + 'countdown/1.png'
+  onBeat: ui + 'feedback/on-beat.svg',
+  tooEarly: ui + 'feedback/too-early.svg',
+  tooLate: ui + 'feedback/too-late.svg',
+  3: ui + 'countdown/3.svg', 2: ui + 'countdown/2.svg', 1: ui + 'countdown/1.svg'
 };
 let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],lastFrame=0,offset=0;
 let reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;$('motion').checked=reduce;
@@ -152,9 +152,9 @@ async function resume(){
 function finish(){
  soundtrack.stop(END);state='result';pausedAt=END;audio.suspend();
  const acc=Math.round((perfect+good*.7)/(notes.length+strays)*100);
- for(const id of ['modal','settings','quitDialog','beatHud','pause','gameInfo','progressTrack'])$(id).hidden=true;
+ for(const id of ['modal','settings','quitDialog','judgmentLayer','beatHud','pause','gameInfo','progressTrack'])$(id).hidden=true;
  $('results').hidden=false;
- $('accuracy').src=ui+'result/percentages/'+String(acc).padStart(3,'0')+'.png';
+ $('accuracy').src=ui+'result/percentages/'+String(acc).padStart(3,'0')+'.svg';
  $('accuracy').alt=acc+'%';$('accuracy').setAttribute('aria-label',acc+' percent accuracy');
  $('resultStats').textContent='PERFECT '+perfect+' / GOOD '+good+' / MISS '+misses+'\nBEST COMBO '+best+' / SCORE '+score.toLocaleString();
  $('resultRetry').focus();$('status').textContent='Order complete.';
@@ -281,15 +281,16 @@ function centeredArt(name, y, width, height) {
 }
 
 function drawFeedback(t, y) {
-  if (!fx || t - fx.t >= .7) return;
-  const hit = fx.kind === 'perfect' || fx.kind === 'good';
-  const label = fx.label || (hit ? 'onBeat' : fx.kind === 'miss' ? 'tooLate' : 'offBeat');
-  if (label === 'offBeat') txt('OFF BEAT!',600,y+14,40,'#FF5537','center');
-  else centeredArt(label,y,hit ? 284 : 350,122);
-  if (hit) {
-    const detail = fx.kind.toUpperCase()+' · '+(fx.delta>0?'+':'')+Math.round(fx.delta*1000)+' ms';
-    txt(detail,600,y+79,15,INK,'center');
-  }
+  const layer=$('judgmentLayer');
+  if (!fx || t - fx.t >= .7) {layer.hidden=true;return;}
+  const hit=fx.kind==='perfect'||fx.kind==='good';
+  const label=fx.label||(hit?'onBeat':fx.kind==='miss'?'tooLate':'offBeat');
+  const art=$('judgmentArt'),text=$('judgmentText'),detail=$('judgmentDetail');
+  layer.hidden=false;layer.dataset.feedback=label;
+  art.hidden=label==='offBeat';text.hidden=label!=='offBeat';detail.hidden=!hit;
+  if(label==='offBeat'){text.textContent='OFF BEAT!';text.style.top=((y+14)/675*100)+'%';}
+  else {if(art.dataset.name!==label){art.src=assetPaths[label];art.dataset.name=label;}art.style.top=(y/675*100)+'%';art.style.width='calc('+(hit?284:350)+' / 675 * 100cqh)';}
+  if(hit){detail.textContent=fx.kind.toUpperCase()+' · '+(fx.delta>0?'+':'')+Math.round(fx.delta*1000)+' ms';detail.style.top=((y+79)/675*100)+'%';}
 }
 
 function hand(x,y,size=240,rotation=Math.PI/2,open=false){const a=assets.hand;if(!a)return;c.save();c.translate(x,y);c.rotate(rotation);c.drawImage(a,0,open?0:a.height/2,a.width/3,a.height/2,-size/2,-size/2,size,size);c.restore();}
@@ -601,21 +602,22 @@ async function skipTutorial() {
   if (state === 'tutorial') await start('level');
   else if (state === 'playing' && lessonMode !== 'level') beginRound('level');
 }
-function showGameplay(){$('skipTutorial').hidden=lessonMode==='level';for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
+function showGameplay(){$('skipTutorial').hidden=lessonMode==='level';for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
 function showTutorial(){if(state!=='ready')return;state='tutorial';$('skipTutorial').hidden=false;$('overlay').hidden=true;$('tutorial').hidden=false;canvas.inert=true;$('gotIt').disabled=false;$('gotIt').focus();}
-function goHome(){if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','skipTutorial','modal','settings','quitDialog','results','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
+function goHome(){if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','skipTutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
 function openSettings(){if(state==='playing')pause();$('settings').hidden=false;$('musicVolume').focus();}
 function sliderFill(el){el.style.setProperty('--fill',((Number(el.value)-Number(el.min||0))/(Number(el.max||100)-Number(el.min||0))*100)+'%');}
 function resizeCanvas(){
   const {width,height}=canvas.getBoundingClientRect();
   if(width<=0 || height<=0)return;
-  // Keep the number of pixels cleared and painted per frame bounded on Retina displays.
-  const scale=Math.min(window.devicePixelRatio||1,2,1600/width,900/height);
+  // Match display pixels on Retina screens; retain a 4K backing-store limit for very large windows.
+  const scale=Math.min(window.devicePixelRatio||1,3,4096/width,2160/height);
   const targetWidth=Math.max(1,Math.round(width*scale));
   const targetHeight=Math.max(1,Math.round(height*scale));
   if(canvas.width===targetWidth && canvas.height===targetHeight)return;
   canvas.width=targetWidth;
   canvas.height=targetHeight;
+  c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
   if(state==='paused')draw(pausedAt);
 }
 new ResizeObserver(resizeCanvas).observe(canvas);window.addEventListener('resize',resizeCanvas);

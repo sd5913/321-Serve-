@@ -1,0 +1,527 @@
+{
+  "navy": "#00133A",
+  "cream": "#FCEBD1",
+  "description": "True vector companions; supplied PNGs remain intact. Paths follow the original artwork, with transparent safety margins.",
+  "assets": [
+    {
+      "source": "assets/ui/elements/feedback/on-beat.png",
+      "svg": "assets/ui/elements/feedback/on-beat.svg"
+    },
+    {
+      "source": "assets/ui/elements/feedback/miss.png",
+      "svg": "assets/ui/elements/feedback/miss.svg"
+    },
+    {
+      "source": "assets/ui/elements/countdown/1.png",
+      "svg": "assets/ui/elements/countdown/1.svg"
+    },
+    {
+      "source": "assets/ui/elements/countdown/2.png",
+      "svg": "assets/ui/elements/countdown/2.svg"
+    },
+    {
+      "source": "assets/ui/elements/countdown/3.png",
+      "svg": "assets/ui/elements/countdown/3.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/000.png",
+      "svg": "assets/ui/elements/result/percentages/000.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/001.png",
+      "svg": "assets/ui/elements/result/percentages/001.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/002.png",
+      "svg": "assets/ui/elements/result/percentages/002.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/003.png",
+      "svg": "assets/ui/elements/result/percentages/003.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/004.png",
+      "svg": "assets/ui/elements/result/percentages/004.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/005.png",
+      "svg": "assets/ui/elements/result/percentages/005.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/006.png",
+      "svg": "assets/ui/elements/result/percentages/006.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/007.png",
+      "svg": "assets/ui/elements/result/percentages/007.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/008.png",
+      "svg": "assets/ui/elements/result/percentages/008.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/009.png",
+      "svg": "assets/ui/elements/result/percentages/009.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/010.png",
+      "svg": "assets/ui/elements/result/percentages/010.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/011.png",
+      "svg": "assets/ui/elements/result/percentages/011.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/012.png",
+      "svg": "assets/ui/elements/result/percentages/012.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/013.png",
+      "svg": "assets/ui/elements/result/percentages/013.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/014.png",
+      "svg": "assets/ui/elements/result/percentages/014.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/015.png",
+      "svg": "assets/ui/elements/result/percentages/015.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/016.png",
+      "svg": "assets/ui/elements/result/percentages/016.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/017.png",
+      "svg": "assets/ui/elements/result/percentages/017.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/018.png",
+      "svg": "assets/ui/elements/result/percentages/018.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/019.png",
+      "svg": "assets/ui/elements/result/percentages/019.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/020.png",
+      "svg": "assets/ui/elements/result/percentages/020.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/021.png",
+      "svg": "assets/ui/elements/result/percentages/021.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/022.png",
+      "svg": "assets/ui/elements/result/percentages/022.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/023.png",
+      "svg": "assets/ui/elements/result/percentages/023.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/024.png",
+      "svg": "assets/ui/elements/result/percentages/024.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/025.png",
+      "svg": "assets/ui/elements/result/percentages/025.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/026.png",
+      "svg": "assets/ui/elements/result/percentages/026.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/027.png",
+      "svg": "assets/ui/elements/result/percentages/027.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/028.png",
+      "svg": "assets/ui/elements/result/percentages/028.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/029.png",
+      "svg": "assets/ui/elements/result/percentages/029.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/030.png",
+      "svg": "assets/ui/elements/result/percentages/030.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/031.png",
+      "svg": "assets/ui/elements/result/percentages/031.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/032.png",
+      "svg": "assets/ui/elements/result/percentages/032.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/033.png",
+      "svg": "assets/ui/elements/result/percentages/033.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/034.png",
+      "svg": "assets/ui/elements/result/percentages/034.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/035.png",
+      "svg": "assets/ui/elements/result/percentages/035.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/036.png",
+      "svg": "assets/ui/elements/result/percentages/036.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/037.png",
+      "svg": "assets/ui/elements/result/percentages/037.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/038.png",
+      "svg": "assets/ui/elements/result/percentages/038.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/039.png",
+      "svg": "assets/ui/elements/result/percentages/039.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/040.png",
+      "svg": "assets/ui/elements/result/percentages/040.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/041.png",
+      "svg": "assets/ui/elements/result/percentages/041.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/042.png",
+      "svg": "assets/ui/elements/result/percentages/042.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/043.png",
+      "svg": "assets/ui/elements/result/percentages/043.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/044.png",
+      "svg": "assets/ui/elements/result/percentages/044.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/045.png",
+      "svg": "assets/ui/elements/result/percentages/045.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/046.png",
+      "svg": "assets/ui/elements/result/percentages/046.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/047.png",
+      "svg": "assets/ui/elements/result/percentages/047.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/048.png",
+      "svg": "assets/ui/elements/result/percentages/048.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/049.png",
+      "svg": "assets/ui/elements/result/percentages/049.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/050.png",
+      "svg": "assets/ui/elements/result/percentages/050.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/051.png",
+      "svg": "assets/ui/elements/result/percentages/051.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/052.png",
+      "svg": "assets/ui/elements/result/percentages/052.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/053.png",
+      "svg": "assets/ui/elements/result/percentages/053.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/054.png",
+      "svg": "assets/ui/elements/result/percentages/054.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/055.png",
+      "svg": "assets/ui/elements/result/percentages/055.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/056.png",
+      "svg": "assets/ui/elements/result/percentages/056.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/057.png",
+      "svg": "assets/ui/elements/result/percentages/057.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/058.png",
+      "svg": "assets/ui/elements/result/percentages/058.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/059.png",
+      "svg": "assets/ui/elements/result/percentages/059.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/060.png",
+      "svg": "assets/ui/elements/result/percentages/060.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/061.png",
+      "svg": "assets/ui/elements/result/percentages/061.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/062.png",
+      "svg": "assets/ui/elements/result/percentages/062.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/063.png",
+      "svg": "assets/ui/elements/result/percentages/063.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/064.png",
+      "svg": "assets/ui/elements/result/percentages/064.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/065.png",
+      "svg": "assets/ui/elements/result/percentages/065.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/066.png",
+      "svg": "assets/ui/elements/result/percentages/066.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/067.png",
+      "svg": "assets/ui/elements/result/percentages/067.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/068.png",
+      "svg": "assets/ui/elements/result/percentages/068.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/069.png",
+      "svg": "assets/ui/elements/result/percentages/069.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/070.png",
+      "svg": "assets/ui/elements/result/percentages/070.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/071.png",
+      "svg": "assets/ui/elements/result/percentages/071.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/072.png",
+      "svg": "assets/ui/elements/result/percentages/072.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/073.png",
+      "svg": "assets/ui/elements/result/percentages/073.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/074.png",
+      "svg": "assets/ui/elements/result/percentages/074.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/075.png",
+      "svg": "assets/ui/elements/result/percentages/075.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/076.png",
+      "svg": "assets/ui/elements/result/percentages/076.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/077.png",
+      "svg": "assets/ui/elements/result/percentages/077.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/078.png",
+      "svg": "assets/ui/elements/result/percentages/078.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/079.png",
+      "svg": "assets/ui/elements/result/percentages/079.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/080.png",
+      "svg": "assets/ui/elements/result/percentages/080.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/081.png",
+      "svg": "assets/ui/elements/result/percentages/081.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/082.png",
+      "svg": "assets/ui/elements/result/percentages/082.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/083.png",
+      "svg": "assets/ui/elements/result/percentages/083.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/084.png",
+      "svg": "assets/ui/elements/result/percentages/084.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/085.png",
+      "svg": "assets/ui/elements/result/percentages/085.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/086.png",
+      "svg": "assets/ui/elements/result/percentages/086.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/087.png",
+      "svg": "assets/ui/elements/result/percentages/087.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/088.png",
+      "svg": "assets/ui/elements/result/percentages/088.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/089.png",
+      "svg": "assets/ui/elements/result/percentages/089.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/090.png",
+      "svg": "assets/ui/elements/result/percentages/090.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/091.png",
+      "svg": "assets/ui/elements/result/percentages/091.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/092.png",
+      "svg": "assets/ui/elements/result/percentages/092.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/093.png",
+      "svg": "assets/ui/elements/result/percentages/093.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/094.png",
+      "svg": "assets/ui/elements/result/percentages/094.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/095.png",
+      "svg": "assets/ui/elements/result/percentages/095.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/096.png",
+      "svg": "assets/ui/elements/result/percentages/096.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/097.png",
+      "svg": "assets/ui/elements/result/percentages/097.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/098.png",
+      "svg": "assets/ui/elements/result/percentages/098.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/099.png",
+      "svg": "assets/ui/elements/result/percentages/099.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/percentages/100.png",
+      "svg": "assets/ui/elements/result/percentages/100.svg"
+    },
+    {
+      "source": "assets/ui/elements/branding/logo-321-serve.png",
+      "svg": "assets/ui/elements/branding/logo-321-serve.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/settings-gear.png",
+      "svg": "assets/ui/elements/buttons/unified/settings-gear.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/start.png",
+      "svg": "assets/ui/elements/buttons/unified/start.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/back.png",
+      "svg": "assets/ui/elements/buttons/unified/back.svg"
+    },
+    {
+      "source": "assets/ui/elements/tutorial/listen-then-tap-card.png",
+      "svg": "assets/ui/elements/tutorial/listen-then-tap-card.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/got-it.png",
+      "svg": "assets/ui/elements/buttons/unified/got-it.svg"
+    },
+    {
+      "source": "assets/ui/elements/titles/paused.png",
+      "svg": "assets/ui/elements/titles/paused.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/resume.png",
+      "svg": "assets/ui/elements/buttons/unified/resume.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/restart.png",
+      "svg": "assets/ui/elements/buttons/unified/restart.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/home-pause.png",
+      "svg": "assets/ui/elements/buttons/unified/home-pause.svg"
+    },
+    {
+      "source": "assets/ui/elements/titles/settings.png",
+      "svg": "assets/ui/elements/titles/settings.svg"
+    },
+    {
+      "source": "assets/ui/elements/settings/label-music.png",
+      "svg": "assets/ui/elements/settings/label-music.svg"
+    },
+    {
+      "source": "assets/ui/elements/settings/label-sfx.png",
+      "svg": "assets/ui/elements/settings/label-sfx.svg"
+    },
+    {
+      "source": "assets/ui/elements/titles/quit-game.png",
+      "svg": "assets/ui/elements/titles/quit-game.svg"
+    },
+    {
+      "source": "assets/ui/elements/labels/progress-will-be-lost.png",
+      "svg": "assets/ui/elements/labels/progress-will-be-lost.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/cancel.png",
+      "svg": "assets/ui/elements/buttons/unified/cancel.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/quit.png",
+      "svg": "assets/ui/elements/buttons/unified/quit.svg"
+    },
+    {
+      "source": "assets/ui/elements/titles/nice-cuts.png",
+      "svg": "assets/ui/elements/titles/nice-cuts.svg"
+    },
+    {
+      "source": "assets/ui/elements/decorations/celebration-left.png",
+      "svg": "assets/ui/elements/decorations/celebration-left.svg"
+    },
+    {
+      "source": "assets/ui/elements/decorations/celebration-right.png",
+      "svg": "assets/ui/elements/decorations/celebration-right.svg"
+    },
+    {
+      "source": "assets/ui/elements/result/label-on-beat.png",
+      "svg": "assets/ui/elements/result/label-on-beat.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/retry.png",
+      "svg": "assets/ui/elements/buttons/unified/retry.svg"
+    },
+    {
+      "source": "assets/ui/elements/buttons/unified/home-result.png",
+      "svg": "assets/ui/elements/buttons/unified/home-result.svg"
+    },
+    {
+      "source": "assets/ui/elements/modals/panel-base.png",
+      "svg": "assets/ui/elements/modals/panel-base.svg"
+    }
+  ]
+}

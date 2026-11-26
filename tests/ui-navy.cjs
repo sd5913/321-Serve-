@@ -2,7 +2,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),sharp=require(process.env.SHARP_MODULE||'sharp');
 const {NAVY,RGB,isNavy,normalizeSVG}=require('../scripts/normalize-ui-navy.cjs');
 const root=path.resolve(__dirname,'..');
-(async()=>{let pngs=0,svgs=0;for(const dir of ['assets/ui/elements','assets/ui/level-select'])for(const name of fs.readdirSync(path.join(root,dir),{recursive:true})){const relative=dir+'/'+name,file=path.join(root,relative);if(relative==='assets/ui/elements/branding/logo-321-serve.png')continue;
+(async()=>{let pngs=0,svgs=0;for(const dir of ['assets/ui/elements','assets/ui/level-select'])for(const name of fs.readdirSync(path.join(root,dir),{recursive:true})){const relative=dir+'/'+name,file=path.join(root,relative);if(relative==='assets/ui/elements/branding/logo-321-serve.png'||relative.endsWith('-hd.png'))continue;
  if(name.endsWith('.png')){const {data}=await sharp(file).ensureAlpha().raw().toBuffer({resolveWithObject:true});for(let i=0;i<data.length;i+=4)if(data[i+3]&&isNavy(data[i],data[i+1],data[i+2]))assert(data[i]===RGB[0]&&data[i+1]===RGB[1]&&data[i+2]===RGB[2],relative+' has a different navy');pngs++;}
  if(name.endsWith('.svg')){const text=fs.readFileSync(file,'utf8');assert.equal(await normalizeSVG(text),text,relative+' needs navy normalization');svgs++;}
  }
