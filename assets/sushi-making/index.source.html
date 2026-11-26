@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Fish Beat Kitchen</title>
+<title>Sushi Making</title>
 <style>
   :root{
     --coral:#ee8073;      /*  #ee8073 */
@@ -238,7 +238,7 @@
 
     <div class="overlay" id="startScreen">
       <div class="panel">
-        <h1>Fish Beat Kitchen</h1>
+        <h1>Sushi Making</h1>
         <p>Chopsticks wait on the right while salmon and squid run along the board.<br>
            Hit <b>Salmon with ←</b> (left side of plate) and <b>Squid with →</b> (right side).<br>
            Music matches every slice — follow the beat. Closer slices = faster combos.<br>
@@ -566,7 +566,7 @@ function updateHUD(bump){
   $('#score').textContent=score;
   const ce=$('#combo');
   ce.textContent=combo>1?`Combo x${combo}`:'';
-  $('#levelTxt').textContent=`Level ${level+1} · Plate ${plateIdx+1}/5`;
+  $('#levelTxt').textContent=`Sushi Making · Plate ${plateIdx+1}/5`;
   /* （ DOM，） */
   const active=$('#recipes .rplate.active .rseq');
   if(active){
@@ -865,7 +865,7 @@ function checkPlate(){
         running=false;if(raf){cancelAnimationFrame(raf);raf=null;}
         /* ：， */
         stopBgm();
-        $('#clearTitle').textContent=`Level ${level+1} Complete!`;
+        $('#clearTitle').textContent='Sushi Making Complete!';
         $('#clearDesc').textContent=`Score ${score} · Max Combo ${maxCombo}. All five plates are perfectly plated!`;
         $('#btnNext').textContent=level+1<LEVELS.length?'Next Level':'Play Again';
         $('#clearScreen').classList.remove('hidden');

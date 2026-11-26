@@ -1,4 +1,4 @@
-# Fish Beat Kitchen
+# Sushi Making
 
 Self-contained rhythm game build. Open `index.html` directly in a browser; all artwork and audio are embedded as data URIs, so no extra files are required.
 
