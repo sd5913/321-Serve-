@@ -23,24 +23,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 }
 
-final class GameViewController: CAPBridgeViewController {
+final class GameViewController: UIViewController {
+    private let game = CAPBridgeViewController()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let webView = webView else { return }
+        addChild(game)
 
-        // Keep the game and controls clear of the sensor housing and home indicator.
-        let container = UIView()
-        container.backgroundColor = webView.backgroundColor
-        view = container
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        container.addSubview(webView)
+        // Embed the Capacitor controller without replacing the view it manages.
+        let gameView = game.view!
+        view.backgroundColor = gameView.backgroundColor
+        gameView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(gameView)
 
-        let safeArea = container.safeAreaLayoutGuide
+        let safeArea = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: safeArea.topAnchor),
-            webView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
+            gameView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            gameView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            gameView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            gameView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor),
         ])
+        game.didMove(toParent: self)
     }
+
+    override var childForStatusBarStyle: UIViewController? { game }
+    override var childForStatusBarHidden: UIViewController? { game }
 }

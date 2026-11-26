@@ -78,7 +78,7 @@ jobs:
           echo "$launch"
           pid=${launch##*: }
           [[ "$pid" =~ ^[1-9][0-9]*$ ]]
-          sleep 5
+          sleep 12
           kill -0 "$pid"
           xcrun simctl io "$device" screenshot "$RUNNER_TEMP/321-serve-ios-startup.png"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
