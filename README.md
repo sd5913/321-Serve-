@@ -19,6 +19,7 @@
 | 看关卡风格、拆动作和编排节拍 | [关卡设计指南](docs/guides/level-design.md) |
 | 替换声音、对齐拍点和保存音频 | [调音台指南](docs/guides/audio-studio.md) |
 | 找代码和素材、验证改动 | [开发与迭代指南](docs/guides/development.md) |
+| 打包 iOS 与设置 TestFlight | [iOS / TestFlight 指南](docs/guides/ios-testflight.md) |
 | 记录试玩和查阅历史 | [试玩记录](docs/playtest-log.md) · [更新记录](docs/CHANGELOG.md) |
 
 ---
@@ -44,4 +45,5 @@ The level selector displays four levels. **Rice Rice Baby** is currently playabl
 | Explore the level style, break down actions, and arrange rhythm patterns | [Level design guide](docs/guides/level-design.md) |
 | Replace sounds, align timing, and save audio | [Audio studio guide](docs/guides/audio-studio.md) |
 | Find code and assets, and verify changes | [Development and iteration guide](docs/guides/development.md) |
+| Build for iOS and set up TestFlight | [iOS and TestFlight guide](docs/guides/ios-testflight.md) |
 | Record playtests and review project history | [Playtest log](docs/playtest-log.md) · [Changelog](docs/CHANGELOG.md) |
