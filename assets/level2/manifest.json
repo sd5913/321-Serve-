@@ -1347,5 +1347,23 @@
       852
     ],
     "sha256": "ff0d702879fb1e852baa3fe1d7a81b747dafd067c252a0bb1f9888d0e69fdaca"
+  },
+  {
+    "file": "fish-side-single-eye-flank-corrected.png",
+    "source": "fish-single-eye-flank-corrected.png",
+    "size": [
+      1391,
+      692
+    ],
+    "sha256": "5a163118c81ee20d8c4ba59a9d0e5b338c42f4f4daa485129511dd16badc9312"
+  },
+  {
+    "file": "fish-side-single-eye-wide-cream-belly.png",
+    "source": "fish-single-eye-wide-cream-belly.png",
+    "size": [
+      1392,
+      696
+    ],
+    "sha256": "f6ce969b346ff5a902b5a4717f3e2c7b1440b278c490583dfa339c1ae991f3de"
   }
 ]

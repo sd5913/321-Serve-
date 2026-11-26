@@ -38,3 +38,11 @@ manifest.json 记录高清来源、裁切区域、输出尺寸和 SHA-256。
 - environment-wall-layer / environment-floor-layer：同尺寸墙、地分层，另一部分透明，可直接重叠。
 
 不含后方大柜。右侧装饰小柜按最新场景要求补齐。
+
+## 单眼侧身鱼的三版
+
+- `fish-side-single-eye-base.png`：原版，灰色脸颊向内收。
+- `fish-side-single-eye-flank-corrected.png`：浅灰色延伸到鱼头前缘，米色腹部较窄。
+- `fish-side-single-eye-wide-cream-belly.png`：浅灰色连到前缘，米色腹部加宽。
+
+三版独立保留，透明底，不覆盖原版。
