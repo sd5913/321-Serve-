@@ -12,6 +12,6 @@ The approved English tutorial uses a solid `#87DCB0` background, `#FCEBD1` panel
 
 PNGs are exported at twice the design size. Transparent margins surround the components; only the background is opaque. Runtime uses the corresponding SVGs for sharp rendering. Body text is outlined from the bundled IBM Plex Mono font so browsers do not substitute another typeface.
 
-Flow: introduction → explanation → demonstration → “Now it’s your turn!” → practice. Repeat for four patterns. Failed practice repeats the same pattern. Continue after completion to a plain green 3 → 2 → 1 → GO! screen, with 800 ms per image, then start the unchanged formal chart and soundtrack. No count-in appears inside the tutorial. Skip remains available.
+Flow: introduction → explanation → demonstration → “Now it’s your turn!” → practice. Repeat for four patterns. Failed practice replays the same demonstration, then shows “Now it’s your turn!” before another attempt. Continue after completion to a plain green 3 → 2 → 1 → GO! screen, with 800 ms per image, then start the unchanged formal chart and soundtrack. No count-in appears inside the tutorial. Skip remains available.
 
 To regenerate, install development dependencies `sharp` and Python `fonttools`, then run `node scripts/build-rice-tutorial.cjs` from the repository root. These dependencies are not required by the game in the browser.

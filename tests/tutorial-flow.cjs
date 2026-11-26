@@ -25,9 +25,11 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    assert(await p.locator('#tutorialTurn').isVisible());
    await p.waitForFunction(()=>state==='playing'&&lessonMode==='practice');
    assert(!/[\u3400-\u9fff]/.test(await p.locator('#phase').textContent()));
-   if(stage===0){
+   {
     await p.evaluate(()=>{clockOrigin=audio.currentTime-END-.01;});
-    await p.waitForFunction(()=>state==='tutorial'&&tutorialFlow.stage==='turn');assert(await p.locator('#tutorialRetry').isVisible());
+    await p.waitForFunction(()=>state==='playing'&&lessonMode==='demo');assert.equal(await p.evaluate(()=>lessonIndex),stage);
+    await p.evaluate(()=>{for(const n of notes)demonstrate(n.t);clockOrigin=audio.currentTime-END-.01;});
+    await p.waitForFunction(()=>state==='tutorial'&&tutorialFlow.stage==='turn');assert(await p.locator('#tutorialTurn').isVisible());
     await p.waitForFunction(()=>state==='playing'&&lessonMode==='practice');
    }
    const actions=await p.evaluate(()=>notes.map(n=>n.action));
@@ -46,6 +48,15 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   });
   await p.click('#tutorialContinue');await p.waitForFunction(()=>state==='count-in');assert(await p.locator('#tutorialCard').isHidden());assert(await p.locator('#tutorialTurn').isHidden());assert(await p.locator('#beatHud').isHidden());
   await p.waitForFunction(()=>state==='playing'&&lessonMode==='level');
+  const background=await p.evaluate(()=>{
+   const tableCalls=[],original=c.drawImage.bind(c);
+   c.drawImage=(art,...args)=>{if(art===assets.table)tableCalls.push({args,transform:[...['a','b','c','d','e','f'].map(k=>c.getTransform()[k])]});return original(art,...args);};
+   try{draw(time());}finally{c.drawImage=original;}
+   return {tableCalls,width:canvas.width,height:canvas.height,base:getComputedStyle(document.querySelector('.game')).backgroundColor};
+  });
+  assert.deepEqual(background.tableCalls,[{args:[0,0,background.width,background.height],transform:[1,0,0,1,0,0]}]);
+  assert.equal(background.base,'rgb(252, 235, 209)');
+  await p.locator('.game').screenshot({path:path.resolve(__dirname,'../test-output/full-table-background.png')});
   const changes=await p.evaluate(()=>window.countChanges);assert.deepEqual(changes.map(x=>x.label),['3','2','1','GO!']);for(let i=1;i<4;i++)assert(Math.abs(changes[i].t-changes[i-1].t-800)<100);
   assert.deepEqual(await p.evaluate(()=>({notes:levelChart.map(n=>({beat:n.beat,action:n.action})),end:levelEnd,perfectWindow,goodWindow})),chart);
   await p.click('#pause');const frozen=await p.evaluate(()=>time());await p.waitForTimeout(100);assert.equal(await p.evaluate(()=>time()),frozen);await p.click('#resume');await p.waitForFunction(()=>state==='playing');
@@ -55,6 +66,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await p.locator('.game').screenshot({path:path.resolve(__dirname,'../test-output/tutorial-mobile.png')});
   await p.click('#skipTutorial');await p.waitForFunction(()=>state==='playing'&&lessonMode==='level');assert.equal(await p.evaluate(()=>notes.every(n=>n.result===null)),true);
   assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
-  console.log('PASS: intro and four English lessons; watch/turn/practice; retry on failure; real keyboard and touch inputs; slim 2/4/2/1 bars; 800 ms count-in only after tutorial; cancel/retry/skip; mobile layout; unchanged chart/windows; no missing assets.');
+  console.log('PASS: intro and four English lessons; watch/turn/practice; demonstration replay on failure in every lesson; real keyboard and touch inputs; slim 2/4/2/1 bars; 800 ms count-in only after tutorial; cancel/retry/skip; mobile layout; original table fills the complete canvas; unchanged chart/windows; no missing assets.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
