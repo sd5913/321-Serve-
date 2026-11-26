@@ -66,7 +66,7 @@ jobs:
           cmp index.html "$app/public/index.html"
           cmp rice-audio.js "$app/public/rice-audio.js"
           diff -qr --exclude='cordova.js' --exclude='cordova_plugins.js' www-ios "$app/public"
-          jq -e --arg bundle "$bundle" '.appId == $bundle and (.server.url == null)' "$app/capacitor.config.json"
+          jq -e --arg bundle "$bundle" '.appId == $bundle and (.server.url == null) and (.ios.contentInset == "always")' "$app/capacitor.config.json"
 
           device=$(xcrun simctl list devices available -j | jq -r \
             '[.devices | to_entries | sort_by(.key) | reverse | .[].value[] | select(.name == "iPhone 17")][0].udid // empty')

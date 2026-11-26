@@ -1,5 +1,9 @@
 {
   "appId": "org.5913.321serve",
   "appName": "321 Serve",
-  "webDir": "www-ios"
+  "webDir": "www-ios",
+  "ios": {
+    "contentInset": "always",
+    "backgroundColor": "#fcebd1"
+  }
 }

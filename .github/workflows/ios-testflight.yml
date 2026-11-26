@@ -34,8 +34,9 @@ jobs:
             echo 'TestFlight is disabled. Set SERVE_TESTFLIGHT_ENABLED=true after owner setup.'
             exit 0
           fi
-          if [[ "$(gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.protected')" != true ]]; then
-            echo 'Protect main with required PR review before enabling TestFlight.' >&2
+          if [[ "$(gh api "repos/$GITHUB_REPOSITORY/rules/branches/main" \
+            --jq 'any(.[]; .type == "pull_request" and .parameters.required_approving_review_count >= 1)')" != true ]]; then
+            echo 'Enable a main branch ruleset that requires an approving PR review before enabling TestFlight.' >&2
             exit 1
           fi
           echo 'ready=true' >> "$GITHUB_OUTPUT"
@@ -76,7 +77,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           test "$ENABLED" = true
-          test "$(gh api "repos/$GITHUB_REPOSITORY/branches/main" --jq '.protected')" = true
+          test "$(gh api "repos/$GITHUB_REPOSITORY/rules/branches/main" \
+            --jq 'any(.[]; .type == "pull_request" and .parameters.required_approving_review_count >= 1)')" = true
           test "$(git rev-parse HEAD)" = "$VERIFIED_COMMIT"
           bash .github/scripts/verify-release-ref.sh "$GITHUB_REF" "$GITHUB_SHA"
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6

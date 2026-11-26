@@ -49,11 +49,14 @@ with open(path, 'rb') as source:
     profile = plistlib.load(source)
 entitlements = profile["Entitlements"]
 assert profile["TeamIdentifier"] == [team], "Wrong provisioning team"
-assert entitlements["application-identifier"] == f"{team}.{bundle_id}", "Wrong provisioning app ID"
+prefix, _, application_id = entitlements["application-identifier"].partition(".")
+assert application_id == bundle_id and prefix in profile["ApplicationIdentifierPrefix"], "Wrong provisioning app ID"
 assert not entitlements.get("get-task-allow"), "Development profile"
 assert "ProvisionedDevices" not in profile and not profile.get("ProvisionsAllDevices"), "Expected App Store distribution profile"
 assert profile["ExpirationDate"] > datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None), "Expired profile"
-print(uuid.UUID(profile["UUID"]))
+profile_uuid = profile["UUID"]
+assert str(uuid.UUID(profile_uuid)) == profile_uuid.lower(), "Invalid provisioning profile UUID"
+print(profile_uuid)
 PY
 )"
 profiles="$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
