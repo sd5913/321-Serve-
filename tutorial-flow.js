@@ -70,7 +70,7 @@ function complete(){
 }
 function countIn(){
  panel('count-in');soundtrack.stop(0);count.hidden=false;
- const images=['assets/ui/elements/countdown/3.svg','assets/ui/elements/countdown/2.svg','assets/ui/elements/countdown/1.svg',base+'countdown-go.svg'];
+ const images=[base+'countdown-3.svg',base+'countdown-2.svg',base+'countdown-1.svg',base+'countdown-go.svg'];
  let shown=-1;
  timed(3200,elapsed=>{
   const index=Math.min(3,Math.floor(elapsed/800));if(index===shown)return;shown=index;

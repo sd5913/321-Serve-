@@ -348,13 +348,12 @@ function draw(t) {
   // Cover the entire display with the original table art, without moving gameplay objects.
   c.setTransform(1,0,0,1,0,0);
   c.clearRect(0,0,canvas.width,canvas.height);
-  if(lessonMode==='level')c.drawImage(assets.table,0,0,canvas.width,canvas.height);
+  c.drawImage(assets.table,0,0,canvas.width,canvas.height);
   c.setTransform(scale,0,0,scale,(canvas.width-1200*scale)/2,0);
   c.save();
   c.translate(0, 61);
   c.scale(1200 / 1950, 1200 / 1950);
   c.beginPath(); c.rect(0, 0, 1950, 900); c.clip();
-  if(lessonMode!=='level')image('table', 0, 0, 1950, 900);
   const playing = ['playing', 'paused', 'result'].includes(state);
   const beat = playing ? t / BEAT : -10;
   const group = servings.find(g => beat >= g.beat && beat < g.beat + g.length);
