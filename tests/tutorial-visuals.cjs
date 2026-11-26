@@ -5,7 +5,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 (async()=>{
  const root=path.resolve(__dirname,'..'),dir=path.join(root,'assets/ui/elements/tutorial/rice-rice-baby');
  const go=await alphaBounds(sharp,path.join(dir,'countdown-go.svg'),true);
- for(const n of [1,2,3]){const box=await alphaBounds(sharp,path.join(dir,'countdown-'+n+'.svg'),true);assert(Math.abs(box.height-go.height)<=2,'number body height differs from GO: '+n);}
+ for(const n of [1,2,3]){const box=await alphaBounds(sharp,path.join(dir,'countdown-'+n+'.svg'),true);assert(Math.abs(box.height-go.height*1.12)<=2,'number body height differs from GO: '+n);}
  assert(fs.readFileSync(path.join(dir,'now-its-your-turn.svg'),'utf8').includes('#FCEBD1'));
  assert(fs.readFileSync(path.join(dir,'countdown-go.svg'),'utf8').includes('#FF5537'));
  for(const name of ['block-left','block-right','block-top','block-bottom']){
@@ -27,6 +27,6 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   await p.evaluate(()=>{tutorialFlow.cancel();beginRound('level');perfect=notes.length;finish();});
   const color=await p.locator('#results').evaluate(e=>getComputedStyle(e).backgroundImage);assert(color.includes('117, 211, 165')&&color.includes('96, 197, 151'));
   await p.waitForFunction(()=>[...document.querySelectorAll('#results img')].every(e=>e.complete&&e.naturalWidth));await p.locator('.game').screenshot({path:path.join(out,'green-results.png')});assert.deepEqual(errors,[]);
-  console.log('PASS: matched number bodies/GO; cream turn title/red GO; separate transparent layers; actual block motion; both reduced-motion modes; full tutorial background; coordinated green result screen.');
+  console.log('PASS: number bodies at 112% of GO; cream turn title/red GO; separate transparent layers; actual block motion; both reduced-motion modes; full tutorial background; coordinated green result screen.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

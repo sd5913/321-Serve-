@@ -7,7 +7,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
   async function inspect(width,height,dpr,baseline){
    const p=await browser.newPage({viewport:{width,height},deviceScaleFactor:dpr}),errors=[];
    p.on('pageerror',e=>errors.push(e.message));
-   if(baseline)await p.route('**/game.js',route=>route.fulfill({contentType:'application/javascript',body:baseline}));
+   if(baseline)await p.route('**/game.js*',route=>route.fulfill({contentType:'application/javascript',body:baseline}));
    await p.goto(process.env.GAME_URL||'http://127.0.0.1:8889/index.html');await p.waitForFunction(()=>state==='ready');
    await p.click('#start');await p.click('#playLevel');await p.click('#skipTutorial');await p.waitForFunction(()=>state==='playing');
    const captures=await p.evaluate(()=>{
@@ -33,13 +33,13 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
    assert(current.bounds.left>=0&&current.bounds.left<current.width*.04);
    assert(current.bounds.top>0&&current.bounds.bottom<current.height*.92);
    if(original){
-    assert.deepEqual(current.glow,original.glow,'original radial glow changed');
+    const glow=current.glow[0].m,machine=current.objects.find(v=>v.name==='machine').m;assert.equal(glow[4],machine[4]);assert.equal(glow[5],machine[5]);
     const untouched=list=>list.filter(v=>!['machine','smoke','drops'].includes(v.name));
     assert.deepEqual(untouched(current.objects),untouched(original.objects),'food/background/hand drawing changed');
     assert.deepEqual(current.chart,original.chart);assert.equal(current.perfectWindow,original.perfectWindow);assert.equal(current.goodWindow,original.goodWindow);
    }
   }
   for(const n of [2,4]){const svg=fs.readFileSync(path.resolve(__dirname,'../assets/ui/level-select/title-'+n+'.svg'),'utf8');assert(!/<image\b|data:image/.test(svg));assert(svg.includes('<path'));}
-  console.log('PASS: complete machine near left edge at 2x/3x; original glow, food/background/hand geometry and judgments retained; vector titles.');
+  console.log('PASS: complete machine near left edge at 2x/3x; glow centered on the machine; food/background/hand geometry and judgments retained; vector titles.');
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

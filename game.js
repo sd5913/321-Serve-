@@ -9,7 +9,7 @@ const assets = {};
 const ui = 'assets/ui/elements/';
 const assetPaths = {
   table: 'assets/level1/table.png',
-  machine: 'assets/level1/imgMachineNormal1.png',
+  machine: 'assets/level1/ui/machine-clean.svg',
   loose: 'assets/level1/imgRiceBefore1.png',
   shaped: 'assets/level1/imgRiceShaped1.png',
   inaccurate: 'assets/level1/imgRiceInaccurate1.png',
@@ -365,13 +365,16 @@ function draw(t) {
   const releaseAge = group ? local - group.charge : -1;
   const recoil = releaseAge >= 0 ? Math.sin(releaseAge*38)*Math.exp(-releaseAge*13) : 0;
   const shake = reduce ? 0 : charging ? Math.sin(t*83)*(.3+pressure)*(fault?23:3) : recoil*23;
-  const machineX = 327.5 + shake - pressure*20;
+  const machineScale=1.2;
+  const sceneLeft=-(canvas.width/scale-1200)/2*(1950/1200);
+  const machineX=sceneLeft+325.4*machineScale+1.5+shake-pressure*20;
   const machineY = 449.5 + (reduce ? 0 : charging && fault ? Math.cos(t*67)*11 : 0);
+  c.restore();c.save(); // Glow shares the machine frame and reaches the full canvas.
   if (fault) {
     const intensity = charging ? .5 + .2*Math.sin(t*24) : .22;
     c.save();
     c.translate(machineX, machineY);
-    c.scale(1,1.13);
+    c.scale(machineScale,1.13*machineScale);
     const glow = c.createRadialGradient(0,0,190,0,0,490);
     glow.addColorStop(0, 'rgba(255,40,35,0)');
     glow.addColorStop(.55, 'rgba(255,45,30,'+intensity+')');
@@ -379,6 +382,7 @@ function draw(t) {
     c.fillStyle=glow; c.fillRect(-500,-500,1000,1000);
     c.restore();
   }
+  c.restore();c.save();clipScene();
   for (const batch of servings) {
     const age = beat - batch.beat;
     if (age < batch.charge) break;
@@ -453,12 +457,9 @@ function draw(t) {
       transformed(name,x,y,w*(1+squash),h/(1+squash),rotation);
     }
   }
-  // Adjust the machine artwork only. The original glow, rice and hand coordinates stay unchanged.
-  c.restore();c.save();if(lessonMode!=='level')clipScene();
-  const machineScale=lessonMode==='level'?1.2:1;
-  const sceneLeft=-(canvas.width/scale-1200)/2*(1950/1200);
-  const visualMachineX=lessonMode==='level'?sceneLeft+325.4*machineScale+1.5+shake-pressure*20:machineX;
-  c.translate(visualMachineX,machineY);c.scale(machineScale,machineScale);
+  // Tutorial and formal rounds use the same machine frame; food/hands retain their coordinates.
+  c.restore();c.save();
+  c.translate(machineX,machineY);c.scale(machineScale,machineScale);
   c.save();
   c.shadowColor = fault ? '#ff3020' : 'transparent';
   c.shadowBlur = fault ? (charging ? 42 : 22) : 0;

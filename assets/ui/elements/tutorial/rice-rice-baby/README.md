@@ -7,7 +7,7 @@ The approved English tutorial uses a `#87DCB0` background with gently moving rel
 - `now-its-your-turn`: transition from demonstration to interactive practice.
 - `tutorial-complete-card`: all four patterns complete.
 - `continue-button`, `watch-demo-button`, `key-a`, `key-d`, `textbox-empty`: reusable transparent components.
-- `countdown-1/2/3` and `countdown-go`: transparent count-in exports. The 3/2/1 companions wrap the shared countdown paths; only their number bodies are matched to GO height, excluding the small decorative accents. GO is coral and the turn cue is cream with navy outline/shadow.
+- `countdown-1/2/3` and `countdown-go`: transparent count-in exports. The 3/2/1 companions wrap the shared countdown paths; their number bodies use 112% of GO height, excluding the small decorative accents. `countdown-go-red` is the coral runtime resource, with versioned references to avoid stale assets; the turn cue is cream with navy outline/shadow.
 - `background-green`: the solid background, exported separately.
 
 PNGs are exported at twice the design size. Transparent margins surround the components; only the background is opaque. Runtime uses the corresponding SVGs for sharp rendering. Body text is outlined from the bundled IBM Plex Mono font so browsers do not substitute another typeface.

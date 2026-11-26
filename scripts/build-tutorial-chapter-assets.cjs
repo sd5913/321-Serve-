@@ -25,12 +25,13 @@ async function build(root,sharp){
  const out=path.join(root,'assets/ui/elements/tutorial/rice-rice-baby');
  const go=await alphaBounds(sharp,path.join(out,'countdown-go.svg'));
  for(const n of [1,2,3]){
-  const file=path.join(root,'assets/ui/elements/countdown',n+'.svg'),box=await alphaBounds(sharp,file,true),scale=go.height/box.height;
+  const file=path.join(root,'assets/ui/elements/countdown',n+'.svg'),box=await alphaBounds(sharp,file,true),scale=go.height*1.12/box.height;
   let svg=fs.readFileSync(file,'utf8');
   svg=svg.replace('<svg ',`<svg x="${(950-box.width*scale)/2-box.left*scale}" y="${(340-box.height*scale)/2-box.top*scale}" `)
    .replace(/width="[^"]+"/,`width="${box.sourceWidth*scale}"`).replace(/height="[^"]+"/,`height="${box.sourceHeight*scale}"`);
   fs.writeFileSync(path.join(out,'countdown-'+n+'.svg'),`<svg xmlns="http://www.w3.org/2000/svg" width="950" height="340" viewBox="0 0 950 340">${svg}</svg>`);
  }
+ fs.copyFileSync(path.join(out,'countdown-go.svg'),path.join(out,'countdown-go-red.svg'));
  const wrap=body=>`<svg xmlns="http://www.w3.org/2000/svg" width="1950" height="900" viewBox="0 0 1950 900">${body}</svg>`;
  const layers={
   'block-left':'<path d="M0 0H545L260 900H0Z" fill="#A9E8C6"/>',

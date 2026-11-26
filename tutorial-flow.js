@@ -70,11 +70,11 @@ function complete(){
 }
 function countIn(){
  panel('count-in');soundtrack.stop(0);count.hidden=false;
- const images=[base+'countdown-3.svg',base+'countdown-2.svg',base+'countdown-1.svg',base+'countdown-go.svg'];
+ const images=[base+'countdown-3.svg',base+'countdown-2.svg',base+'countdown-1.svg',base+'countdown-go-red.svg'];
  let shown=-1;
  timed(3200,elapsed=>{
   const index=Math.min(3,Math.floor(elapsed/800));if(index===shown)return;shown=index;
-  count.src=images[index];count.alt=['3','2','1','GO!'][index];screen.dataset.count=count.alt;el('status').textContent=count.alt;
+  count.src=images[index]+'?v=rice-ui-2';count.alt=['3','2','1','GO!'][index];screen.dataset.count=count.alt;el('status').textContent=count.alt;
  },async()=>{
   const current=token;
   if(await prepareAudio()){if(current===token)beginRound('level');}
