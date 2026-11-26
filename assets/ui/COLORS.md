@@ -8,8 +8,8 @@ Independent UI components, percentage artwork, selector assets, outlines, labels
 
 独立 UI 组件、百分比、选关素材、描边与运行时文字统一采用大标题取样的深蓝。素材尺寸与透明通道保留；整页设计参考、原始字形图、背景和游戏插画不改色。
 
-`elements/feedback/too-early.png` and `too-late.png` include editable SVG counterparts. They are available as assets only; this update does not change judgment rules or wire the new feedback into gameplay.
+`elements/feedback/too-early.png` and `too-late.png` include editable SVG counterparts. They are now used for early/late feedback in the level and tutorial. ON BEAT remains the hit feedback; wrong keys and unrelated extra presses use OFF BEAT. These are display labels only: music, chart, note results, judgment windows and scoring are unchanged.
 
-TOO EARLY / TOO LATE 提供透明 PNG 与可编辑 SVG，本次仅加入素材库，尚未接入游戏判定。
+TOO EARLY / TOO LATE 提供透明 PNG 与可编辑 SVG，现已用于关卡和教程的早晚反馈；命中仍显示 ON BEAT，按错键及无对应操作的多按显示 OFF BEAT。仅更换显示标签，音乐、谱面、音符结果、判定范围及计分不变。
 
 Generators call `scripts/normalize-ui-navy.cjs` so rebuilt assets keep the same navy. Run it directly with Sharp available to normalize independent UI assets.

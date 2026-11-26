@@ -21,7 +21,8 @@ const assetPaths = {
   squeezed: 'assets/level1/imgSpongeSqueezed1.png',
   drops: 'assets/level1/imgWaterDrops2.png',
   onBeat: ui + 'feedback/on-beat.png',
-  miss: ui + 'feedback/miss.png',
+  tooEarly: ui + 'feedback/too-early.png',
+  tooLate: ui + 'feedback/too-late.png',
   3: ui + 'countdown/3.png', 2: ui + 'countdown/2.png', 1: ui + 'countdown/1.png'
 };
 let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],lastFrame=0,offset=0;
@@ -197,6 +198,7 @@ function hit(action = 'a') {
   const t = time(), beat = t / BEAT, judge = t - offset / 1000;
   gesture = {action, t};
   if (beat < (lessonMode === 'level' ? 0 : 2)) return;
+  const expectedFeedbackNote = notes.find(note => !note.result);
   const current = servings.find(g => beat >= g.beat && beat < g.beat + g.length);
   const settled = current && beat >= current.beat + current.landing;
   const active = settled && !current.exit;
@@ -233,13 +235,24 @@ function hit(action = 'a') {
   } else {
     if (n && !n.result) n.result = 'wrong';
     strays++; combo=0;
-    feedback('wrong',t,n,0);
+    feedback('wrong',t,n,0,{action, expected:expectedFeedbackNote});
   }
   if (current?.kind === 'sponge' && action === 'a' && current.exit?.inputAt === t) fx.splash = true;
 }
-function feedback(kind, t, n, delta) {
+// Classify the displayed label only; scoring, note results and timing windows stay unchanged.
+function feedbackLabel(kind, t, note, context) {
+  if (kind === 'perfect' || kind === 'good') return 'onBeat';
+  if (kind === 'miss') return 'tooLate';
+  const target = note || context?.expected;
+  if (!target || context?.action !== target.action) return 'offBeat';
+  const delta = t - offset / 1000 - target.t;
+  if (delta < 0) return 'tooEarly';
+  if (delta > goodWindow) return 'tooLate';
+  return 'offBeat';
+}
+function feedback(kind, t, n, delta, context) {
   const success = kind === 'perfect' || kind === 'good';
-  fx = { kind, t, n, delta };
+  fx = { kind, t, n, delta, label:feedbackLabel(kind,t,n,context) };
 
   if (success) {
 
@@ -250,9 +263,9 @@ function feedback(kind, t, n, delta) {
     if (combo % 8 === 0) $('status').textContent = combo + ' 连击！饭团很开心。';
   } else {
     soundtrack.effect('mistake', audio.currentTime);
-    $('status').textContent = kind === 'miss'
-      ? '漏拍了！饭团生气了，跟上下一拍。'
-      : '拍子偏了！看清物品，按 A 捏饭或 D 扫走。';
+    $('status').textContent = fx.label === 'tooEarly' ? '按早了，听下一次提示再出手。'
+      : fx.label === 'tooLate' ? '按晚了或漏拍了，跟上下一拍。'
+      : '按键不对应或多按了：A 捏饭，D 扫走；海绵只按 D。';
   }
 }
 function rr(x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=3;c.stroke();}}
@@ -264,17 +277,19 @@ function centeredArt(name, y, width, height) {
   const scale = Math.min(width / art.naturalWidth, height / art.naturalHeight);
   const w = art.naturalWidth * scale;
   const h = art.naturalHeight * scale;
-  image(name, (canvas.width - w) / 2, y - h / 2, w, h);
+  image(name, (1200 - w) / 2, y - h / 2, w, h);
 }
 
 function drawFeedback(t, y) {
   if (!fx || t - fx.t >= .7) return;
   const hit = fx.kind === 'perfect' || fx.kind === 'good';
-  centeredArt(hit ? 'onBeat' : 'miss', y, 284, 122);
-  const detail = hit
-    ? fx.kind.toUpperCase() + ' · ' + (fx.delta > 0 ? '+' : '') + Math.round(fx.delta * 1000) + ' ms'
-    : fx.kind === 'miss' ? 'TOO LATE' : 'OFF BEAT';
-  txt(detail, 600, y + 79, 15, INK, 'center');
+  const label = fx.label || (hit ? 'onBeat' : fx.kind === 'miss' ? 'tooLate' : 'offBeat');
+  if (label === 'offBeat') txt('OFF BEAT!',600,y+14,40,'#FF5537','center');
+  else centeredArt(label,y,hit ? 284 : 350,122);
+  if (hit) {
+    const detail = fx.kind.toUpperCase()+' · '+(fx.delta>0?'+':'')+Math.round(fx.delta*1000)+' ms';
+    txt(detail,600,y+79,15,INK,'center');
+  }
 }
 
 function hand(x,y,size=240,rotation=Math.PI/2,open=false){const a=assets.hand;if(!a)return;c.save();c.translate(x,y);c.rotate(rotation);c.drawImage(a,0,open?0:a.height/2,a.width/3,a.height/2,-size/2,-size/2,size,size);c.restore();}
@@ -468,7 +483,7 @@ function draw(t) {
     c.globalAlpha = 1;
   }
   c.restore();
-  if (playing && lessonMode !== 'level' && t < 1.7) {
+  if (playing && lessonMode !== 'level' && t < 1.7 && (!fx || t - fx.t >= .7)) {
     rr(329, 75, 542, 102, 18, 'rgba(255,251,237,.94)', INK);
     txt('教学 '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title,600,116,24,INK,'center');
     txt(lessonMode==='demo'?'先看一遍，记住声音与动作':'轮到你：听短音，在节奏点按键',600,151,19,INK,'center');
