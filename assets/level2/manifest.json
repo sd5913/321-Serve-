@@ -1248,5 +1248,104 @@
       519
     ],
     "sha256": "8ecdaaf00e7b7d321a87f714b002b32fa085646a7d6ecbdf7a395c67022bbeb5"
+  },
+  {
+    "file": "environment-foreground-counter.png",
+    "source": "02-foreground-counter.png",
+    "size": [
+      2159,
+      349
+    ],
+    "sha256": "8058445c52a6dada580a2805b3e51bd344b4599354555b9b432b8e106ff590cf"
+  },
+  {
+    "file": "decoration-wall-shelf.png",
+    "source": "03-wall-shelf.png",
+    "size": [
+      1924,
+      397
+    ],
+    "sha256": "c307c27467d67afd8f8e511440ac3c8d18879436487963bc7eb511172ee66047"
+  },
+  {
+    "file": "decoration-plant.png",
+    "source": "04-plant.png",
+    "size": [
+      1014,
+      1034
+    ],
+    "sha256": "bfb05719e2eb0f26f8a4a1a8cd3599ba82890f729c69e4e8a9ce93660df6c3e6"
+  },
+  {
+    "file": "decoration-jar.png",
+    "source": "05-jar.png",
+    "size": [
+      864,
+      772
+    ],
+    "sha256": "015615c9d680fd9a52c1cbf3d4d11b1f5bf1937f398a67a48e0aa8d5cbd4c6f2"
+  },
+  {
+    "file": "decoration-right-cabinet.png",
+    "source": "06-right-cabinet.png",
+    "size": [
+      813,
+      1167
+    ],
+    "sha256": "c644cb8576c05e73cbc3b8f2674d81a3008f36cf264b566764c817003e50342f"
+  },
+  {
+    "file": "decoration-soap-bottle.png",
+    "source": "07-soap-bottle.png",
+    "size": [
+      673,
+      958
+    ],
+    "sha256": "ab6c086f470c161a72458439a72b8f487772c344f92caa6cb9b494c4651b3c1f"
+  },
+  {
+    "file": "environment-decorations-overlay.png",
+    "source": "09-combined-decor-overlay.png",
+    "size": [
+      1846,
+      852
+    ],
+    "sha256": "f33be4a1035ea3fa44ddec013363c1cfe08cd9ae2480d25ba01dd6e1454a6e96"
+  },
+  {
+    "file": "decoration-wall-shelf-group.png",
+    "source": "09-combined-decor-overlay.png",
+    "size": [
+      270,
+      189
+    ],
+    "sha256": "39ea65d8ba7808e24a11f3563c46a20fcfc3cd8532798b825dc2cb54697d037e"
+  },
+  {
+    "file": "decoration-right-cabinet-with-soap.png",
+    "source": "09-combined-decor-overlay.png",
+    "size": [
+      244,
+      388
+    ],
+    "sha256": "945f3d3e95b4436fdb36fdba1042e5ded5e934252bacd1bda79f793e4975efea"
+  },
+  {
+    "file": "environment-wall-layer.png",
+    "source": "08-empty-wall-floor.png",
+    "size": [
+      1846,
+      852
+    ],
+    "sha256": "f794e690be9c520d7b8686be5d9909469074ae0780aafad250f7e94190630b87"
+  },
+  {
+    "file": "environment-floor-layer.png",
+    "source": "08-empty-wall-floor.png",
+    "size": [
+      1846,
+      852
+    ],
+    "sha256": "ff0d702879fb1e852baa3fe1d7a81b747dafd067c252a0bb1f9888d0e69fdaca"
   }
 ]

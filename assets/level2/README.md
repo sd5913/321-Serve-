@@ -27,5 +27,14 @@ manifest.json records the high-resolution sources, crop regions, output dimensio
 - tv-screen-background-*：独立屏幕内容底图；屏幕内有颜色，四周和圆角外透明。
 - tv-with-abstract-screen：电视组合预览，可直接使用。
 
-按最新方案不包含柜子或带柜子的整张场景。只新增美术资产，不修改游戏代码。
+按最新方案不包含后方大柜。只新增美术资产，不修改游戏代码。
 manifest.json 记录高清来源、裁切区域、输出尺寸和 SHA-256。
+
+## 场景补充
+
+- environment-foreground-counter：前景操作台。
+- decoration-*：置物架、盆栽、罐子、右侧小柜和洗手液，均有独立小图；另有两组合并小图。
+- environment-decorations-overlay：保留左上与右侧原位置的整幅透明装饰层。
+- environment-wall-layer / environment-floor-layer：同尺寸墙、地分层，另一部分透明，可直接重叠。
+
+不含后方大柜。右侧装饰小柜按最新场景要求补齐。
