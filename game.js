@@ -353,7 +353,8 @@ function draw(t) {
   c.save();
   c.translate(0, 61);
   c.scale(1200 / 1950, 1200 / 1950);
-  c.beginPath(); c.rect(0, 0, 1950, 900); c.clip();
+  const clipScene=()=>{c.beginPath();c.rect(0,0,1950,900);c.clip();};
+  c.save();clipScene();
   const playing = ['playing', 'paused', 'result'].includes(state);
   const beat = playing ? t / BEAT : -10;
   const group = servings.find(g => beat >= g.beat && beat < g.beat + g.length);
@@ -452,16 +453,22 @@ function draw(t) {
       transformed(name,x,y,w*(1+squash),h/(1+squash),rotation);
     }
   }
-  // Machine covers objects still inside its outlet.
+  // Adjust the machine artwork only. The original glow, rice and hand coordinates stay unchanged.
+  c.restore();c.save();if(lessonMode!=='level')clipScene();
+  const machineScale=lessonMode==='level'?1.2:1;
+  const sceneLeft=-(canvas.width/scale-1200)/2*(1950/1200);
+  const visualMachineX=lessonMode==='level'?sceneLeft+325.4*machineScale+1.5+shake-pressure*20:machineX;
+  c.translate(visualMachineX,machineY);c.scale(machineScale,machineScale);
   c.save();
   c.shadowColor = fault ? '#ff3020' : 'transparent';
   c.shadowBlur = fault ? (charging ? 42 : 22) : 0;
-  transformed('machine', machineX, machineY, 1139, 759*(1-pressure*.06), -Math.PI/2);
+  transformed('machine', 0, 0, 1139, 759*(1-pressure*.06), -Math.PI/2);
   c.restore();
   if (fault) {
-    ellipse(machineX-89.5,machineY-203.5,21,21,'#ff2020');
-    if (group.kind === 'triple') drawSmoke(local, group.charge, machineX+285, machineY-8);
+    ellipse(-89.5,-203.5,21,21,'#ff2020');
+    if (group.kind === 'triple') drawSmoke(local, group.charge,285,-8);
   }
+  c.restore();c.save();clipScene();
   const age = gesture ? t - gesture.t : 99;
   if (age >= 0 && age < .48) {
     if (gesture.action === 'd') {
@@ -485,7 +492,7 @@ function draw(t) {
     transformed('drops', 905 - splash * 180, 240 - splash * 180, 244, 191, -166.2 * Math.PI / 180, true);
     c.globalAlpha = 1;
   }
-  c.restore();
+  c.restore();c.restore();
   const next = notes.find(n => !n.result);
   const waiting = next && next.t - t > .45 && !charging;
   const instruction = waiting ? 'WAIT · LISTEN FOR THE CUE' : charging ? (fault ? 'RED LIGHT · WAIT FOR RICE' : 'RICE IS COMING') : next?.action === 'd' ? 'D · SWEEP DOWN' : 'A · SHAPE RICE';
