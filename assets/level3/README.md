@@ -1,4 +1,21 @@
-# 第三关资产：三文鱼与鱿鱼 / Level 3 — Sashimi
+# Level 3 — Sashimi / 第三关资产：三文鱼与鱿鱼
+
+## English
+
+Each PNG is an individual asset taken from the earlier high-resolution source images, rather than an enlarged overview screenshot. Original pixel proportions and alpha channels are preserved, with transparent margins around each asset.
+
+- cutting-board-1~3: three long cutting boards.
+- plate-round: a white plate viewed directly from above.
+- hand-chopsticks-*: pinching, small flick and large flick poses.
+- salmon-character-style-1~3-*: three pattern sets, each with front, right, back and left views.
+- salmon-chunk-happy-1~2: happy salmon-chunk alternatives.
+- squid-character-frightened: a frightened squid slice.
+- squid-slice-1~5 and squid-slice-curved: six top-view squid slices.
+- salmon-slice-set-a-1~5 and set-b-1~5: two sets of top-view salmon-slice alternatives.
+
+manifest.json records each file's high-resolution source, crop region and dimensions. Only assets were added; game logic was not changed. The existing assets/level1 folder is preserved to avoid overwriting the earlier rice assets.
+
+## 中文
 
 每个 PNG 为一个独立素材，来自历史高清原图，未使用总览截图放大。保持原始像素比例及透明通道，四周留有透明间距。
 
