@@ -7,7 +7,7 @@ This folder contains slim rhythm bars with 1–6 dots. The tutorial HUD uses the
 - 每款均有透明 PNG 和可编辑 SVG。Each variant includes a transparent PNG and an editable SVG.
 - 圆点直径与点间距沿用上一套预览。Dot diameter and spacing match the earlier variable-bar previews.
 - 深蓝底条更矮、两端留白更小。The navy capsule is shorter with less padding at both ends.
-- 颜色 / Colors: navy `#07162D`, cream `#FCEBD1`.
+- 颜色 / Colors: navy `#00133A`, cream `#FCEBD1`.
 - 普通版 1–5 点 / Normal 1–5-dot variants: [上级目录 / Parent folder](../).
 - 既有 6 点状态图 / Existing six-dot states: [six-beat-states](../../six-beat-states/).
 

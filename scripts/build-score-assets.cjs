@@ -33,4 +33,5 @@ const cells=[
  }
  await sharp(glyphs.go.buffer).extend({top:8,bottom:8,left:8,right:8,background:'#00000000'}).png({palette:true,colours:256,dither:0,compressionLevel:9,effort:10}).toFile(path.join(root,'assets/ui/elements/countdown/go.png'));
  console.log('Built 101 transparent percentages and GO! from the supplied glyphs.');
+ await require('./normalize-ui-navy.cjs').normalizeUIAssets(root);
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -137,5 +137,6 @@
     "settings": "../elements/buttons/unified/settings-gear.png",
     "selectLevel": "../elements/buttons/unified/select-level.png",
     "selectLevelSvg": "../elements/buttons/unified/select-level.svg"
-  }
+  },
+  "navy": "#00133A"
 }

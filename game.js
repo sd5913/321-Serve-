@@ -4,7 +4,7 @@ let clockOrigin = 0;
 const perfectWindow = .24 * BEAT;
 const goodWindow = .4 * BEAT;
 const SFX_VOLUME = .9;
-const INK='#142342',CREAM='#fffbed',RED='#ff583f',YELLOW='#ffe879';
+const INK='#00133a',CREAM='#fffbed',RED='#ff583f',YELLOW='#ffe879';
 const assets = {};
 const ui = 'assets/ui/elements/';
 const assetPaths = {
