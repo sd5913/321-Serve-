@@ -23,6 +23,7 @@ const assetPaths = {
   onBeat: ui + 'feedback/on-beat.svg',
   tooEarly: ui + 'feedback/too-early.svg',
   tooLate: ui + 'feedback/too-late.svg',
+  keyA: ui+'tutorial/rice-rice-baby/key-a.svg', keyD: ui+'tutorial/rice-rice-baby/key-d.svg',
   3: ui + 'countdown/3.svg', 2: ui + 'countdown/2.svg', 1: ui + 'countdown/1.svg'
 };
 let state='loading',audio,master,pausedAt=0,muted=false,notes=[],combo=0,best=0,score=0,perfect=0,good=0,misses=0,strays=0,fx=null,particles=[],lastFrame=0,offset=0;
@@ -53,10 +54,10 @@ const levelServings=servings.slice(),levelChart=chart.slice();
 const levelEnd=RICE_SCORE.duration;
 let END = levelEnd;
 const lessons = [
-  {kind:'rice', title:'正常出饭', hint:'听机器运转；A 捏成形，D 向下扫走。'},
-  {kind:'triple', title:'故障连出', hint:'听红灯与烟声；从右到左按三次 A，再按 D。'},
-  {kind:'bounce', title:'故障反弹', hint:'听卡顿机器与反弹声；饭落稳后 A 捏、D 扫。'},
-  {kind:'sponge', title:'海绵', hint:'听挤压声与“吧唧”；只按 D 拍走，A 捏住是错误分支。'}
+  {kind:'rice', title:'REGULAR RICE', hint:'Wait for the rice to land. Shape it, then send it away.'},
+  {kind:'triple', title:'TRIPLE RICE', hint:'Shape three portions from right to left, then send them away.'},
+  {kind:'bounce', title:'BOUNCING RICE', hint:'Wait for the rice to settle. Shape it, then send it away.'},
+  {kind:'sponge', title:'WATCH THE SPONGE', hint:'Send the sponge away. Do not shape it.'}
 ];
 let lessonMode = 'level', lessonIndex = -1;
 const time = () => state === 'playing' ? audio.currentTime - clockOrigin : pausedAt;
@@ -72,7 +73,7 @@ async function prepareAudio() {
     return true;
   } catch {
 
-    $('status').textContent = '音效未能启动，请重新点击开始。';
+    $('status').textContent = 'Audio could not start. Please try again.';
     return false;
   } finally {
     startingPlayback = false;
@@ -118,7 +119,7 @@ function beginRound(mode, index = -1) {
   $('pause').disabled = false; $('pause').setAttribute('aria-label','Pause game');
   $('status').textContent = mode === 'level'
     ? '音乐关卡：跟随音乐捏饭、拍走；海绵只按 D，A 是误捏。'
-    : '教学 '+(index+1)+'/4 · '+(mode==='demo'?'先看示范：':'轮到你：')+lessons[index].hint+' 短音响起时按键，前后 0.4 拍内算跟上。';
+    : 'LESSON '+(index+1)+'/4 · '+(mode==='demo'?'WATCH THE DEMO · ':'YOUR TURN · ')+lessons[index].hint;
   canvas.focus();
   if (document.hidden) pause();
 }
@@ -137,7 +138,8 @@ async function start(mode = 'demo') {
   studio.stopTimeline();
   await studio.ready;
   soundtrack.editor = studio;
-  beginRound(mode === 'level' ? 'level' : 'demo', mode === 'level' ? -1 : 0);
+  if(mode==='level') tutorialFlow.countIn();
+  else tutorialFlow.explain(0);
 }
 function pause(){
  if(state!=='playing')return;
@@ -180,18 +182,12 @@ function demonstrate(t) {
   }
 }
 function advanceTutorial() {
-  if (lessonMode === 'demo') {
-    beginRound('practice', lessonIndex);
-    return;
-  }
+  if (lessonMode === 'demo') {tutorialFlow.turn(lessonIndex);return;}
   const passed = misses === 0 && strays === 0 &&
     notes.every(n => n.result === 'perfect' || n.result === 'good');
-  if (!passed) {
-    beginRound('practice', lessonIndex);
-    $('status').textContent = '再练一次 · '+lessons[lessonIndex].hint;
-  } else if (lessonIndex < lessons.length-1) {
-    beginRound('demo', lessonIndex+1);
-  } else beginRound('level');
+  if (!passed) tutorialFlow.turn(lessonIndex, true);
+  else if (lessonIndex < lessons.length-1) tutorialFlow.explain(lessonIndex+1);
+  else tutorialFlow.complete();
 }
 function hit(action = 'a') {
   if (state !== 'playing' || lessonMode === 'demo') return;
@@ -484,34 +480,29 @@ function draw(t) {
     c.globalAlpha = 1;
   }
   c.restore();
-  if (playing && lessonMode !== 'level' && t < 1.7 && (!fx || t - fx.t >= .7)) {
-    rr(329, 75, 542, 102, 18, 'rgba(255,251,237,.94)', INK);
-    txt('教学 '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title,600,116,24,INK,'center');
-    txt(lessonMode==='demo'?'先看一遍，记住声音与动作':'轮到你：听短音，在节奏点按键',600,151,19,INK,'center');
-  }
   const next = notes.find(n => !n.result);
   const waiting = next && next.t - t > .45 && !charging;
   const instruction = waiting ? '准备 · 听下一拍' : charging ? (fault ? '红灯蓄力 · 等待出饭' : '蓄力出饭') : next?.action === 'd' ? 'D · 向下扫走' : 'A · 捏饭团';
-  txt(playing ? instruction : 'A 捏饭 · D 手刀 · 海绵直接拍走', 600, 645, 22, INK, 'center');
+  if(lessonMode==='level')txt(playing ? instruction : 'A 捏饭 · D 手刀 · 海绵直接拍走', 600, 645, 22, INK, 'center');
   if (playing) {
     txt(combo + ' COMBO', 35, 645, 18);
     const phase = group ? {rice:'正常出饭',bounce:'蓄力弹饭',triple:'连续三份',sponge:'小心海绵'}[group.kind] : '准备下一句';
     const phaseText = lessonMode === 'level' ? 'RICE RICE BABY · '+phase
-      : '教学 '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title+' · '+(lessonMode==='demo'?'看示范':'你来操作');
+      : 'LESSON '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title+' · '+(lessonMode==='demo'?'WATCH':'YOUR TURN');
     const phaseLabel = $('phase');
     if(phaseLabel.textContent!==phaseText)phaseLabel.textContent=phaseText;
     if (next) {
       const distance = (next.t - t) / BEAT;
       const onBeat = Math.abs(distance) <= .14;
-      c.strokeStyle = onBeat ? RED : INK; c.lineWidth = onBeat ? 6 : 3;
-      c.beginPath(); c.arc(1040, 150, 20 + Math.max(0, Math.min(2, distance)) * 11, 0, Math.PI * 2); c.stroke();
-      txt(next.action.toUpperCase(),1040,158,24,onBeat?RED:INK,'center');
-      txt(onBeat?'现在按！':'圆环收拢时按',1040,210,16,onBeat?RED:INK,'center');
-    }
-    if (beat < (lessonMode === 'level' ? 0 : 2)) {
-      const count = (lessonMode === 'level' ? 3 : 2) - Math.floor(t / BEAT);
-      if (count > 0) centeredArt(count, 300, 200, 180);
-      else txt('GO!',600,330,90,INK,'center');
+      if(lessonMode==='level') {
+        c.strokeStyle = onBeat ? RED : INK; c.lineWidth = onBeat ? 6 : 3;
+        c.beginPath(); c.arc(1040, 150, 20 + Math.max(0, Math.min(2, distance)) * 11, 0, Math.PI * 2); c.stroke();
+        txt(next.action.toUpperCase(),1040,158,24,onBeat?RED:INK,'center');
+        txt(onBeat?'现在按！':'圆环收拢时按',1040,210,16,onBeat?RED:INK,'center');
+      } else {
+        image(next.action==='a'?'keyA':'keyD',1007,115,66,57.2);
+        txt(onBeat?'ON THE CUE!':'LISTEN FOR THE CUE',1040,199,14,onBeat?RED:INK,'center');
+      }
     }
   }
   drawFeedback(t, 100);
@@ -536,7 +527,7 @@ function loop(ms){
   if(scoreLabel.textContent!==scoreText)scoreLabel.textContent=scoreText;
   $('progress').style.width=Math.min(100,Math.max(0,t/END*100))+'%';
   if (state === 'playing')updateHUD(t);
-  if(state!=='paused'&&state!=='result')draw(t);
+  if(state==='playing')draw(t);
   lastFrame=ms;
 }
 // Display-only HUD: tutorial groups use slim slots; level judgments stay in four-input pages.
@@ -598,13 +589,15 @@ function updateHUD(t) {
   paintDots(notes, tutorial ? 0 : hudStart, count, advanced && !fresh);
 }
 async function skipTutorial() {
-  if (startingPlayback) return;
-  if (state === 'tutorial') await start('level');
-  else if (state === 'playing' && lessonMode !== 'level') beginRound('level');
+  if(startingPlayback || state==='count-in')return;
+  if(state==='playing' && lessonMode!=='level'){
+    soundtrack.stop(time());state='tutorial';
+  }
+  if(state==='tutorial')await start('level');
 }
 function showGameplay(){$('skipTutorial').hidden=lessonMode==='level';for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
-function showTutorial(){if(state!=='ready')return;state='tutorial';$('skipTutorial').hidden=false;$('overlay').hidden=true;$('tutorial').hidden=false;canvas.inert=true;$('gotIt').disabled=false;$('gotIt').focus();}
-function goHome(){if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','skipTutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
+function showTutorial(){if(state!=='ready')return;tutorialFlow.intro();}
+function goHome(){tutorialFlow.cancel();if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','skipTutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
 function openSettings(){if(state==='playing')pause();$('settings').hidden=false;$('musicVolume').focus();}
 function sliderFill(el){el.style.setProperty('--fill',((Number(el.value)-Number(el.min||0))/(Number(el.max||100)-Number(el.min||0))*100)+'%');}
 function resizeCanvas(){
@@ -622,7 +615,7 @@ function resizeCanvas(){
 }
 new ResizeObserver(resizeCanvas).observe(canvas);window.addEventListener('resize',resizeCanvas);
 $('skipTutorial').onclick=skipTutorial;
-$('start').onclick=showTutorial;$('gotIt').onclick=start;$('resultRetry').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;
+$('start').onclick=showTutorial;$('resultRetry').onclick=start;$('retry').onclick=start;$('resume').onclick=resume;
 $('pause').onclick=()=>state==='paused'?resume():pause();
 $('pauseHome').onclick=()=>{$('quitDialog').hidden=false;$('cancelQuit').focus();};
 $('cancelQuit').onclick=()=>{$('quitDialog').hidden=true;$('resume').focus();};

@@ -10,6 +10,8 @@ async function normalizeRaster(input){const {data,info}=await sharp(input).ensur
  return {changed,buffer:changed?await sharp(data,{raw:info}).png({compressionLevel:9}).toBuffer():input};}
 async function normalizeSVG(input){let result=normalizeHex(input),offset=0;const matches=[...result.matchAll(/data:image\/png;base64,([A-Za-z0-9+/=]+)/g)];for(const m of matches){const normalized=await normalizeRaster(Buffer.from(m[1],'base64'));if(normalized.changed){const old=m[0],next='data:image/png;base64,'+normalized.buffer.toString('base64'),start=m.index+offset;result=result.slice(0,start)+next+result.slice(start+old.length);offset+=next.length-old.length;}}return result;}
 async function normalizeUIAssets(root=path.resolve(__dirname,'..')){const folders=['assets/ui/elements','assets/ui/level-select'],changed=[];for(const folder of folders){const full=path.join(root,folder);for(const name of fs.readdirSync(full,{recursive:true})){const file=path.join(full,name),relative=path.relative(root,file).split(path.sep).join('/');if(relative==='assets/ui/elements/branding/logo-321-serve.png'||relative.endsWith('-hd.png'))continue;
+ // Tutorial PNGs are direct SVG exports: preserve their antialiased edges.
+ if(name.endsWith('.png')&&relative.startsWith('assets/ui/elements/tutorial/rice-rice-baby/'))continue;
  if(name.endsWith('.png')){const original=fs.readFileSync(file),result=await normalizeRaster(original);if(result.changed){fs.writeFileSync(file,result.buffer);changed.push({path:relative,pixels:result.changed});}}
  else if(name.endsWith('.svg')){const original=fs.readFileSync(file,'utf8'),result=await normalizeSVG(original);if(result!==original){fs.writeFileSync(file,result);changed.push({path:relative});}}
  }}return changed;}

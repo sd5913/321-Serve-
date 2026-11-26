@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');
  const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_PATH});
  try{
   const page=await browser.newPage();page.setDefaultTimeout(20000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('file://'+process.cwd()+'/index.html');
+  await page.goto(process.env.GAME_URL||'file://'+process.cwd()+'/index.html');
   await page.waitForFunction(()=>state==='ready');
   await page.evaluate(()=>studio.ready);
   const data=await page.evaluate(()=>({groups:levelServings.length,end:levelEnd,notes:levelChart.length,
@@ -12,7 +12,7 @@ const assert=require('node:assert/strict');
    valid:levelChart.every(n=>n.beat>=n.group.beat+n.group.landing && n.beat<n.group.beat+n.group.length),
    cues:KitchenSoundtrack.buildEvents(levelServings,levelChart).length}));
   assert.equal(data.groups,44);assert.equal(data.cues,44);assert(data.valid);assert(data.distinct);assert(Math.abs(data.music-data.end)<.05);
-  await page.click('#start');await page.click('#playLevel');await page.click('#gotIt');await page.waitForFunction(()=>state==='playing');
+  await page.click('#start');await page.click('#playLevel');await page.click('#tutorialContinue');await page.click('#tutorialContinue');await page.waitForFunction(()=>state==='playing');
   await page.evaluate(()=>beginRound('level'));await page.waitForTimeout(180);
   assert(await page.evaluate(()=>soundtrack.musicSource && !soundtrack.musicSource.loop && soundtrack.musicSource.buffer===studio.audioBuffer('music')));
   assert(await page.evaluate(()=>soundtrack.events.every(e=>e.kind.startsWith('cue'))),'no pre-scheduled button sounds');

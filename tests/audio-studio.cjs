@@ -22,7 +22,7 @@ function wav() {
     page.setDefaultTimeout(3000);
     const errors=[];
     page.on('pageerror',error=>errors.push(error.message));
-    await page.goto('file://'+process.cwd()+'/index.html');
+    await page.goto(process.env.GAME_URL||'file://'+process.cwd()+'/index.html');
     await page.waitForFunction(()=>state==='ready');
     await page.click('#audioStudioToggle');
     assert(await page.locator('#audioStudio').isVisible());
@@ -293,7 +293,7 @@ function wav() {
       await page.locator('#audioStudio').screenshot({path:process.env.STUDIO_SCREENSHOT});
     }
 
-    await page.click('#start');await page.click('#playLevel');await page.click('#gotIt');
+    await page.click('#start');await page.click('#playLevel');await page.click('#tutorialContinue');await page.click('#tutorialContinue');
     await page.waitForFunction(()=>state==='playing');
     await page.waitForTimeout(120);
     const playback=await page.evaluate(()=>{
