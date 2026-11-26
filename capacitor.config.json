@@ -3,7 +3,6 @@
   "appName": "321 Serve",
   "webDir": "www-ios",
   "ios": {
-    "contentInset": "always",
     "backgroundColor": "#fcebd1"
   }
 }
