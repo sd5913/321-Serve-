@@ -11,9 +11,18 @@ async function vectorize(input,label){const {data,info}=await sharp(input).ensur
  if(pillNames.has(label)){
   const fillIndex=counts[2]>counts[1]?2:1,fill=[NAVY,CREAM,CORAL,YELLOW][fillIndex];
   const bounds=mask=>{let l=width,t=height,r=0,b=0;for(let y=0;y<height;y++)for(let x=0;x<width;x++)if(mask[y*width+x]===0){l=Math.min(l,x);t=Math.min(t,y);r=Math.max(r,x+1);b=Math.max(b,y+1);}return {l,t,w:r-l,h:b-t};};
-  const outer=bounds(whole),inner=bounds(masks[fillIndex]),textMask=Buffer.alloc(width*height,255),radius=inner.h/2;
-  for(let y=0;y<height;y++)for(let x=0;x<width;x++){const px=x+.5,py=y+.5,cx=Math.max(inner.l+radius,Math.min(inner.l+inner.w-radius,px)),cy=inner.t+radius;const inside=Math.hypot(px-cx,py-cy)<radius-2;if(inside&&masks[fillIndex===1?0:1][y*width+x]===0)textMask[y*width+x]=0;}
-  const letters=await trace(textMask,width,height,fillIndex===1?NAVY:CREAM,2);
+  const outer=bounds(whole),fillMask=masks[fillIndex];
+  // Ignore pale antialias fringes outside the navy border when finding the capsule fill.
+  const runEdge=(start,end,step,at)=>{for(let n=start;step>0?n<=end:n>=end;n+=step)if([0,1,2].every(k=>fillMask[at(n+k*step)]===0))return n;throw Error('No solid capsule fill in '+label);};
+  const mx=Math.floor(outer.l+outer.w/2),my=Math.floor(outer.t+outer.h/2);
+  const il=runEdge(outer.l,outer.l+outer.w-3,1,x=>my*width+x),ir=runEdge(outer.l+outer.w-1,outer.l+2,-1,x=>my*width+x);
+  const it=runEdge(outer.t,outer.t+outer.h-3,1,y=>y*width+mx),ib=runEdge(outer.t+outer.h-1,outer.t+2,-1,y=>y*width+mx);
+  const inner={l:il,t:it,w:ir-il+1,h:ib-it+1},textMasks=[Buffer.alloc(width*height,255),Buffer.alloc(width*height,255)],textCounts=[0,0],radius=inner.h/2;
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){const px=x+.5,py=y+.5,cx=Math.max(inner.l+radius,Math.min(inner.l+inner.w-radius,px)),cy=inner.t+radius;const inside=Math.hypot(px-cx,py-cy)<radius-2;if(inside)for(let k=0;k<2;k++)if(k!==fillIndex&&masks[k][y*width+x]===0){textMasks[k][y*width+x]=0;textCounts[k]++;}}
+  // Coral buttons can have navy or cream lettering; follow the supplied artwork.
+  const textIndex=textCounts[0]>=textCounts[1]?0:1;
+  if(!textCounts[textIndex])throw Error('No lettering found in '+label);
+  const letters=await trace(textMasks[textIndex],width,height,[NAVY,CREAM][textIndex],2);
   const shapes=`<rect x="${outer.l}" y="${outer.t}" width="${outer.w}" height="${outer.h}" rx="${outer.h/2}" fill="${NAVY}"/><rect x="${inner.l}" y="${inner.t}" width="${inner.w}" height="${inner.h}" rx="${inner.h/2}" fill="${fill}"/>`+letters;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width+8}" height="${height+8}" viewBox="-4 -4 ${width+8} ${height+8}" data-crisp-ui="true" role="img" aria-label="${label}">${shapes}</svg>`;
  }

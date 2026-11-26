@@ -118,7 +118,7 @@ function beginRound(mode, index = -1) {
   showGameplay(); updateHUD(0); canvas.inert = false; $('modal').hidden = true;
   $('pause').disabled = false; $('pause').setAttribute('aria-label','Pause game');
   $('status').textContent = mode === 'level'
-    ? '音乐关卡：跟随音乐捏饭、拍走；海绵只按 D，A 是误捏。'
+    ? 'Follow the rhythm. Shape rice, then sweep. Sweep sponges only.'
     : 'LESSON '+(index+1)+'/4 · '+(mode==='demo'?'WATCH THE DEMO · ':'YOUR TURN · ')+lessons[index].hint;
   canvas.focus();
   if (document.hidden) pause();
@@ -259,12 +259,12 @@ function feedback(kind, t, n, delta, context) {
       particles.push({ x: 600, y: 425, vx: (Math.random() - .5) * 700,
         vy: -120 - Math.random() * 500, born: t, r: Math.random() * 4 + 3 });
     }
-    if (combo % 8 === 0) $('status').textContent = combo + ' 连击！饭团很开心。';
+    if (combo % 8 === 0) $('status').textContent = combo + ' COMBO! Keep it going.';
   } else {
     soundtrack.effect('mistake', audio.currentTime);
-    $('status').textContent = fx.label === 'tooEarly' ? '按早了，听下一次提示再出手。'
-      : fx.label === 'tooLate' ? '按晚了或漏拍了，跟上下一拍。'
-      : '按键不对应或多按了：A 捏饭，D 扫走；海绵只按 D。';
+    $('status').textContent = fx.label === 'tooEarly' ? 'Too early. Listen for the next cue.'
+      : fx.label === 'tooLate' ? 'Too late or missed. Catch the next beat.'
+      : 'Wrong or extra input. Shape rice, then sweep. Sweep sponges only.';
   }
 }
 function rr(x,y,w,h,r,fill,stroke){c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=3;c.stroke();}}
@@ -489,11 +489,11 @@ function draw(t) {
   c.restore();
   const next = notes.find(n => !n.result);
   const waiting = next && next.t - t > .45 && !charging;
-  const instruction = waiting ? '准备 · 听下一拍' : charging ? (fault ? '红灯蓄力 · 等待出饭' : '蓄力出饭') : next?.action === 'd' ? 'D · 向下扫走' : 'A · 捏饭团';
-  if(lessonMode==='level')txt(playing ? instruction : 'A 捏饭 · D 手刀 · 海绵直接拍走', 600, 645, 22, INK, 'center');
+  const instruction = waiting ? 'WAIT · LISTEN FOR THE CUE' : charging ? (fault ? 'RED LIGHT · WAIT FOR RICE' : 'RICE IS COMING') : next?.action === 'd' ? 'D · SWEEP DOWN' : 'A · SHAPE RICE';
+  if(lessonMode==='level')txt(playing ? instruction : 'A · SHAPE   D · SWEEP   SWEEP SPONGES ONLY', 600, 645, 22, INK, 'center');
   if (playing) {
     txt(combo + ' COMBO', 35, 645, 18);
-    const phase = group ? {rice:'正常出饭',bounce:'蓄力弹饭',triple:'连续三份',sponge:'小心海绵'}[group.kind] : '准备下一句';
+    const phase = group ? {rice:'REGULAR RICE',bounce:'BOUNCING RICE',triple:'TRIPLE RICE',sponge:'WATCH THE SPONGE'}[group.kind] : 'NEXT PATTERN';
     const phaseText = lessonMode === 'level' ? 'RICE RICE BABY · '+phase
       : 'LESSON '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title+' · '+(lessonMode==='demo'?'WATCH':'YOUR TURN');
     const phaseLabel = $('phase');
@@ -505,7 +505,7 @@ function draw(t) {
         c.strokeStyle = onBeat ? RED : INK; c.lineWidth = onBeat ? 6 : 3;
         c.beginPath(); c.arc(1040, 150, 20 + Math.max(0, Math.min(2, distance)) * 11, 0, Math.PI * 2); c.stroke();
         txt(next.action.toUpperCase(),1040,158,24,onBeat?RED:INK,'center');
-        txt(onBeat?'现在按！':'圆环收拢时按',1040,210,16,onBeat?RED:INK,'center');
+        txt(onBeat?'PRESS NOW!':'PRESS AS THE RING CLOSES',1040,210,16,onBeat?RED:INK,'center');
       } else {
         image(next.action==='a'?'keyA':'keyD',1007,115,66,57.2);
         txt(onBeat?'ON THE CUE!':'LISTEN FOR THE CUE',1040,199,14,onBeat?RED:INK,'center');
@@ -637,4 +637,4 @@ canvas.tabIndex=0;canvas.onpointerdown=e=>{if(e.button!==0)return;const bounds=c
 document.addEventListener('keydown',e=>{if(e.target.matches('input')||e.target.closest('#audioStudio'))return;if(['KeyA','KeyD','Space'].includes(e.code)&&!e.repeat){if(e.code==='Space'&&e.target.matches('button'))return;e.preventDefault();if(state==='ready')showTutorial();else hit(e.code==='KeyD'?'d':'a');}if(e.code==='Escape'&&state==='playing'){e.preventDefault();pause();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
 studio=new AudioStudio({groups:levelServings,chart:levelChart,getAudio:()=>audio,getSoundtrack:()=>soundtrack,pauseGame:pause});
-Promise.all(Object.entries(assetPaths).map(([n,path])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{assets[n]=img;resolve();};img.onerror=()=>reject(new Error(n));img.src=path;}))).then(()=>{state='ready';$('start').disabled=false;}).catch(e=>{$('status').textContent='素材未能加载：'+e.message;});requestAnimationFrame(loop);
+Promise.all(Object.entries(assetPaths).map(([n,path])=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{assets[n]=img;resolve();};img.onerror=()=>reject(new Error(n));img.src=path;}))).then(()=>{state='ready';$('start').disabled=false;}).catch(e=>{$('status').textContent='Could not load artwork: '+e.message;});requestAnimationFrame(loop);

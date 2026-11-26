@@ -335,3 +335,8 @@ svg.studio-waveform {
 .lesson-count{position:absolute;left:35%;top:23%;width:30%;height:54%;object-fit:contain}
 #tutorial[data-stage="count-in"]{z-index:7}
 .tutorial-skip{z-index:6}
+
+/* Size the pause panel directly so SVG text is rasterized at its final display size. */
+.pause-panel{width:28.666667%;transform:none}
+.pause-panel .small-link{font-size:clamp(7.333333px,.8cqw,12px)}
+@media(max-width:600px){.pause-panel{width:36.666667%}}
