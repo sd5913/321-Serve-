@@ -26,6 +26,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 final class GameViewController: UIViewController {
     private let game = CAPBridgeViewController()
 
+    override func loadView() {
+        view = UIView()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         addChild(game)
