@@ -354,3 +354,6 @@ svg.studio-waveform {
 @keyframes rice-block-corner{from{transform:translate(-1%,1%);opacity:.6}to{transform:translate(2%,-2%);opacity:1}}
 @media(prefers-reduced-motion:reduce){#tutorial .tutorial-color-blocks i{animation:none!important}}
 .game:has(#motion:checked) #tutorial .tutorial-color-blocks i{animation:none!important}
+
+/* Keep the score at the right when the formal-round phase label is hidden. */
+.topline #score{margin-left:auto}

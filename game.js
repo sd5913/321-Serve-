@@ -5,6 +5,8 @@ const perfectWindow = .24 * BEAT;
 const goodWindow = .4 * BEAT;
 const SFX_VOLUME = .9;
 const INK='#00133a',CREAM='#fffbed',RED='#ff583f',YELLOW='#ffe879';
+// Formal-round display toggles only; see docs/guides/input-guide-ring.md to restore.
+const LEVEL_UI_GUIDES=Object.freeze({phase:false,inputRing:false,actionHint:false});
 const assets = {};
 const ui = 'assets/ui/elements/';
 const assetPaths = {
@@ -497,7 +499,7 @@ function draw(t) {
   const next = notes.find(n => !n.result);
   const waiting = next && next.t - t > .45 && !charging;
   const instruction = waiting ? 'WAIT · LISTEN FOR THE CUE' : charging ? (fault ? 'RED LIGHT · WAIT FOR RICE' : 'RICE IS COMING') : next?.action === 'd' ? 'D · SWEEP DOWN' : 'A · SHAPE RICE';
-  if(lessonMode==='level')txt(playing ? instruction : 'A · SHAPE   D · SWEEP   SWEEP SPONGES ONLY', 600, 645, 22, INK, 'center');
+  if(lessonMode==='level'&&LEVEL_UI_GUIDES.actionHint)txt(playing ? instruction : 'A · SHAPE   D · SWEEP   SWEEP SPONGES ONLY', 600, 645, 22, INK, 'center');
   if (playing) {
     txt(combo + ' COMBO', 35, 645, 18);
     const phase = group ? {rice:'REGULAR RICE',bounce:'BOUNCING RICE',triple:'TRIPLE RICE',sponge:'WATCH THE SPONGE'}[group.kind] : 'NEXT PATTERN';
@@ -505,7 +507,7 @@ function draw(t) {
       : 'LESSON '+(lessonIndex+1)+'/4 · '+lessons[lessonIndex].title+' · '+(lessonMode==='demo'?'WATCH':'YOUR TURN');
     const phaseLabel = $('phase');
     if(phaseLabel.textContent!==phaseText)phaseLabel.textContent=phaseText;
-    if (next) {
+    if (next && (lessonMode!=='level'||LEVEL_UI_GUIDES.inputRing)) {
       const distance = (next.t - t) / BEAT;
       const onBeat = Math.abs(distance) <= .14;
       if(lessonMode==='level') {
@@ -609,7 +611,7 @@ async function skipTutorial() {
   }
   if(state==='tutorial')await start('level');
 }
-function showGameplay(){$('skipTutorial').hidden=lessonMode==='level';for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
+function showGameplay(){$('phase').hidden=lessonMode==='level'&&!LEVEL_UI_GUIDES.phase;$('skipTutorial').hidden=lessonMode==='level';for(const id of ['overlay','tutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','levelSelect','emptyLevel'])$(id).hidden=true;for(const id of ['pause','gameInfo','progressTrack'])$(id).hidden=false;resizeCanvas();}
 function showTutorial(){if(state!=='ready')return;tutorialFlow.intro();}
 function goHome(){tutorialFlow.cancel();if(soundtrack)soundtrack.stop(0);if(audio)audio.suspend();pausedAt=0;state='ready';notes=[];gesture=fx=null;for(const id of ['tutorial','skipTutorial','modal','settings','quitDialog','results','judgmentLayer','beatHud','pause','gameInfo','progressTrack','levelSelect','emptyLevel'])$(id).hidden=true;$('overlay').hidden=false;$('pause').disabled=true;canvas.inert=true;$('start').focus();}
 function openSettings(){if(state==='playing')pause();$('settings').hidden=false;$('musicVolume').focus();}
