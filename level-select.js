@@ -21,6 +21,7 @@ function showLevels(){
 function home(){menu.hidden=true;empty.hidden=true;goHome();}
 function play(){
  if(state!=='level-select'||!el('settings').hidden)return;
+ if(selected===2){window.location.assign(new URL('assets/sushi-making/index.html',document.baseURI).href);return;}
  menu.hidden=true;
  if(selected===0){state='ready';showTutorial();return;}
  state='empty-level';empty.hidden=false;empty.setAttribute('aria-label',levels[selected].name);canvas.inert=true;el('status').textContent=levels[selected].name;el('emptyBack').focus();
