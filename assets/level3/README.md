@@ -1,3 +1,20 @@
+# Level 3 — Sushi Making / 第三关：寿司制作
+
+## Playable build / 可玩版本
+
+This level is a playable rhythm game. Open `index.html` directly — all artwork and audio are embedded as data URIs, so it works from `file://` or any static host with no extra requests.
+
+Play online: https://sd5913.github.io/321-Serve-/assets/level3/index.html
+
+- `index.html` — standalone playable build (open this one)
+- `index.source.html` — source build with relative `assets/` references
+- `assets/` — artwork and audio used by the source build
+- The PNG assets and `manifest.json` listed below are the original level artwork and are all preserved.
+
+Controls: Arrow Left / A for salmon, Arrow Right / D for squid. Click the game first to give it keyboard focus; you can also tap the left / right half of the board.
+
+---
+
 # Level 3 — Sashimi / 第三关资产：三文鱼与鱿鱼
 
 ## English

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Sushi Making</title>
+<style>
+  :root{
+    --coral:#ee8073;      /*  #ee8073 */
+    --ink:#2c2a4a;        /*  */
+    --cream:#fbf0d8;      /*  */
+    --white:#fefdfd;
+    --gold:#ffd166;
+    --mint:#7fc9a6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;background:#ece9e6;font-family:"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;}
+  body{display:flex;align-items:center;justify-content:center;}
+
+  #wrap{position:relative;width:960px;height:540px;transform-origin:center center;}
+  /* ，； */
+  #game{position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;
+        background:radial-gradient(ellipse 70% 60% at 50% 22%,#f39488 0%,#ee8073 55%,#e36c61 100%);
+        box-shadow:0 20px 60px rgba(23,34,65,.30),inset 0 0 80px rgba(255,255,255,.06);}
+  #game:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+        background:repeating-linear-gradient(90deg,rgba(255,255,255,.022) 0 1px,transparent 1px 46px);}
+  /*  */
+  #game.shake{animation:shake .18s ease-out;}
+  @keyframes shake{
+    0%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}
+    50%{transform:translate(3px,-2px)}75%{transform:translate(-2px,-1px)}100%{transform:translate(0,0)}}
+
+  /*  */
+  #particles{position:absolute;inset:0;z-index:22;pointer-events:none;overflow:hidden;}
+  .spark{position:absolute;border-radius:50%;pointer-events:none;
+         box-shadow:0 0 8px currentColor;}
+  .ring{position:absolute;border:3px solid currentColor;border-radius:50%;pointer-events:none;}
+
+  /* ---------- ：（ +  + ）， ---------- */
+  #board{position:absolute;left:0;right:0;top:262px;height:52px;z-index:2;
+         background:#eda962;
+         border-top:3px solid #1c253d;
+         border-bottom:5px solid #a55b42;
+         box-shadow:inset 0 9px 0 rgba(139,80,45,.35),
+                    inset 0 14px 0 rgba(255,255,255,.10),
+                    inset 0 -12px 0 rgba(139,80,45,.28);}
+
+  /* ---------- ： +  + （） ---------- */
+  #plate{position:absolute;left:50%;top:376px;width:280px;height:280px;
+         transform:translateX(-50%);border-radius:50%;background:var(--cream);
+         border:4px solid var(--ink);padding:5px;z-index:3;
+         box-shadow:0 -4px 14px rgba(23,34,65,.14),inset 0 2px 5px rgba(255,255,255,.7);}
+  #plate.platePop{animation:platePop .4s cubic-bezier(.2,.8,.3,1);}
+  @keyframes platePop{0%{transform:translateX(-50%) scale(1)}45%{transform:translateX(-50%) scale(1.04)}100%{transform:translateX(-50%) scale(1)}}
+  .plate-inner{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 50% 40%,#fff,#f7f2e6);
+               border:1px solid var(--ink);position:relative;overflow:hidden;
+               box-shadow:inset 0 6px 16px rgba(23,34,65,.08);}
+  #plateFood{position:absolute;inset:0;pointer-events:none;}
+  .plate-piece{position:absolute;object-fit:contain;
+               filter:drop-shadow(0 2px 3px rgba(23,34,65,.2));}
+  .plate-piece.land{animation:pieceLand .35s cubic-bezier(.2,1.4,.4,1);}
+  /* ， CSS  --rot ， */
+  @keyframes pieceLand{
+    0%{transform:translateY(-10px) rotate(var(--rot,0deg)) scale(1.4);opacity:.3}
+    100%{transform:translateY(0) rotate(var(--rot,0deg)) scale(1);opacity:1}}
+
+  /* ---------- ： ----------
+      .fish  Web Animations （， rAF ）；
+      img ， transform 。 */
+  #lane{position:absolute;left:0;right:0;top:198px;height:64px;z-index:6;pointer-events:none;}
+  .fish{position:absolute;top:0;left:0;width:64px;height:64px;will-change:transform;}
+  .fish img{width:100%;height:100%;object-fit:contain;display:block;
+        filter:drop-shadow(0 2px 1px rgba(23,34,65,.12));transform-origin:center bottom;
+        animation:walk .26s ease-in-out infinite alternate;}
+  @keyframes walk{
+    from{transform:translateY(0) rotate(-2deg)}
+    to  {transform:translateY(-3px) rotate(2deg)}
+  }
+  .fish.near img{filter:drop-shadow(0 0 10px var(--gold)) drop-shadow(0 2px 2px rgba(23,34,65,.2));}
+
+  /* ---------- ：， ---------- */
+  #hitline{position:absolute;left:600px;top:190px;width:64px;height:80px;z-index:7;pointer-events:none;}
+  #hitline .circle{position:absolute;left:8px;top:6px;width:48px;height:48px;border-radius:50%;
+        border:2px solid rgba(255,255,255,.65);box-shadow:0 0 0 0 rgba(255,255,255,.45);}
+  #hitline .dot{position:absolute;left:29px;top:27px;width:6px;height:6px;border-radius:50%;
+        background:rgba(255,255,255,.85);}
+  /* ： + ， */
+  #nextHint{position:absolute;left:50%;top:150px;transform:translateX(-50%);z-index:8;
+        display:flex;align-items:center;gap:8px;pointer-events:none;
+        background:rgba(23,34,65,.42);border-radius:20px;padding:4px 14px;
+        box-shadow:0 2px 8px rgba(23,34,65,.2);}
+  #nextHint .arr{font-size:18px;font-weight:900;color:var(--gold);line-height:1;}
+  #nextHint .ico{width:30px;height:30px;object-fit:contain;}
+  #nextHint .lbl{font-size:10px;font-weight:800;color:#fff;letter-spacing:1px;opacity:.85;}
+  #nextHint.beat{animation:nextBeat .3s ease-out;}
+  @keyframes nextBeat{0%{transform:translateX(-50%) scale(1)}45%{transform:translateX(-50%) scale(1.15)}100%{transform:translateX(-50%) scale(1)}}
+  #hitline.pulse .circle{animation:hitpulse .45s ease-out;}
+  @keyframes hitpulse{
+    0%{box-shadow:0 0 0 0 rgba(255,209,102,.85);border-color:var(--gold);transform:scale(1)}
+    50%{box-shadow:0 0 0 14px rgba(255,209,102,0);transform:scale(1.16)}
+    100%{box-shadow:0 0 0 0 rgba(255,209,102,0);transform:scale(1)}}
+  /* ：， 4  */
+  #hitline.guide .circle{animation:guidepulse .38s ease-out;}
+  @keyframes guidepulse{
+    0%{box-shadow:0 0 0 0 rgba(255,255,255,.95);border-color:#fff;transform:scale(1.05)}
+    45%{box-shadow:0 0 0 18px rgba(255,255,255,0);border-color:var(--gold);transform:scale(1.45)}
+    100%{box-shadow:0 0 0 0 rgba(255,255,255,0);border-color:rgba(255,255,255,.65);transform:scale(1)}}
+  /*  */
+  .fish.near{filter:drop-shadow(0 0 10px var(--gold)) drop-shadow(0 2px 2px rgba(23,34,65,.2));}
+
+  /* ---------- ： ---------- */
+  #chop{position:absolute;right:-6px;top:66px;width:330px;z-index:9;pointer-events:none;
+        transform-origin:82% 58%;transition:transform .09s ease-out;}
+  #chop img{width:100%;display:block;}
+  #chop.hit{transform:rotate(-6deg) translate(-5px,3px) scale(.98);}
+  #chop.fling{transform:rotate(12deg) translate(9px,-15px);}
+
+  /* ---------- ： ---------- */
+  #recipes{position:absolute;left:16px;top:14px;z-index:12;display:flex;gap:7px;}
+  #recipeTitle{position:absolute;left:18px;top:2px;z-index:13;font-size:10px;font-weight:800;
+        letter-spacing:1.4px;color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(23,34,65,.35);}
+  #recipes{top:24px;}
+  .rplate{width:108px;height:88px;background:rgba(254,253,253,.93);border:3px solid var(--ink);
+          border-radius:11px;padding:4px 6px;position:relative;opacity:.62;
+          box-shadow:0 3px 0 rgba(23,34,65,.16);transition:transform .3s cubic-bezier(.2,.8,.3,1),opacity .3s,box-shadow .3s;}
+  .rplate .rt{font-size:10px;font-weight:800;color:var(--ink);letter-spacing:.6px;}
+  .rplate .rseq{display:flex;flex-wrap:wrap;gap:1px;margin-top:3px;align-content:flex-start;
+                height:58px;overflow:hidden;}
+  .mini{width:15px;height:17px;object-fit:contain;display:block;vertical-align:top;}
+  /* / */
+  .mini.eaten{opacity:.2;}
+  .rplate.active{opacity:1;transform:translateY(4px) scale(1.08);border-color:#fff;
+                 box-shadow:0 0 0 4px var(--gold),0 7px 0 rgba(23,34,65,.18);}
+  .rplate.done{opacity:.5;}
+  .rplate.done:after{content:"✓";position:absolute;right:6px;top:2px;color:#2e9e6b;font-size:20px;font-weight:900;}
+  .rplate.active .rt{color:#c4452f;}
+
+  /* ---------- HUD ---------- */
+  #hud{position:absolute;right:18px;top:14px;z-index:12;text-align:right;color:#fff;
+       text-shadow:0 2px 4px rgba(23,34,65,.35);pointer-events:none;}
+  #hud:after{content:"";position:absolute;inset:-9px -13px;background:rgba(23,34,65,.30);
+             border-radius:12px;z-index:-1;backdrop-filter:blur(2px);}
+  #hud .row{display:flex;gap:14px;justify-content:flex-end;align-items:baseline;}
+  #score{font-size:30px;font-weight:900;letter-spacing:1px;transition:transform .12s;}
+  #score.bump{animation:scoreBump .3s cubic-bezier(.2,.8,.3,1);}
+  @keyframes scoreBump{0%{transform:scale(1)}40%{transform:scale(1.28);color:var(--gold)}100%{transform:scale(1)}}
+  #combo{font-size:18px;font-weight:800;color:var(--gold);min-width:78px;}
+  #combo.hot{animation:comboHot .35s ease-out;}
+  @keyframes comboHot{0%{transform:scale(1)}50%{transform:scale(1.3) rotate(-4deg)}100%{transform:scale(1)}}
+  #levelTxt{font-size:12px;font-weight:700;opacity:.92;letter-spacing:.5px;}
+  /*  */
+  #comboBadge{position:absolute;right:18px;top:96px;z-index:12;padding:4px 12px;border-radius:20px;
+        background:linear-gradient(135deg,#ffd166,#ff9f68);color:var(--ink);font-size:12px;font-weight:900;
+        letter-spacing:.6px;box-shadow:0 3px 10px rgba(23,34,65,.25);opacity:0;transform:translateX(20px);
+        transition:opacity .25s,transform .25s;}
+  #comboBadge.show{opacity:1;transform:translateX(0);}
+
+  /* ----------  ---------- */
+  #feedback{position:absolute;left:50%;top:300px;transform:translateX(-50%) scale(.6);z-index:15;
+            font-size:46px;font-weight:900;color:#fff;opacity:0;pointer-events:none;
+            letter-spacing:1px;text-shadow:0 4px 0 var(--ink),0 8px 18px rgba(23,34,65,.35);}
+  #feedback.show{animation:fb .72s cubic-bezier(.2,.8,.3,1) forwards;}
+  @keyframes fb{0%{opacity:0;transform:translateX(-50%) scale(.5) rotate(-8deg)}
+                25%{opacity:1;transform:translateX(-50%) scale(1.2) rotate(3deg)}
+                65%{opacity:1;transform:translateX(-50%) scale(1)}
+                100%{opacity:0;transform:translateX(-50%) translateY(-30px) scale(.9)}}
+
+  /* ----------  ---------- */
+  #keys{position:absolute;left:0;right:0;bottom:12px;z-index:12;display:flex;justify-content:space-between;padding:0 24px;}
+  .keyhint{background:rgba(254,253,253,.95);border:3px solid var(--ink);border-radius:12px;
+           padding:7px 16px;font-size:14px;font-weight:800;color:var(--ink);
+           display:flex;align-items:center;gap:9px;box-shadow:0 4px 0 rgba(23,34,65,.22);
+           user-select:none;cursor:pointer;transition:transform .1s,background .1s,box-shadow .1s;}
+  .keyhint kbd{background:var(--ink);color:#fff;border-radius:6px;padding:3px 10px;font-size:14px;
+               box-shadow:0 2px 0 rgba(0,0,0,.25);}
+  .keyhint.press{transform:translateY(4px);box-shadow:0 0 0 rgba(23,34,65,.2);background:var(--gold);}
+  .keyhint .fishicon{width:20px;height:20px;object-fit:contain;}
+  #keySignal{position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:16;
+             font-size:26px;font-weight:900;letter-spacing:3px;color:var(--ink);opacity:0;
+             pointer-events:none;text-shadow:0 2px 0 #fff;}
+  #keySignal.show{animation:ks .45s ease-out forwards;}
+  @keyframes ks{0%{opacity:0;transform:translateX(-50%) scale(.7)}
+                25%{opacity:1;transform:translateX(-50%) scale(1.15)}
+                100%{opacity:0;transform:translateX(-50%) scale(1)}}
+
+  /* ---------- ：/ ---------- */
+  .overlay{position:absolute;inset:0;z-index:30;background:rgba(23,34,65,.55);
+           backdrop-filter:blur(5px);
+           display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;}
+  .panel{background:linear-gradient(160deg,#fefdfd,#f7f1e4);border:4px solid var(--ink);
+         border-radius:20px;padding:26px 38px 30px;box-shadow:0 14px 0 rgba(23,34,65,.28),0 24px 50px rgba(0,0,0,.3);
+         max-width:660px;position:relative;}
+  .panel:before{content:"";position:absolute;left:-4px;right:-4px;top:-4px;height:14px;
+         background:repeating-linear-gradient(90deg,var(--gold) 0 18px,#ff9f68 18px 36px);
+         border-radius:20px 20px 0 0;border:4px solid var(--ink);border-bottom:none;}
+  .overlay h1{font-size:40px;letter-spacing:1px;color:var(--ink);margin:6px 0 6px;
+              text-shadow:0 2px 0 rgba(255,255,255,.8);}
+  .overlay p{font-size:14px;line-height:1.85;color:#4a4a63;max-width:600px;}
+  .overlay p b{color:#c4452f;}
+  .overlay .big{font-size:16px;font-weight:800;color:var(--ink);margin:14px 0 4px;
+                background:rgba(255,209,102,.35);display:inline-block;padding:6px 18px;border-radius:20px;}
+  .howto{display:flex;gap:14px;justify-content:center;margin:16px 0 4px;}
+  .howto .card{flex:1;background:#fff;border:3px solid var(--ink);border-radius:12px;padding:10px 12px;
+               box-shadow:0 3px 0 rgba(23,34,65,.18);}
+  .howto .card img{width:34px;height:34px;object-fit:contain;display:block;margin:0 auto 4px;}
+  .howto .card .t{font-size:12px;font-weight:900;color:var(--ink);}
+  .howto .card .k{font-size:11px;color:#888;margin-top:2px;}
+  button.start{margin-top:18px;background:linear-gradient(180deg,#ffd98a,#ffc14d);border:4px solid var(--ink);
+               border-radius:14px;padding:12px 42px;font-size:21px;font-weight:900;color:var(--ink);cursor:pointer;
+               box-shadow:0 6px 0 rgba(23,34,65,.5);transition:transform .12s,box-shadow .12s;letter-spacing:.5px;}
+  button.start:hover{transform:translateY(-2px);box-shadow:0 8px 0 rgba(23,34,65,.5);}
+  button.start:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(23,34,65,.5);}
+  .hidden{display:none!important;}
+
+  /*  */
+  .flyer{position:absolute;z-index:20;object-fit:contain;pointer-events:none;}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="game">
+    <div id="board"></div>
+    <div id="plate"><div class="plate-inner"><div id="plateFood"></div></div></div>
+    <div id="lane"></div>
+    <div id="hitline"><div class="circle"></div><div class="dot"></div></div>
+    <div id="nextHint"><span class="lbl">NEXT</span><span class="arr" id="nextArr">←</span><img class="ico" id="nextIco" src="assets/salmon.png" alt=""></div>
+    <div id="chop"><img src="assets/chop_closed.png" alt="Chopsticks"></div>
+    <div id="particles"></div>
+
+    <div id="recipeTitle">TODAY'S ORDERS</div>
+    <div id="recipes"></div>
+    <div id="hud">
+      <div class="row"><span id="score">0</span><span id="combo"></span></div>
+      <div id="levelTxt">Level 1 · Plate 1/5</div>
+    </div>
+    <div id="comboBadge"></div>
+    <div id="feedback"></div>
+    <div id="keySignal"></div>
+    <div id="keys">
+      <div class="keyhint" id="keyL"><kbd>←</kbd><img class="fishicon" src="assets/salmon.png" alt="">Salmon · Left</div>
+      <div class="keyhint" id="keyR">Squid · Right <img class="fishicon" src="assets/squid.png" alt=""><kbd>→</kbd></div>
+    </div>
+
+    <div class="overlay" id="startScreen">
+      <div class="panel">
+        <h1>Sushi Making</h1>
+        <p>Chopsticks wait on the right while salmon and squid run along the board.<br>
+           Hit <b>Salmon with ←</b> (left side of plate) and <b>Squid with →</b> (right side).<br>
+           Music matches every slice — follow the beat. Closer slices = faster combos.<br>
+           Complete <b>five plates</b> in the order shown above to move on.</p>
+        <div class="howto">
+          <div class="card"><img src="assets/salmon.png" alt=""><div class="t">Salmon</div><div class="k">← Left</div></div>
+          <div class="card"><img src="assets/squid.png" alt=""><div class="t">Squid</div><div class="k">Right →</div></div>
+          <div class="card"><img src="assets/plate_salmon.png" alt=""><div class="t">Plate</div><div class="k">Perfect Timing</div></div>
+        </div>
+        <button class="start" id="btnStart">Start Cooking</button>
+        <p style="margin:12px 0 0;font-size:12px;opacity:.9;letter-spacing:.3px">Click the game first, then press ← / → or A / D. You can also tap the left / right half of the board.</p>
+      </div>
+    </div>
+
+    <div class="overlay hidden" id="clearScreen">
+      <div class="panel">
+        <h1 id="clearTitle">Five Plates Done!</h1>
+        <p id="clearDesc">Great job — everything is perfectly plated!</p>
+        <button class="start" id="btnNext">Next Level</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   
+   
+   ============================================================ */
+
+const IMG={
+  S:'assets/salmon.png',
+  K:'assets/squid.png',
+  Kbad:'assets/squid_surprise.png',
+  Sbad:'assets/salmon_shocked.png',
+  chopOpen:'assets/chop_open.png',
+  chopClosed:'assets/chop_closed.png',
+  chopWide:'assets/chop_wide.png'
+};
+/* ：，， */
+const SLICE={
+  S:['assets/plate_salmon.png'],
+  K:['assets/plate_squid.png']
+};
+Object.values(IMG).forEach(s=>{const i=new Image();i.src=s;});
+Object.values(SLICE).flat().forEach(s=>{const i=new Image();i.src=s;});
+
+/* ONE level. Every "whoosh" in the music = exactly one fish, caught on the beat.
+   WHOOSH = seconds of each whoosh inside one loop of the new music. */
+const WHOOSH=[1.881,3.715,3.942,6.240,6.681,7.158,7.616,8.063,8.949,9.886,10.234,10.786,11.244,11.688,12.608,13.520,13.973,14.425,14.878,15.343,16.242,17.154,18.059,18.866,19.817,20.782,21.216,21.699,22.152,22.640,23.516,24.422,25.002,25.339,26.238,27.156,28.061,28.741,28.973,29.884,30.790,31.684,32.607,33.512,33.965,34.470,34.940,35.329,35.840,36.270];
+const BGM_LOOP=36.616;
+const FINAL_BGM='assets/final_bgm.mp3';
+const TRAVEL_MS=1400;      /* fish travel time: dense whooshes -> tightly packed fish */
+const HIT_WINDOW=150;      /* tight so adjacent whooshes never cross-judge */
+const PLATE_SIZE=10;       /* every 10 fish fill one plate (visual grouping only) */
+
+let level=0,plateIdx=0,score=0,combo=0,maxCombo=0;
+let beatMs=450,travelMs=TRAVEL_MS,hitWindow=HIT_WINDOW;
+let fishList=[],plateStart=0,raf=null,running=false,audioCtx=null;
+let typeTotals={S:0,K:0},placed={S:0,K:0},platePlaced=0,plateDone=false;
+/* ：/，， */
+let sessionId=0,pendingTimers=[];
+function clearPendingTimers(){ pendingTimers.forEach(t=>clearTimeout(t)); pendingTimers=[]; }
+function later(fn,ms){ const id=setTimeout(fn,ms); pendingTimers.push(id); return id; }
+/* ： rAF， */
+function startLoop(){ if(raf)cancelAnimationFrame(raf); raf=requestAnimationFrame(loop); }
+
+const $=s=>document.querySelector(s);
+const lane=$('#lane'),chop=$('#chop'),plateFood=$('#plateFood'),chopImg=chop.querySelector('img');
+const gameEl=$('#game'),particles=$('#particles'),hitline=$('#hitline'),plateEl=$('#plate');
+
+/* ---------------- audio ---------------- */
+function initAudio(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }
+/* No extra music FX: the track's own "whoosh" is the only rhythmic sound. */
+let bgmSrc=null,bgmBuf=null,bgmBufCache={},bgmEl=null;
+let bgmStartCtx=0,bgmStartPerf=0,bgmStarting=false,bgmDur=BGM_LOOP;
+function stopBgm(){
+  if(bgmSrc){try{bgmSrc.onended=null;bgmSrc.stop();bgmSrc.disconnect();}catch(e){} bgmSrc=null;}
+  if(bgmEl){try{bgmEl.pause();bgmEl.currentTime=0;}catch(e){} bgmEl=null;}
+  bgmStarting=false;bgmStartCtx=0;bgmStartPerf=0;
+}
+/* ：，，/、 */
+function startContinuousBgm(){
+  const url=FINAL_BGM;
+  if(!audioCtx||bgmSrc||bgmEl||bgmStarting)return;
+  bgmStarting=true;
+  const lead=.06;
+  bgmStartCtx=audioCtx.currentTime+lead;
+  bgmStartPerf=performance.now()+lead*1000;
+  const launch=buf=>{
+    bgmBufCache[url]=buf;bgmDur=buf.duration||BGM_LOOP;
+    const s=audioCtx.createBufferSource(),g=audioCtx.createGain();
+    s.buffer=buf;s.loop=true;g.gain.value=.85;
+    s.connect(g).connect(audioCtx.destination);
+    s.start(bgmStartCtx);bgmSrc=s;bgmStarting=false;
+  };
+  if(bgmBufCache[url]){launch(bgmBufCache[url]);return;}
+  fetch(url).then(r=>r.arrayBuffer()).then(ab=>audioCtx.decodeAudioData(ab))
+    .then(launch)
+    .catch(()=>{
+      const el=new Audio(url);el.loop=true;el.volume=.85;
+      el.play().then(()=>{bgmEl=el;bgmStarting=false;}).catch(()=>{bgmStarting=false;});
+    });
+}
+/* Absolute media time (performance clock) at which whoosh index gi fires.
+   WHOOSH repeats every bgmDur seconds; music started at bgmStartPerf. */
+function whooshPerf(gi){
+  const cyc=Math.floor(gi/WHOOSH.length),idx=((gi%WHOOSH.length)+WHOOSH.length)%WHOOSH.length;
+  return bgmStartPerf+(cyc*bgmDur+WHOOSH[idx])*1000;
+}
+/* Pick the first upcoming whoosh that leaves enough lead time for
+   fish travel + count-in. Returns its global index. */
+function nextWhooshIndex(needMs){
+  if(!bgmStartPerf)startContinuousBgm();
+  const base=bgmStartPerf||performance.now();
+  const now=performance.now(),target=now+needMs;
+  /* estimate cycle then search forward */
+  let gi=Math.max(0,Math.floor((target-base)/1000/bgmDur)*WHOOSH.length-1);
+  while(whooshPerf(gi)<target && gi<100000)gi++;
+  return gi;
+}
+/*  Web Audio  BGM： audioCtx， */
+function playBgm(url,at){
+  fetch(url).then(r=>r.arrayBuffer()).then(ab=>audioCtx.decodeAudioData(ab)).then(buf=>{
+    bgmBufCache[url]=buf;
+    if(!bgmSrc){
+      const s=audioCtx.createBufferSource(),g=audioCtx.createGain();
+      s.buffer=buf;g.gain.value=.85;s.connect(g).connect(audioCtx.destination);
+      s.onended=()=>{if(bgmSrc===s)bgmSrc=null;try{s.disconnect();g.disconnect();}catch(e){}};
+      s.start(Math.max(at,audioCtx.currentTime));bgmSrc=s;
+      if(bgmEl){try{bgmEl.pause();}catch(e){} bgmEl=null;}
+    }
+  }).catch(()=>bgmFallback(url,at));   /* file://  fetch  audio  */
+}
+/* file:// ：audio  Start ， play */
+function bgmFallback(url,at){
+  const delay=Math.max(0,(at-audioCtx.currentTime)*1000);
+  setTimeout(()=>{
+    const el=new Audio(url);el.volume=.85;el.play().then(()=>{bgmEl=el;}).catch(()=>{});
+  },delay);
+}
+function scheduleMusic(recipe){
+  /* the music itself carries every whoosh; no extra sounds are layered on top */
+  startContinuousBgm();
+}
+/* ---------------- recipes: 5 plates x 10 fish ---------------- */
+const TOTAL_FISH=WHOOSH.length;
+const PLATES=Math.ceil(TOTAL_FISH/PLATE_SIZE);
+function fishTypeAt(i){ return (i%2===0)?'S':'K'; }   /* salmon / squid alternate */
+function renderRecipes(){
+  const box=$('#recipes');box.innerHTML='';
+  for(let pi=0;pi<PLATES;pi++){
+    const d=document.createElement('div');
+    const lo=pi*PLATE_SIZE,hi=Math.min(lo+PLATE_SIZE,TOTAL_FISH);
+    const doneN=fishList.filter(f=>f.id>=lo&&f.id<hi&&f.state==='hit').length;
+    const allDone=(hi-lo)===doneN;
+    d.className='rplate'+(allDone?' done':'');
+    let seq='';
+    for(let i=lo;i<hi;i++){
+      const eaten=fishList.find(f=>f.id===i&&f.state==='hit');
+      seq+=`<span style="display:inline-block"><img class="mini${eaten?' eaten':''}" src="${IMG[fishTypeAt(i)]}"></span>`;
+    }
+    d.innerHTML=`<div class="rt">Plate ${pi+1}</div><div class="rseq">${seq}</div>`;
+    box.appendChild(d);
+  }
+}
+function updateHUD(bump){
+  $('#score').textContent=score;
+  const ce=$('#combo');
+  ce.textContent=combo>1?`Combo x${combo}`:'';
+  const caught=fishList.filter(f=>f.state==='hit').length;
+  $('#levelTxt').textContent=`Sushi Making · ${caught}/${TOTAL_FISH}`;
+  /* reflect caught fish in recipe mini icons */
+  document.querySelectorAll('#recipes .rplate').forEach((pd,pi)=>{
+    const lo=pi*PLATE_SIZE,hi=Math.min(lo+PLATE_SIZE,TOTAL_FISH);
+    pd.querySelectorAll('.mini').forEach((m,k)=>{
+      m.classList.toggle('eaten',!!fishList.find(f=>f.id===lo+k&&f.state==='hit'));
+    });
+    const doneN=fishList.filter(f=>f.id>=lo&&f.id<hi&&f.state==='hit').length;
+    pd.classList.toggle('done',doneN===(hi-lo));
+  });
+  if(bump){
+    const sc=$('#score');sc.classList.remove('bump');void sc.offsetWidth;sc.classList.add('bump');
+    if(combo>1){ce.classList.remove('hot');void ce.offsetWidth;ce.classList.add('hot');}
+    showComboBadge(combo);
+  }
+}
+
+/* ---------------- ：（）
+   ，、；。
+   ：→，→，。
+   ，、，。 ---------------- */
+const PLATE_W=76, PLATE_H=114;   /* （） */
+/* （2）：， */
+const RING_CX=131, RING_CY=80, R=42;
+function slotPos(index,total){
+  const n=Math.max(1,total),a=(index/n)*2*Math.PI;
+  const px=RING_CX+R*Math.sin(a),py=RING_CY-R*Math.cos(a);
+  const rot=a*180/Math.PI-90;
+  return{px,py,rot};
+}
+let plateShown=-1;
+function addToPlate(type,index,total){
+  /* visual plates of PLATE_SIZE fish; start a fresh plate when full */
+  const which=Math.floor(index/PLATE_SIZE);
+  const slot=index%PLATE_SIZE;
+  if(which!==plateShown){ plateFood.innerHTML='';plateShown=which; }
+  const s=slotPos(slot,PLATE_SIZE);
+  const im=document.createElement('img');
+  im.className='plate-piece land';
+  im.src=SLICE[type][0];
+  im.style.width=PLATE_W+'px';im.style.height=PLATE_H+'px';
+  im.style.left=(s.px-PLATE_W/2)+'px';im.style.top=(s.py-PLATE_H/2)+'px';
+  im.style.setProperty('--rot',s.rot+'deg');
+  im.style.transform=`rotate(${s.rot}deg)`;
+  im.style.zIndex=String(10+slot);
+  plateFood.appendChild(im);
+  setTimeout(()=>im.classList.remove('land'),360);
+  /* plate pop feedback each time a fish lands */
+  plateEl.classList.remove('platePop');void plateEl.offsetWidth;plateEl.classList.add('platePop');
+}
+
+/* ---------------- ：， ---------------- */
+function flyFish(el,type,ok,index,total){
+  if(!el)return;
+  const r=el.getBoundingClientRect(),gr=$('#game').getBoundingClientRect();
+  const sx=r.left-gr.left,sy=r.top-gr.top;
+  /*  */
+  const owner=fishList.find(f=>f.el===el);
+  if(owner&&owner.anim){try{owner.anim.cancel();}catch(e){}owner.anim=null;}
+  el.remove();
+  const flyer=document.createElement('img');
+  flyer.className='flyer';
+  flyer.src=ok?IMG[type]:(type==='K'?IMG.Kbad:IMG.Sbad);
+  const size=ok?64:140;   /* ：、， */
+  flyer.style.width=size+'px';flyer.style.height=size+'px';
+  flyer.style.left=sx+'px';flyer.style.top=sy+'px';
+  $('#game').appendChild(flyer);
+  let targetX,targetY;
+  if(ok){
+    const slot=index%PLATE_SIZE;
+    const s=slotPos(slot,PLATE_SIZE);
+    /*  plateFood ， */
+    const pr=plateFood.getBoundingClientRect(), gr=$('#game').getBoundingClientRect();
+    targetX=(pr.left-gr.left)+s.px-PLATE_W/2;
+    targetY=(pr.top-gr.top)+s.py-PLATE_H/2;
+    /* ；、、，
+        addToPlate +，。 */
+    const dx=targetX-sx,dy=targetY-sy;
+    const anim=flyer.animate([
+      {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,offset:0},
+      {transform:`translate(${dx*.5}px,${dy*.5-60}px) rotate(-14deg) scale(1.06)`,opacity:1,offset:.5},
+      {transform:`translate(${dx}px,${dy}px) rotate(0deg) scale(.7)`,opacity:.9,offset:1}
+    ],{duration:380,easing:'cubic-bezier(.3,.6,.4,1)'});
+    anim.onfinish=()=>{flyer.remove();addToPlate(type,index,total);};
+  }else{
+    /* ：「」，， */
+    flyer.style.zIndex='80';
+    flyer.style.filter='drop-shadow(0 0 18px rgba(255,120,120,.9)) drop-shadow(0 8px 10px rgba(23,34,65,.35))';
+    const cx=480-sx-size/2, cy=250-sy-size/2;
+    const tilt=(sx<480?-12:12);
+    const anim=flyer.animate([
+      {transform:'translate(0,0) rotate(0deg) scale(1)',opacity:1,offset:0},
+      {transform:`translate(${cx}px,${cy}px) rotate(${tilt}deg) scale(2.6)`,opacity:1,offset:.22},
+      /* ：、、 */
+      {transform:`translate(${cx}px,${cy}px) rotate(${tilt}deg) scale(2.6)`,opacity:1,offset:.38},
+      {transform:`translate(${cx+6}px,${cy-5}px) rotate(${tilt+3}deg) scale(2.68)`,opacity:1,offset:.52},
+      {transform:`translate(${cx-4}px,${cy+3}px) rotate(${tilt-2}deg) scale(2.62)`,opacity:1,offset:.66},
+      {transform:`translate(${cx}px,${cy}px) rotate(${tilt}deg) scale(2.6)`,opacity:1,offset:.82},
+      /* ， */
+      {transform:`translate(${cx}px,${cy}px) rotate(${tilt}deg) scale(2.35)`,opacity:0,offset:1}
+    ],{duration:2200,easing:'cubic-bezier(.2,.7,.3,1)'});
+    anim.onfinish=()=>flyer.remove();
+  }
+}
+
+/* ---------------- ： /  /  ---------------- */
+function burst(x,y,color,n){
+  n=n||10;
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');
+    el.className='spark';
+    const size=4+Math.random()*7;
+    const a=Math.random()*Math.PI*2,dist=30+Math.random()*70;
+    el.style.cssText=`width:${size}px;height:${size}px;left:${x}px;top:${y}px;
+      background:${color};color:${color};`;
+    particles.appendChild(el);
+    el.animate([
+      {transform:'translate(0,0) scale(1)',opacity:1},
+      {transform:`translate(${Math.cos(a)*dist}px,${Math.sin(a)*dist}px) scale(0)`,opacity:0}
+    ],{duration:420+Math.random()*260,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>el.remove();
+  }
+  /*  */
+  const ring=document.createElement('div');
+  ring.className='ring';ring.style.cssText=`width:20px;height:20px;left:${x-10}px;top:${y-10}px;color:${color};`;
+  particles.appendChild(ring);
+  ring.animate([
+    {transform:'scale(.4)',opacity:.9},
+    {transform:'scale(3.2)',opacity:0}
+  ],{duration:480,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>ring.remove();
+}
+function shakeGame(){
+  gameEl.classList.remove('shake');void gameEl.offsetWidth;gameEl.classList.add('shake');
+  setTimeout(()=>gameEl.classList.remove('shake'),190);
+}
+function pulseHitline(){
+  hitline.classList.remove('pulse');void hitline.offsetWidth;hitline.classList.add('pulse');
+  setTimeout(()=>hitline.classList.remove('pulse'),460);
+}
+function showComboBadge(n){
+  const b=$('#comboBadge');
+  const labels={5:'NICE COMBO!',10:'GREAT!',15:'SIZZLING!',20:'CHEF MODE!'};
+  const label=labels[n]||(n>20?'LEGENDARY!':'');
+  if(!label)return;
+  b.textContent=`${n} COMBO · ${label}`;
+  b.classList.add('show');
+  clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove('show'),1600);
+}
+
+function feedback(txt,color){
+  const f=$('#feedback');f.textContent=txt;f.style.color=color||'#fff';
+  f.classList.remove('show');void f.offsetWidth;f.classList.add('show');
+}
+function chopFx(kind){
+  /*  = (closed)， = (open) ， = (wide)  */
+  if(kind==='hit'){
+    chopImg.src=IMG.chopOpen;chop.style.width='330px';chop.className='hit';
+    setTimeout(()=>{chopImg.src=IMG.chopClosed;chop.className='';},220);
+  }else{
+    chopImg.src=IMG.chopWide;chop.style.width='390px';chop.className='fling';
+    setTimeout(()=>{chopImg.src=IMG.chopClosed;chop.style.width='330px';chop.className='';},290);
+  }
+}
+function pressAnim(side){
+  const el=$(side==='L'?'#keyL':'#keyR');
+  el.classList.add('press');setTimeout(()=>el.classList.remove('press'),130);
+}
+/* Show a clear signal for every accepted key / tap, even before the game starts.
+   If this never lights up, the key never reached the page (focus is outside it). */
+function keySignal(side){
+  const k=$('#keySignal');if(!k)return;
+  k.textContent=side==='L'?'<':'>';
+  k.classList.remove('show');void k.offsetWidth;k.classList.add('show');
+}
+
+/* ---------------- one continuous level: every whoosh -> one fish ---------------- */
+function startPlate(){
+  fishList.forEach(f=>{
+    if(f.anim){try{f.anim.cancel();}catch(e){}}
+    if(f.el)f.el.remove();
+  });
+  fishList=[];
+  lane.innerHTML='';plateFood.innerHTML='';plateShown=-1;
+  beatMs=450;hitWindow=HIT_WINDOW;travelMs=TRAVEL_MS;
+  /* first fish needs travel lead time; then fish i hits on whoosh k0+i (NO skipping) */
+  const k0=nextWhooshIndex(travelMs+300);
+  plateStart=whooshPerf(k0);
+  typeTotals={S:0,K:0};placed={S:0,K:0};platePlaced=0;plateDone=false;lastBeat=-1;
+  for(let i=0;i<TOTAL_FISH;i++){
+    const type=fishTypeAt(i);
+    const hit=whooshPerf(k0+i);              /* consecutive whooshes, one fish each */
+    fishList.push({id:i,type,hitTime:hit,spawnTime:hit-travelMs,state:'wait',el:null});
+    typeTotals[type]++;
+  }
+  renderRecipes();updateHUD();scheduleMusic(fishList);
+}
+
+/* ----------------  ---------------- */
+let lastBeat=-1;
+/*  Web Animations ：， rAF 。
+    document.timeline ， hitTime（performance.now）。 */
+function spawnFishEl(f){
+  const wrap=document.createElement('div');
+  wrap.className='fish';
+  const img=document.createElement('img');
+  img.src=IMG[f.type];wrap.appendChild(img);
+  lane.appendChild(wrap);
+  f.el=wrap;
+  /*  spawnTime  hitTime+； */
+  const anim=wrap.animate([
+    {transform:'translateX(-70px)'},
+    {transform:'translateX(600px)'}
+  ],{duration:travelMs,delay:Math.max(0,f.spawnTime-performance.now()),fill:'both',easing:'linear'});
+  f.anim=anim;
+  return wrap;
+}
+function loop(){
+  if(!running)return;
+  const now=performance.now();
+  fishList.forEach(f=>{
+    if(f.state==='wait'&&now>=f.spawnTime){ spawnFishEl(f); f.state='moving'; }
+    if(f.state==='moving'&&f.el){
+      /*  */
+      if(Math.abs(f.hitTime-now)<=hitWindow*1.6) f.el.classList.add('near');
+      else f.el.classList.remove('near');
+      /* miss once the whoosh window has passed */
+      if(now>f.hitTime+Math.max(hitWindow*1.5,240) && f.state==='moving')miss(f);
+    }
+  });
+  /* “”： */
+  const next=fishList.filter(f=>f.state==='wait'||f.state==='moving')
+                     .sort((a,b)=>a.hitTime-b.hitTime)[0];
+  if(next){
+    const nh=$('#nextHint');
+    $('#nextIco').src=IMG[next.type];
+    $('#nextArr').textContent=next.type==='S'?'←':'→';
+    nh.style.opacity=Math.abs(next.hitTime-now)<beatMs*2?'1':'.45';
+  }else{
+    $('#nextHint').style.opacity='0';
+  }
+  /*  */
+  const beat=Math.floor((now-plateStart)/beatMs);
+  if(beat>=0&&beat!==lastBeat){
+    lastBeat=beat;pulseHitline();
+    const nh=$('#nextHint');nh.classList.remove('beat');void nh.offsetWidth;nh.classList.add('beat');
+  }
+  raf=requestAnimationFrame(loop);
+}
+
+/* ----------------  ---------------- */
+function judge(side){
+  if(!running){ /* ， */
+    feedback('Press START first','#fff');return;
+  }
+  const now=performance.now();pressAnim(side);
+  /* （，）。
+     (>1.2)，""。 */
+  const pending=fishList.filter(f=>f.state==='wait'||f.state==='moving')
+                        .sort((a,b)=>Math.abs(a.hitTime-now)-Math.abs(b.hitTime-now));
+  const hit=pending[0];
+  const catchWin=Math.max(hitWindow*1.6,200);
+  if(!hit || Math.abs(hit.hitTime-now)>catchWin){
+    feedback('Empty','#ffd166');chopFx('fling');return;
+  }
+  if(!hit.el){ spawnFishEl(hit); }
+  hit.state='moving';
+  const px=sxOf(hit),py=262;
+  const diff=Math.abs(hit.hitTime-now);
+  const grade=diff<=hitWindow?'PERFECT':'GOOD';
+  const want=side==='L'?'S':'K';
+  if(hit.type===want){
+    const index=platePlaced++,total=fishList.length;
+    hit.state='hit';combo++;maxCombo=Math.max(maxCombo,combo);
+    score+=(grade==='PERFECT'?100:60)+combo*10;
+    feedback(combo>=5?'COMBO '+grade+'!':grade,'#ffd166');
+    chopFx('hit');pulseHitline();shakeGame();
+    burst(px,py,'#ffd166',12);burst(px,py,'#fff',6);
+    flyFish(hit.el,hit.type,true,index,total);
+    updateHUD(true);checkPlate();
+  }else{
+    hit.state='miss';combo=0;
+    feedback('Wrong side','#fff');
+    chopFx('fling');burst(px,py,'#ff7a7a',8);
+    flyFish(hit.el,hit.type,false,0,1);
+    updateHUD();checkPlate();
+  }
+}
+/*  x（） */
+function sxOf(f){
+  if(!f.el)return 632;
+  const r=f.el.getBoundingClientRect(),gr=gameEl.getBoundingClientRect();
+  return r.left-gr.left+r.width/2;
+}
+function miss(f){
+  f.state='miss';combo=0;
+  feedback('MISS','#fff');
+  chopFx('fling');
+  flyFish(f.el,f.type,false,0,1);
+  updateHUD();checkPlate();
+}
+function checkPlate(){
+  /* all 50 whooshes resolved -> finish the single level */
+  if(!plateDone&&fishList.every(f=>f.state==='hit'||f.state==='miss')){
+    plateDone=true;
+    plateEl.classList.remove('platePop');void plateEl.offsetWidth;plateEl.classList.add('platePop');
+    const sid=sessionId;
+    later(()=>{
+      if(sid!==sessionId||!running)return;
+      running=false;if(raf){cancelAnimationFrame(raf);raf=null;}
+      stopBgm();
+      const caught=fishList.filter(f=>f.state==='hit').length;
+      $('#clearTitle').textContent='Sushi Making Complete!';
+      $('#clearDesc').textContent=`Score ${score} · Max Combo ${maxCombo}. ${caught} of ${TOTAL_FISH} whooshes caught!`;
+      $('#btnNext').textContent='Play Again';
+      $('#clearScreen').classList.remove('hidden');
+    },900);
+  }
+}
+
+/* ----------------  ---------------- */
+function startGame(){
+  sessionId++;clearPendingTimers();stopBgm();
+  initAudio();if(audioCtx.state==='suspended')audioCtx.resume();
+  score=0;combo=0;maxCombo=0;level=0;plateIdx=0;
+  $('#startScreen').classList.add('hidden');
+  $('#clearScreen').classList.add('hidden');
+  running=true;startPlate();startLoop();focusGame();
+}
+$('#btnStart').addEventListener('click',startGame);
+$('#btnNext').addEventListener('click',()=>{
+  sessionId++;clearPendingTimers();stopBgm();
+  $('#clearScreen').classList.add('hidden');
+  running=true;startPlate();startLoop();focusGame();
+});
+$('#keyL').addEventListener('click',e=>{e.stopPropagation();keySignal('L');judge('L');});
+$('#keyR').addEventListener('click',e=>{e.stopPropagation();keySignal('R');judge('R');});
+/* ：=，=（） */
+gameEl.addEventListener('click',e=>{
+  if(e.target.closest('.overlay'))return;
+  if(!running){ startGame(); return; }   /*  */
+  const r=gameEl.getBoundingClientRect();
+  const x=(e.clientX-r.left)/r.width;
+  keySignal(x<0.5?'L':'R');
+  if(x<0.5)judge('L');else judge('R');
+});
+/* ： window ，；， */
+function handleKey(e){
+  if(e.__kbHandled)return;   /* window/document ， */
+  const isL=e.code==='ArrowLeft'||e.key==='a'||e.key==='A';
+  const isR=e.code==='ArrowRight'||e.key==='d'||e.key==='D';
+  if(!isL&&!isR)return;
+  e.__kbHandled=true;
+  if(e.repeat)return;
+  e.preventDefault();
+  focusGame();
+  keySignal(isL?'L':'R');pressAnim(isL?'L':'R');
+  if(!running){ startGame(); return; }   /* ， START  */
+  judge(isL?'L':'R');
+}
+window.addEventListener('keydown',handleKey,true);
+document.addEventListener('keydown',handleKey,true);   /* ：document  */
+/* ，"" */
+window.addEventListener('load',()=>setTimeout(focusGame,0));
+/* ：、 */
+function focusGame(){
+  gameEl.setAttribute('tabindex','0');
+  try{ gameEl.focus({preventScroll:true}); }catch(err){ gameEl.focus(); }
+  if(document.activeElement!==gameEl){
+    document.body.setAttribute('tabindex','0');
+    try{ document.body.focus({preventScroll:true}); }catch(err){ document.body.focus(); }
+  }
+}
+window.addEventListener('focus',focusGame);
+document.addEventListener('pointerdown',focusGame,true);
+function resize(){
+  const s=Math.min(window.innerWidth/960,window.innerHeight/540,.96);
+  $('#wrap').style.transform=`scale(${s})`;
+}
+window.addEventListener('resize',resize);resize();
+</script>
+</body>
+</html>
