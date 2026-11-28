@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,6 +217,59 @@
 
   /*  */
   .flyer{position:absolute;z-index:20;object-fit:contain;pointer-events:none;}
+
+  /* ---------- tutorial: live demo on the real game board ---------- */
+  .start-actions{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;}
+  button.tut-open{margin-top:18px;background:#fff;border:3px solid var(--ink);border-radius:14px;
+                  padding:12px 26px;font-size:16px;font-weight:900;color:var(--ink);cursor:pointer;
+                  box-shadow:0 6px 0 rgba(23,34,65,.5);transition:transform .12s,box-shadow .12s;}
+  button.tut-open:hover{transform:translateY(-2px);box-shadow:0 8px 0 rgba(23,34,65,.5);}
+  button.tut-open:active{transform:translateY(5px);box-shadow:0 1px 0 rgba(23,34,65,.5);}
+  /* during the tutorial the real board stays visible; only the score/recipe HUD yields to the caption */
+  #game.demo-mode #recipes,#game.demo-mode #recipeTitle,#game.demo-mode #hud{display:none!important;}
+  #demoPanel{position:absolute;left:16px;top:8px;width:404px;z-index:26;
+             background:rgba(23,34,65,.93);border:3px solid var(--gold);border-radius:14px;
+             padding:9px 14px 11px;color:#fff;box-shadow:0 6px 18px rgba(23,34,65,.38);text-align:left;}
+  #demoPanel .dp-badge{font-size:10px;font-weight:900;letter-spacing:2px;color:var(--gold);}
+  #demoPanel .dp-step{font-size:17px;font-weight:900;margin:2px 0 3px;}
+  #demoPanel .dp-text{font-size:11.5px;line-height:1.5;color:#f4ead8;min-height:34px;}
+  #demoPanel .dp-text b{color:var(--gold);}
+  #demoPanel .dp-nav{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+  .tut-btn{background:#fff;border:3px solid var(--ink);border-radius:9px;padding:6px 18px;
+           font-size:12px;font-weight:900;color:var(--ink);cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.35);}
+  .tut-btn.primary{background:linear-gradient(180deg,#ffd98a,#ffc14d);}
+  .tut-btn:disabled{opacity:.38;cursor:default;box-shadow:0 3px 0 rgba(0,0,0,.18);}
+  .tut-dots{display:flex;gap:7px;}
+  .tut-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.28);}
+  .tut-dot.on{background:var(--gold);transform:scale(1.3);}
+
+  /* big pressable key images shown right above the key hints */
+  #keyPrompt{position:absolute;left:50%;bottom:62px;transform:translateX(-50%);z-index:24;
+             display:flex;gap:26px;pointer-events:none;}
+  .bigkey{pointer-events:auto;cursor:pointer;user-select:none;
+          position:relative;width:96px;height:96px;border-radius:16px;
+          background:linear-gradient(180deg,#fffdf8,#efe9dc);border:4px solid var(--ink);
+          box-shadow:0 8px 0 rgba(23,34,65,.45),inset 0 3px 0 #fff;
+          display:flex;flex-direction:column;align-items:center;justify-content:center;
+          opacity:.34;transition:opacity .18s,transform .1s,box-shadow .1s;}
+  .bigkey .glyph{font-size:54px;font-weight:900;line-height:1;color:var(--ink);}
+  .bigkey .tag{font-size:10px;font-weight:900;letter-spacing:1px;color:#8a8a9e;margin-top:2px;}
+  .bigkey.want{opacity:1;background:linear-gradient(180deg,#fff3c4,#ffd166);
+               animation:keyPulse 1s ease-in-out infinite;}
+  .bigkey.want .tag{color:#8a5a12;}
+  .bigkey.bad{opacity:1;background:linear-gradient(180deg,#ffd6d6,#ff9a9a);border-color:#b3261e;
+              animation:keyShake .4s ease-in-out infinite;}
+  .bigkey.bad .glyph{color:#b3261e;}
+  .bigkey.bad .tag{color:#b3261e;}
+  @keyframes keyShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .bigkey.press{transform:translateY(6px);box-shadow:0 2px 0 rgba(23,34,65,.45),inset 0 3px 0 #fff;}
+  @keyframes keyPulse{0%,100%{box-shadow:0 8px 0 rgba(23,34,65,.45),0 0 0 0 rgba(255,209,102,.85)}
+                      50%{box-shadow:0 8px 0 rgba(23,34,65,.45),0 0 0 16px rgba(255,209,102,0)}}
+  #promptHint{position:absolute;left:50%;bottom:158px;transform:translateX(-50%);z-index:25;
+              background:rgba(23,34,65,.9);color:#fff;border:3px solid var(--gold);border-radius:20px;
+              padding:5px 20px;font-size:15px;font-weight:900;letter-spacing:.5px;white-space:nowrap;
+              opacity:0;transition:opacity .2s;pointer-events:none;}
+  #promptHint.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -239,6 +292,11 @@
     <div id="comboBadge"></div>
     <div id="feedback"></div>
     <div id="keySignal"></div>
+    <div id="promptHint">Press the glowing key to catch it!</div>
+    <div id="keyPrompt" class="hidden">
+      <div class="bigkey" id="bigL"><span class="glyph">←</span><span class="tag">LEFT / A</span></div>
+      <div class="bigkey" id="bigR"><span class="glyph">→</span><span class="tag">RIGHT / D</span></div>
+    </div>
     <div id="keys">
       <div class="keyhint" id="keyL"><kbd>←</kbd><img class="fishicon" src="assets/salmon.png" alt="">Salmon · Left</div>
       <div class="keyhint" id="keyR">Squid · Right <img class="fishicon" src="assets/squid.png" alt=""><kbd>→</kbd></div>
@@ -256,8 +314,22 @@
           <div class="card"><img src="assets/squid.png" alt=""><div class="t">Squid</div><div class="k">Right →</div></div>
           <div class="card"><img src="assets/plate_salmon.png" alt=""><div class="t">Plate</div><div class="k">Perfect Timing</div></div>
         </div>
-        <button class="start" id="btnStart">Start Cooking</button>
+        <div class="start-actions">
+          <button class="start" id="btnStart">Start Cooking</button>
+          <button class="tut-open" id="btnHowTo">How to Play</button>
+        </div>
         <p style="margin:12px 0 0;font-size:12px;opacity:.9;letter-spacing:.3px">Click the game first, then press ← / → or A / D. You can also tap the left / right half of the board.</p>
+      </div>
+    </div>
+
+    <div id="demoPanel" class="hidden">
+      <div class="dp-badge" id="dpBadge">LIVE DEMO · STEP 1 OF 5</div>
+      <div class="dp-step" id="dpStep">Two Keys, Two Fish</div>
+      <div class="dp-text" id="dpText">Watch the real game below. Each fish is caught on its own key.</div>
+      <div class="dp-nav">
+        <button class="tut-btn" id="tutPrev">Back</button>
+        <div class="tut-dots" id="tutDots"></div>
+        <button class="tut-btn primary" id="tutNext">Next</button>
       </div>
     </div>
 
@@ -742,10 +814,206 @@ function startGame(){
   initAudio();if(audioCtx.state==='suspended')audioCtx.resume();
   score=0;combo=0;maxCombo=0;level=0;plateIdx=0;
   $('#startScreen').classList.add('hidden');
+  demoStop();
   $('#clearScreen').classList.add('hidden');
   running=true;startPlate();startLoop();focusGame();
 }
 $('#btnStart').addEventListener('click',startGame);
+
+/* ---------------- tutorial: short interactive how-to-play ---------------- */
+/* Two quick lessons: (1) both fish / both keys, (2) an automatic wrong-key
+   demo where the fish is knocked flying. The real board is used throughout. */
+const TUT_STEPS=[
+  {t:'Two Keys, Two Fish', d:'Every <b>"whoosh"</b> brings a fish to the ring. Press <b>← / A</b> for salmon and <b>→ / D</b> for squid — try both below.'},
+  {t:'Wrong Key = Miss', d:'Watch the demo: pressing the <b>wrong key</b> knocks the fish <b>flying off</b> with a miss sound. Only the right key plates it.'}
+];
+let tutIdx=0,demoActive=false,demoGen=0,demoTimers=[],demoRaf=null,demoWait=null,demoStepCount=0;
+const tutDots=$('#tutDots');
+for(let i=0;i<3;i++){
+  const d=document.createElement('div');d.className='tut-dot'+(i===0?' on':'');tutDots.appendChild(d);
+}
+/* tutorial-only sound (the real game stays silent except its BGM) */
+function demoTone(kind){
+  if(!audioCtx)return;
+  const t=audioCtx.currentTime;
+  if(kind==='whoosh'){
+    const len=Math.floor(audioCtx.sampleRate*.2),buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+    const src=audioCtx.createBufferSource();src.buffer=buf;
+    const bp=audioCtx.createBiquadFilter();bp.type='bandpass';bp.frequency.setValueAtTime(700,t);bp.frequency.exponentialRampToValueAtTime(3000,t+.13);bp.Q.value=1.1;
+    const g=audioCtx.createGain();g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.28,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.19);
+    src.connect(bp).connect(g).connect(audioCtx.destination);src.start(t);src.stop(t+.2);
+  }else if(kind==='hit'){
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type='triangle';o.frequency.setValueAtTime(760,t);o.frequency.exponentialRampToValueAtTime(1180,t+.09);
+    g.gain.setValueAtTime(.16,t);g.gain.exponentialRampToValueAtTime(.001,t+.24);
+    o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+.26);
+  }else{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type='sawtooth';o.frequency.setValueAtTime(200,t);o.frequency.exponentialRampToValueAtTime(80,t+.26);
+    g.gain.setValueAtTime(.14,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);
+    o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+.32);
+  }
+}
+function demoAfter(fn,ms){const t=setTimeout(fn,ms);demoTimers.push(t);return t;}
+function resetKeys(){
+  $('#bigL').classList.remove('want','bad','press');
+  $('#bigR').classList.remove('want','bad','press');
+}
+function showKeys(side){
+  $('#keyPrompt').classList.remove('hidden');resetKeys();
+  $(side==='L'?'#bigL':'#bigR').classList.add('want');
+  $('#promptHint').textContent='Press the glowing key to catch it!';
+  $('#promptHint').classList.add('show');
+}
+function showWrongKey(side){
+  $('#keyPrompt').classList.remove('hidden');resetKeys();
+  $(side==='L'?'#bigL':'#bigR').classList.add('bad');
+  $('#promptHint').textContent='WRONG KEY — the fish flies away!';
+  $('#promptHint').classList.add('show');
+}
+function hideKeys(){
+  $('#keyPrompt').classList.add('hidden');resetKeys();
+  $('#promptHint').classList.remove('show');
+}
+/* knock the fish flying: reuse the game's real "wrong" flyer animation */
+function knockFishAway(type,wrap,anim){
+  try{if(anim)anim.cancel();}catch(e){}
+  if(wrap)flyFish(wrap,type,false,0,1);
+  demoTone('wrong');shakeGame();feedback('WRONG KEY!','#ff7a7a');
+}
+function demoStop(){
+  demoActive=false;demoGen++;
+  demoTimers.forEach(t=>clearTimeout(t));demoTimers=[];
+  if(demoRaf){cancelAnimationFrame(demoRaf);demoRaf=null;}
+  if(demoWait){const w=demoWait;demoWait=null;try{w.resolve();}catch(e){}}
+  demoStepCount=0;hideKeys();
+  lane.innerHTML='';plateFood.innerHTML='';plateShown=-1;
+  document.querySelectorAll('#game .flyer,#game .spark,#game .ring').forEach(e=>e.remove());
+  $('#feedback').classList.remove('show');
+  $('#comboBadge').classList.remove('show');
+  gameEl.classList.remove('demo-mode');
+  $('#demoPanel').classList.add('hidden');
+}
+/* one fish: runs in -> whoosh at ring -> either waits for the user, or auto-demos a miss */
+function demoFish(type,gen,opt){
+  opt=opt||{};
+  const travel=opt.travel||3000;
+  return new Promise(resolve=>{
+    if(gen!==demoGen||!demoActive){resolve();return;}
+    const wrap=document.createElement('div');wrap.className='fish';
+    const img=document.createElement('img');img.src=IMG[type];wrap.appendChild(img);
+    lane.appendChild(wrap);
+    const anim=wrap.animate([{transform:'translateX(-70px)'},{transform:'translateX(600px)'}],
+                            {duration:travel,fill:'both',easing:'linear'});
+    $('#nextIco').src=IMG[type];$('#nextArr').textContent=type==='S'?'←':'→';
+    $('#nextHint').style.opacity='1';
+    demoAfter(()=>{
+      if(gen!==demoGen||!demoActive){resolve();return;}
+      wrap.classList.add('near');pulseHitline();
+      demoTone('whoosh');                    /* whoosh lands exactly at the ring */
+      const side=type==='S'?'L':'R';
+      if(opt.autoWrong){                      /* automatic wrong-key animation */
+        const wrongSide=side==='L'?'R':'L';
+        showWrongKey(wrongSide);
+        knockFishAway(type,wrap,anim);
+        demoAfter(()=>{hideKeys();resolve();},2100);
+        return;
+      }
+      showKeys(side);
+      demoWait={type,side,gen,wrap,anim,opt,resolve};   /* block until correct key */
+    },travel);
+  });
+}
+function demoCatch(side){
+  if(!demoWait||!demoActive)return false;
+  const w=demoWait;
+  if(w.side!==side){
+    /* wrong key: fish is knocked away, then the same fish comes back to retry */
+    const wrongKey=side==='L'?$('#bigL'):$('#bigR');
+    wrongKey.classList.remove('press');void wrongKey.offsetWidth;wrongKey.classList.add('press');
+    setTimeout(()=>wrongKey.classList.remove('press'),160);
+    demoWait=null;hideKeys();
+    knockFishAway(w.type,w.wrap,w.anim);
+    demoAfter(()=>{
+      if(w.gen!==demoGen||!demoActive){w.resolve();return;}
+      demoFish(w.type,w.gen,w.opt).then(()=>w.resolve());
+    },1500);
+    return false;
+  }
+  demoWait=null;hideKeys();
+  const big=side==='L'?$('#bigL'):$('#bigR');
+  big.classList.add('press');setTimeout(()=>big.classList.remove('press'),150);
+  demoTone('hit');
+  pressAnim(side);keySignal(side);chopFx('hit');pulseHitline();shakeGame();
+  feedback('PERFECT','#ffd166');
+  burst(632,262,'#ffd166',12);burst(632,262,'#fff',6);
+  try{w.anim.cancel();}catch(e){}
+  flyFish(w.wrap,w.type,true,w.opt.index||0,PLATE_SIZE);
+  demoAfter(()=>w.resolve(),w.opt.gap||720);
+  return true;
+}
+/* LINEAR flow: one correct LEFT, one correct RIGHT, then an automatic
+   wrong-key demo, then the tutorial finishes. No endless looping. */
+async function demoLoop(gen){
+  /* 1) learner catches salmon with LEFT */
+  $('#dpBadge').textContent='LIVE DEMO · STEP 1 OF 3';
+  $('#dpStep').textContent='Salmon = LEFT';
+  $('#dpText').innerHTML='A fish slides in with a <b>"whoosh"</b>. Press the glowing <b>← / A</b> key when it reaches the ring.';
+  Array.from(tutDots.children).forEach((x,k)=>x.classList.toggle('on',k===0));
+  await demoFish('S',gen,{travel:3000,index:0}); if(gen!==demoGen)return;
+  /* 2) learner catches squid with RIGHT */
+  $('#dpBadge').textContent='LIVE DEMO · STEP 2 OF 3';
+  $('#dpStep').textContent='Squid = RIGHT';
+  $('#dpText').innerHTML='Now squid — press the glowing <b>→ / D</b> key on the "whoosh".';
+  Array.from(tutDots.children).forEach((x,k)=>x.classList.toggle('on',k===1));
+  await demoFish('K',gen,{travel:3000,index:1}); if(gen!==demoGen)return;
+  /* 3) automatic wrong-key demo: the fish is knocked flying */
+  $('#dpBadge').textContent='LIVE DEMO · STEP 3 OF 3';
+  $('#dpStep').textContent='Wrong Key = Miss';
+  $('#dpText').innerHTML='Watch: a <b>wrong key</b> knocks the fish <b>flying away</b>. Only the right key plates it.';
+  Array.from(tutDots.children).forEach((x,k)=>x.classList.toggle('on',k===2));
+  await demoFish('S',gen,{travel:2600,autoWrong:true}); if(gen!==demoGen)return;
+  /* tutorial ends here */
+  demoFinish(gen);
+}
+function demoFinish(gen){
+  if(gen!==demoGen||!demoActive)return;
+  demoActive=false;hideKeys();
+  $('#dpBadge').textContent='TUTORIAL COMPLETE';
+  $('#dpStep').textContent='Ready to Cook!';
+  $('#dpText').innerHTML='Two keys, one fish per whoosh. Wrong key = fish flies away. <b>Start the real level!</b>';
+  $('#tutPrev').disabled=true;
+  $('#tutNext').disabled=false;
+  $('#tutNext').textContent='Start Cooking';
+}
+function showTut(){
+  demoStop();
+  initAudio();if(audioCtx.state==='suspended')audioCtx.resume();
+  $('#tutPrev').disabled=true;      /* linear: no skipping ahead */
+  $('#tutNext').disabled=true;      /* enabled only when the tutorial finishes */
+  $('#tutNext').textContent='Next';
+  demoActive=true;
+  const gen=demoGen;
+  gameEl.classList.add('demo-mode');
+  $('#demoPanel').classList.remove('hidden');
+  demoLoop(gen);
+}
+function openTutorial(){
+  $('#startScreen').classList.add('hidden');
+  $('#clearScreen').classList.add('hidden');
+  showTut();
+}
+function closeTutorial(){
+  demoStop();
+  $('#startScreen').classList.remove('hidden');
+  focusGame();
+}
+$('#btnHowTo').addEventListener('click',openTutorial);
+$('#tutPrev').addEventListener('click',()=>{ if(!demoActive)closeTutorial(); });
+$('#tutNext').addEventListener('click',()=>{ if(!demoActive)startGame(); });
+$('#bigL').addEventListener('click',e=>{e.stopPropagation();demoCatch('L');});
+$('#bigR').addEventListener('click',e=>{e.stopPropagation();demoCatch('R');});
 $('#btnNext').addEventListener('click',()=>{
   sessionId++;clearPendingTimers();stopBgm();
   $('#clearScreen').classList.add('hidden');
@@ -756,6 +1024,7 @@ $('#keyR').addEventListener('click',e=>{e.stopPropagation();keySignal('R');judge
 /* ：=，=（） */
 gameEl.addEventListener('click',e=>{
   if(e.target.closest('.overlay'))return;
+  if(!$('#demoPanel').classList.contains('hidden'))return;
   if(!running){ startGame(); return; }   /*  */
   const r=gameEl.getBoundingClientRect();
   const x=(e.clientX-r.left)/r.width;
@@ -765,6 +1034,16 @@ gameEl.addEventListener('click',e=>{
 /* ： window ，；， */
 function handleKey(e){
   if(e.__kbHandled)return;   /* window/document ， */
+  /* tutorial page: arrows page through steps, Esc returns to start */
+  if(!$('#demoPanel').classList.contains('hidden')){
+    const isL=e.code==='ArrowLeft'||e.key==='a'||e.key==='A';
+    const isR=e.code==='ArrowRight'||e.key==='d'||e.key==='D';
+    if(!isL&&!isR&&e.code!=='Escape')return;
+    e.__kbHandled=true;if(e.repeat)return;e.preventDefault();
+    if(e.code==='Escape'){closeTutorial();return;}
+    demoCatch(isL?'L':'R');   /* correct key advances, wrong key does not */
+    return;
+  }
   const isL=e.code==='ArrowLeft'||e.key==='a'||e.key==='A';
   const isR=e.code==='ArrowRight'||e.key==='d'||e.key==='D';
   if(!isL&&!isR)return;
