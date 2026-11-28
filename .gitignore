@@ -4,3 +4,6 @@ test-output/
 
 # Godot local imports
 godot/.godot/
+
+# Capacitor generated web bundle
+/www-ios/

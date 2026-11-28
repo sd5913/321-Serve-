@@ -1,0 +1,117 @@
+name: Upload 321 Serve to TestFlight
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - '!v0[0-9]*'
+      - '!v*.0[0-9]*'
+      - '!v*.*.0[0-9]*'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate new release tag
+    if: >-
+      github.repository == 'sd5913/321-Serve-' &&
+      github.ref_type == 'tag' && github.ref_protected &&
+      github.event.created && !github.event.deleted && !github.event.forced
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.tag.outputs.version }}
+      commit: ${{ steps.tag.outputs.commit }}
+    steps:
+      - name: Check opt-in and main protection
+        id: gate
+        env:
+          ENABLED: ${{ vars.SERVE_TESTFLIGHT_ENABLED }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$ENABLED" != true ]]; then
+            echo 'TestFlight is disabled. Set SERVE_TESTFLIGHT_ENABLED=true after owner setup.'
+            exit 0
+          fi
+          if [[ "$(gh api "repos/$GITHUB_REPOSITORY/rules/branches/main" \
+            --jq 'any(.[]; .type == "pull_request" and .parameters.required_approving_review_count >= 1)')" != true ]]; then
+            echo 'Enable a main branch ruleset that requires an approving PR review before enabling TestFlight.' >&2
+            exit 1
+          fi
+          echo 'ready=true' >> "$GITHUB_OUTPUT"
+      - name: Check out the validator from main
+        if: steps.gate.outputs.ready == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: refs/heads/main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify strict version and commit ancestry
+        if: steps.gate.outputs.ready == 'true'
+        id: tag
+        run: bash .github/scripts/verify-release-ref.sh "$GITHUB_REF" "$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+
+  upload:
+    name: Sign, export and upload to TestFlight
+    needs: validate
+    if: needs.validate.outputs.commit != '' && needs.validate.outputs.version != ''
+    environment: serve-testflight
+    runs-on: macos-26
+    timeout-minutes: 40
+    concurrency:
+      group: serve-testflight-${{ github.ref }}
+      cancel-in-progress: false
+    env:
+      MARKETING_VERSION: ${{ needs.validate.outputs.version }}
+      VERIFIED_COMMIT: ${{ needs.validate.outputs.commit }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.validate.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Recheck release after approval
+        env:
+          ENABLED: ${{ vars.SERVE_TESTFLIGHT_ENABLED }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$ENABLED" = true
+          test "$(gh api "repos/$GITHUB_REPOSITORY/rules/branches/main" \
+            --jq 'any(.[]; .type == "pull_request" and .parameters.required_approving_review_count >= 1)')" = true
+          test "$(git rev-parse HEAD)" = "$VERIFIED_COMMIT"
+          bash .github/scripts/verify-release-ref.sh "$GITHUB_REF" "$GITHUB_SHA"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Prepare the verified commit
+        run: |
+          bash .github/scripts/prepare-ios.sh
+          build=$(node .github/scripts/ios-upload.mjs build-number)
+          echo "BUILD_NUMBER=$build" >> "$GITHUB_ENV"
+          echo "IPA_DIR=$RUNNER_TEMP/321-serve-ipa" >> "$GITHUB_ENV"
+      - name: Sign and export the IPA
+        env:
+          APPLE_TEAM_ID: ${{ vars.SERVE_APPLE_TEAM_ID }}
+          DISTRIBUTION_P12: ${{ secrets.SERVE_DISTRIBUTION_P12_BASE64 }}
+          DISTRIBUTION_PASSWORD: ${{ secrets.SERVE_DISTRIBUTION_P12_PASSWORD }}
+          PROVISIONING_PROFILE: ${{ secrets.SERVE_PROVISIONING_PROFILE_BASE64 }}
+        run: bash .github/scripts/sign-ios.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: 321-Serve-${{ needs.validate.outputs.version }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/321-serve-ipa/321-Serve.ipa
+          if-no-files-found: error
+          retention-days: 7
+      - name: Submit to App Store Connect
+        env:
+          ASC_KEY: ${{ secrets.SERVE_ASC_INDIVIDUAL_KEY_BASE64 }}
+          ASC_KEY_ID: ${{ vars.SERVE_ASC_INDIVIDUAL_KEY_ID }}
+        run: |
+          node .github/scripts/ios-upload.mjs upload "$IPA_DIR/321-Serve.ipa" "$MARKETING_VERSION" "$BUILD_NUMBER"
+          printf 'App Store Connect accepted version %s, build %s for processing.\n' \
+            "$MARKETING_VERSION" "$BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove local IPA export
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/321-serve-ipa"

@@ -1,0 +1,89 @@
+name: iOS PR validation
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: Packaged game and regression tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+      - run: npm run test:ios
+      - run: npm run ios:sync
+      - run: npx --no-install playwright install --with-deps webkit
+      - name: Test the existing web entry point
+        env:
+          BROWSER_PATH: /usr/bin/google-chrome
+        run: |
+          node tests/integrated-rice.cjs
+          node tests/input-latency.cjs
+      - name: Test copied Capacitor resources in mobile Chromium and WebKit
+        env:
+          BROWSER_PATH: /usr/bin/google-chrome
+        run: |
+          npm run test:ios-web
+          IOS_WEB_ENGINE=webkit npm run test:ios-web
+
+  simulator:
+    name: Build and launch on iOS Simulator
+    runs-on: macos-26
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - run: bash .github/scripts/prepare-ios.sh
+      - name: Build without signing
+        run: |
+          xcodebuild build -project ios/App/App.xcodeproj -scheme App \
+            -configuration Debug -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/serve-build" \
+            -clonedSourcePackagesDirPath "$RUNNER_TEMP/321-serve-spm" \
+            -disableAutomaticPackageResolution -skipPackageUpdates CODE_SIGNING_ALLOWED=NO
+      - name: Check build contents and launch
+        run: |
+          app="$RUNNER_TEMP/serve-build/Build/Products/Debug-iphonesimulator/App.app"
+          bundle=org.5913.321serve
+          test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$app/Info.plist")" = "$bundle"
+          test "$(/usr/libexec/PlistBuddy -c 'Print CFBundleDisplayName' "$app/Info.plist")" = '321 Serve'
+          cmp index.html "$app/public/index.html"
+          cmp rice-audio.js "$app/public/rice-audio.js"
+          diff -qr --exclude='cordova.js' --exclude='cordova_plugins.js' www-ios "$app/public"
+          jq -e --arg bundle "$bundle" '.appId == $bundle and (.server.url == null)' "$app/capacitor.config.json"
+
+          device=$(xcrun simctl list devices available -j | jq -r \
+            '[.devices | to_entries | sort_by(.key) | reverse | .[].value[] | select(.name == "iPhone 17")][0].udid // empty')
+          test -n "$device"
+          xcrun simctl bootstatus "$device" -b
+          xcrun simctl status_bar "$device" override --time '9:41'
+          xcrun simctl install "$device" "$app"
+          launch=$(xcrun simctl launch "$device" "$bundle")
+          echo "$launch"
+          pid=${launch##*: }
+          [[ "$pid" =~ ^[1-9][0-9]*$ ]]
+          sleep 12
+          kill -0 "$pid"
+          xcrun simctl io "$device" screenshot "$RUNNER_TEMP/321-serve-ios-startup.png"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: 321-serve-ios-startup
+          path: ${{ runner.temp }}/321-serve-ios-startup.png
+          if-no-files-found: error
+          retention-days: 7

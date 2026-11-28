@@ -1,0 +1,22 @@
+{
+  "name": "321-serve-ios",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "ios:stage": "node scripts/stage-ios.mjs",
+    "ios:sync": "npm run ios:stage && cap sync ios",
+    "test:ios": "node --test tests/ios-*.test.mjs",
+    "test:ios-web": "node tests/ios-web.cjs"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.6.3",
+    "@capacitor/ios": "8.6.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.3",
+    "playwright": "1.65.1"
+  }
+}
