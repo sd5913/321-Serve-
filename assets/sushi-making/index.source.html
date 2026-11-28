@@ -286,44 +286,30 @@ const SLICE={
 Object.values(IMG).forEach(s=>{const i=new Image();i.src=s;});
 Object.values(SLICE).flat().forEach(s=>{const i=new Image();i.src=s;});
 
-/* b = ； BPM144.55， 8 ， */
-const seq=(bs,ts)=>bs.map((b,i)=>({t:ts[i%ts.length],b}));
-const alt=n=>Array.from({length:n},(_,i)=>(i%2?'K':'S')).join('');
-const grp=n=>Array.from({length:n},(_,i)=>(Math.floor(i/2)%2?'K':'S')).join('');
+/* whoosh cue positions (s) inside one loop of the new music.
+   Fish hit EXACTLY when a whoosh plays. stride = whoosh steps between fish. */
+const WHOOSH=[1.877,3.709,3.940,6.207,6.675,7.139,7.607,8.072,8.979,9.879,10.310,10.778,11.246,11.711,12.610,13.543,13.978,14.442,14.877,15.309,16.208,17.144,18.076,18.919,19.787,20.688,21.622,22.090,22.559,22.991,23.459,24.360,25.294,25.928,26.162,26.967,27.868,28.535,28.769,29.670,30.604,31.471,32.405,33.306,33.775,34.240,34.709,35.177,35.610,36.042];
+const BGM_LOOP=36.616;
 const FINAL_BGM='assets/final_bgm.mp3';
+/* plate: n fish, stride in whoosh units, fish type pattern */
+const P=(n,stride,types)=>({n,stride,types});
 const LEVELS=[
-  {bpm:144.55,bgm:FINAL_BGM,travelBeats:8,plates:[
-    seq([0,1,2,3,4,5,7],alt(7)),
-    seq([0,1,2,3,4,6,7.5],grp(7)),
-    seq([0,1,2,3,5,6,7],alt(7)),
-    seq([0,1,2,4,5,6,7],grp(7)),
-    seq([0,1,2,3,4,5,6.5,7.5],alt(8))
+  {bpm:129,bgm:FINAL_BGM,travelMs:2200,hitWindow:320,plates:[
+    P(6,2,"SKSKSK"),P(6,2,"SSKKSS"),P(6,2,"KSKSKS"),P(6,2,"SSSKKK"),P(6,2,"SKSKSK")
   ]},
-  {bpm:144.55,bgm:FINAL_BGM,travelBeats:6,plates:[
-    seq([0,1,1.5,2,3,4,5,6,7],alt(9)),
-    seq([0,.5,1,2,2.5,3,4,5,6,7],grp(10)),
-    seq([0,1,2,2.5,3,4,5,6,7],alt(9)),
-    seq([0,1,1.5,2,3,4,5,6.5,7.5],grp(9)),
-    seq([0,.5,1,1.5,2,3,4,5,6,7],alt(10))
+  {bpm:129,bgm:FINAL_BGM,travelMs:1800,hitWindow:260,plates:[
+    P(8,2,"SSKKSSKK"),P(8,2,"KSKSKSKS"),P(8,2,"SSSKKKSS"),P(8,2,"SKSKSKSK"),P(8,2,"SSKKSSKK")
   ]},
-  {bpm:144.55,bgm:FINAL_BGM,travelBeats:5,plates:[
-    seq([0,.5,1,1.5,2,3,4,5,6,7,7.5],alt(11)),
-    seq([0,.5,1,2,2.5,3,3.5,4,5,6,7],grp(11)),
-    seq([0,.5,1,1.5,2,2.5,3,4,5,6,7,7.5],alt(12)),
-    seq([0,.5,1,1.5,2,3,3.5,4,5,6,6.5,7.5],grp(12)),
-    seq([0,.5,1,1.5,2,2.5,3,3.5,4,5,6,7,7.5],alt(13))
+  {bpm:129,bgm:FINAL_BGM,travelMs:1500,hitWindow:190,plates:[
+    P(10,1,"KSKSKSKSKS"),P(10,1,"SSSKKKSSSK"),P(10,1,"SKSKSKSKSK"),P(10,1,"SSKKSSKKSS"),P(10,1,"KSKSKSKSKS")
   ]},
-  {bpm:144.55,bgm:FINAL_BGM,travelBeats:4,plates:[
-    seq([0,.25,.5,1,1.5,2,2.5,3,4,5,6,6.5,7,7.5],alt(14)),
-    seq([0,.25,.5,.75,1,1.5,2,3,4,4.5,5,6,7,7.5],grp(14)),
-    seq([0,.25,.5,1,1.25,1.5,2,2.5,3,4,5,6,6.5,7,7.5],alt(15)),
-    seq([0,.25,.5,.75,1,1.5,2,2.25,2.5,3,4,5,6,6.5,7,7.5],grp(15)),
-    seq([0,.25,.5,.75,1,1.25,1.5,2,2.5,3,3.5,4,5,6,6.5,7,7.5,7.75],alt(18))
+  {bpm:129,bgm:FINAL_BGM,travelMs:1200,hitWindow:140,plates:[
+    P(12,1,"SSSKKKSSSKKK"),P(12,1,"SKSKSKSKSKSK"),P(12,1,"SSKKSSKKSSKK"),P(12,1,"KSKSKSKSKSKS"),P(12,1,"SSSKKKSSSKKK")
   ]}
 ];
 
 let level=0,plateIdx=0,score=0,combo=0,maxCombo=0;
-let beatMs=600,travelMs=4200,hitWindow=280;
+let beatMs=450,travelMs=2200,hitWindow=320;
 let fishList=[],plateStart=0,raf=null,running=false,audioCtx=null;
 let typeTotals={S:0,K:0},placed={S:0,K:0},platePlaced=0,plateDone=false;
 /* ：/，， */
@@ -402,8 +388,9 @@ function guideIn(t0,bs){
   const el=ensureCountIn(),spans=el.querySelectorAll('span');
   spans.forEach(s=>s.style.opacity='.25');
   el.style.opacity='1';
+  const step=bs*.9;   /* guide on the new track's ~0.45s whoosh grid */
   for(let i=0;i<4;i++){
-    const at=t0-(4-i)*bs*.5;
+    const at=t0-(4-i)*step;
     guideTick(at,i);
     const ms=Math.max(0,(at-audioCtx.currentTime)*1000);
     later(()=>{
@@ -435,7 +422,7 @@ function hatAt(at){
   src.onended=()=>{try{src.disconnect();f.disconnect();g.disconnect();}catch(e){}};
 }
 let bgmSrc=null,bgmBuf=null,bgmBufCache={},bgmEl=null;
-let bgmStartCtx=0,bgmStartPerf=0,bgmStarting=false;
+let bgmStartCtx=0,bgmStartPerf=0,bgmStarting=false,bgmDur=BGM_LOOP;
 function stopBgm(){
   if(bgmSrc){try{bgmSrc.onended=null;bgmSrc.stop();bgmSrc.disconnect();}catch(e){} bgmSrc=null;}
   if(bgmEl){try{bgmEl.pause();bgmEl.currentTime=0;}catch(e){} bgmEl=null;}
@@ -450,7 +437,7 @@ function startContinuousBgm(){
   bgmStartCtx=audioCtx.currentTime+lead;
   bgmStartPerf=performance.now()+lead*1000;
   const launch=buf=>{
-    bgmBufCache[url]=buf;
+    bgmBufCache[url]=buf;bgmDur=buf.duration||BGM_LOOP;
     const s=audioCtx.createBufferSource(),g=audioCtx.createGain();
     s.buffer=buf;s.loop=true;g.gain.value=.85;
     s.connect(g).connect(audioCtx.destination);
@@ -464,11 +451,22 @@ function startContinuousBgm(){
       el.play().then(()=>{bgmEl=el;bgmStarting=false;}).catch(()=>{bgmStarting=false;});
     });
 }
-function nextGridStart(travelBeats){
+/* Absolute media time (performance clock) at which whoosh index gi fires.
+   WHOOSH repeats every bgmDur seconds; music started at bgmStartPerf. */
+function whooshPerf(gi){
+  const cyc=Math.floor(gi/WHOOSH.length),idx=((gi%WHOOSH.length)+WHOOSH.length)%WHOOSH.length;
+  return bgmStartPerf+(cyc*bgmDur+WHOOSH[idx])*1000;
+}
+/* Pick the first upcoming whoosh that leaves enough lead time for
+   fish travel + count-in. Returns its global index. */
+function nextWhooshIndex(needMs){
   if(!bgmStartPerf)startContinuousBgm();
-  const base=bgmStartPerf||performance.now(),b=60000/LEVELS[level].bpm;
-  const k=Math.ceil((performance.now()-base)/b+travelBeats+2);
-  return base+k*b;
+  const base=bgmStartPerf||performance.now();
+  const now=performance.now(),target=now+needMs;
+  /* estimate cycle then search forward */
+  let gi=Math.max(0,Math.floor((target-base)/1000/bgmDur)*WHOOSH.length-1);
+  while(whooshPerf(gi)<target && gi<100000)gi++;
+  return gi;
 }
 /* ：，， */
 function breakSting(at){
@@ -518,11 +516,13 @@ function bgmFallback(url,at){
 function scheduleMusic(recipe){
   if(!audioCtx)return;
   startContinuousBgm();
-  /*  AudioContext ， */
-  const t0=bgmStartCtx+(plateStart-bgmStartPerf)/1000,bs=beatMs/1000;
-  /*  4 ， */
+  /* performance clock -> AudioContext clock (BGM anchors both) */
+  const ctxT=perf=>bgmStartCtx+(perf-bgmStartPerf)/1000;
+  const t0=ctxT(plateStart),bs=beatMs/1000;
+  /* 4 guide hits on the whoosh grid before the first fish */
   guideIn(t0,bs);
-  recipe.forEach(f=>cuteTick(t0+f.b*bs,f.t));
+  /* cute tick exactly on every whoosh / fish hit */
+  recipe.forEach(f=>cuteTick(ctxT(f.hitTime),f.t));
 }
 function sfxHit(ok,comboN){
   if(!audioCtx)return;
@@ -551,12 +551,11 @@ function renderRecipes(){
   LEVELS[level].plates.forEach((p,i)=>{
     const d=document.createElement('div');
     d.className='rplate'+(i===plateIdx?' active':'')+(i<plateIdx?' done':'');
-    let prev=null;
     const eatenCount=(i===plateIdx)?fishList.filter(f=>f.state==='hit').length:0;
-    const seq=p.map((f,k)=>{
-      const gap=prev===null?0:Math.min(6,Math.round((f.b-prev)*4));prev=f.b;
+    const seq=Array.from(p.types).map((tt,k)=>{
+      const gap=k===0?0:Math.min(6,p.stride*2);
       const eaten=(i<plateIdx)||(i===plateIdx&&k<eatenCount);
-      return `<span style="display:inline-block;margin-left:${gap}px"><img class="mini${eaten?' eaten':''}" src="${IMG[f.t]}"></span>`;
+      return `<span style="display:inline-block;margin-left:${gap}px"><img class="mini${eaten?' eaten':''}" src="${IMG[tt]}"></span>`;
     }).join('');
     d.innerHTML=`<div class="rt">Plate ${i+1}</div><div class="rseq">${seq}</div>`;
     box.appendChild(d);
@@ -725,25 +724,30 @@ function pressAnim(side){
 
 /* ----------------  ---------------- */
 function startPlate(){
-  /* ：， */
+  /* clear old fish */
   fishList.forEach(f=>{
     if(f.anim){try{f.anim.cancel();}catch(e){}}
     if(f.el)f.el.remove();
   });
   fishList=[];
   lane.innerHTML='';plateFood.innerHTML='';
-  beatMs=60000/LEVELS[level].bpm;
-  /* ：、， */
-  hitWindow=level===0?300:level===1?240:level===2?170:110;
-  travelMs=beatMs*(LEVELS[level].travelBeats||7);   /* ： */
-  plateStart=nextGridStart(LEVELS[level].travelBeats||7);
-  const recipe=LEVELS[level].plates[plateIdx];
-  typeTotals={S:recipe.filter(f=>f.t==='S').length,K:recipe.filter(f=>f.t==='K').length};
+  const L=LEVELS[level];
+  beatMs=60000/L.bpm;              /* visual beat (~0.465s), matches whoosh grid */
+  hitWindow=L.hitWindow;
+  travelMs=L.travelMs;
+  const plate=L.plates[plateIdx], n=Math.min(plate.n,plate.types.length);
+  /* first fish needs travel time + 4-hit count-in room */
+  const k0=nextWhooshIndex(travelMs+beatMs*4+250);
+  plateStart=whooshPerf(k0);
+  typeTotals={S:0,K:0};
+  for(let i=0;i<n;i++)typeTotals[plate.types[i]]=(typeTotals[plate.types[i]]||0)+1;
   placed={S:0,K:0};platePlaced=0;plateDone=false;lastBeat=-1;
-  recipe.forEach((f,i)=>fishList.push({
-    id:i,type:f.t,hitTime:plateStart+f.b*beatMs,
-    spawnTime:plateStart+f.b*beatMs-travelMs,state:'wait',el:null
-  }));
+  const recipe=[];
+  for(let i=0;i<n;i++){
+    const hit=whooshPerf(k0+i*plate.stride);
+    const f={id:i,type:plate.types[i],hitTime:hit,spawnTime:hit-travelMs,state:'wait',el:null};
+    fishList.push(f);recipe.push(f);
+  }
   renderRecipes();updateHUD();scheduleMusic(recipe);
 }
 
@@ -775,8 +779,8 @@ function loop(){
       /*  */
       if(Math.abs(f.hitTime-now)<=hitWindow*1.6) f.el.classList.add('near');
       else f.el.classList.remove('near');
-      /*  miss  1.5 ， */
-      if(now>f.hitTime+beatMs*1.5 && f.state==='moving')miss(f);
+      /* miss once the whoosh window has passed */
+      if(now>f.hitTime+Math.max(hitWindow*1.5,240) && f.state==='moving')miss(f);
     }
   });
   /* “”： */
@@ -810,7 +814,8 @@ function judge(side){
   const pending=fishList.filter(f=>f.state==='wait'||f.state==='moving')
                         .sort((a,b)=>Math.abs(a.hitTime-now)-Math.abs(b.hitTime-now));
   const hit=pending[0];
-  if(!hit || Math.abs(hit.hitTime-now)>beatMs*1.2){
+  const catchWin=Math.max(hitWindow*1.6,200);
+  if(!hit || Math.abs(hit.hitTime-now)>catchWin){
     sfxHit(false);feedback('Empty','#ffd166');chopFx('fling');return;
   }
   if(!hit.el){ spawnFishEl(hit); }
