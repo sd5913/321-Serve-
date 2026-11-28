@@ -5,6 +5,7 @@
 This level is a playable rhythm game. Open `index.html` directly — all artwork and audio are embedded as data URIs, so it works from `file://` or any static host with no extra requests.
 
 Play online: https://sd5913.github.io/321-Serve-/assets/level3/index.html
+**Background music (standalone):** https://sd5913.github.io/321-Serve-/final_bgm.mp3 — local copy: `assets/final_bgm.mp3`
 
 - `index.html` — standalone playable build (open this one)
 - `index.source.html` — source build with relative `assets/` references

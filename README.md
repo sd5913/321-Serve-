@@ -23,6 +23,18 @@
 
 ---
 
+
+## Level 3 — Sushi Making / 第三关：寿司制作
+
+Play: https://sd5913.github.io/321-Serve-/assets/sushi-making/index.html  
+Alternate entry: https://sd5913.github.io/321-Serve-/assets/level3/index.html
+
+**Background music (standalone MP3):** [`final_bgm.mp3`](final_bgm.mp3) · https://sd5913.github.io/321-Serve-/final_bgm.mp3
+
+Both entries also carry a copy at `<entry>/assets/final_bgm.mp3`.
+
+---
+
 ## English
 
 A rhythm game built around kitchen actions. Listen to the rice machine, pinch and sweep to the beat, and watch out for sponges disguised as rice balls.
